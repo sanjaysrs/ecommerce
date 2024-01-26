@@ -1,0 +1,13 @@
+cloud:
+  aws:
+    credentials:
+      access-key: AKIA47CRXNC4PDCIAEOI
+      secret-key: 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
+    region:
+      static: ap-south-1
+    stack:
+      auto: false
+
+application:
+  bucket:
+    name: imagebucketmobig
