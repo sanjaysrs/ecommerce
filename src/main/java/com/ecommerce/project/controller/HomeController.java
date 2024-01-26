@@ -6,6 +6,7 @@ import com.ecommerce.project.entity.Product;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -111,9 +112,16 @@ public class HomeController {
     }
 
     @GetMapping("/shop/viewproduct/{id}")
-    public String viewProduct(@PathVariable long id, Model model) {
+    public String viewProduct(@PathVariable long id, Model model, HttpServletRequest request) {
 
-        Product product = productService.getProductById(id).get();
+        Optional<Product> productOptional = productService.getProductById(id);
+
+        if (productOptional.isEmpty()) {
+            String referer = request.getHeader("Referer");
+            return "redirect:" + (referer!=null ? referer : "/shop");
+        }
+
+        Product product = productOptional.get();
 
         if (getCurrentUserRole().equals("[ROLE_USER]")) {
 
