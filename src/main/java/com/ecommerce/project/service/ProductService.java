@@ -45,4 +45,11 @@ public class ProductService {
     public List<Product> getProductsByNameAndCategory(String keyword, int categoryId) {
         return productRepository.findAllByNameContainingAndCategory_Id(keyword, categoryId);
     }
+
+    public List<Product> getSearchResult(String keyword, int categoryId) {
+        if (categoryId==0)
+            return getProductsByNameContaining(keyword);
+        return getProductsByNameAndCategory(keyword, categoryId);
+    }
+
 }

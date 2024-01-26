@@ -1,5 +1,6 @@
 package com.ecommerce.project.controller;
 
+import com.ecommerce.project.aws.service.StorageService;
 import com.ecommerce.project.entity.CartItem;
 import com.ecommerce.project.entity.Product;
 import com.ecommerce.project.entity.User;
@@ -38,6 +39,9 @@ public class HomeController {
     @Autowired
     CartService cartService;
 
+    @Autowired
+    StorageService storageService;
+
     private String getCurrentUserRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().toString();
@@ -67,6 +71,7 @@ public class HomeController {
     public String shop(Model model) {
         model.addAttribute("categories", categoryService.getAllCategories());
         model.addAttribute("products", productService.getAllProducts());
+        model.addAttribute("urlList", storageService.getUrlList(productService.getAllProducts()));
 
         if (getCurrentUserRole().equals("[ROLE_USER]"))
             model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
@@ -75,14 +80,9 @@ public class HomeController {
     }
 
     @GetMapping("/shop/search")
-    public String searchForProducts(@RequestParam String keyword, @RequestParam Integer within, Model model) {
+    public String searchForProducts(@RequestParam String keyword, @RequestParam Integer categoryId, Model model) {
 
-        List<Product> searchResult;
-
-        if (within==0)
-            searchResult = productService.getProductsByNameContaining(keyword);
-        else
-            searchResult = productService.getProductsByNameAndCategory(keyword, within);
+        List<Product> searchResult = productService.getSearchResult(keyword, categoryId);
 
         if (getCurrentUserRole().equals("[ROLE_USER]"))
             model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
@@ -95,6 +95,7 @@ public class HomeController {
 
         model.addAttribute("products", searchResult);
         model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("urlList", storageService.getUrlList(searchResult));
 
         return "shop";
     }
@@ -104,6 +105,7 @@ public class HomeController {
 
         model.addAttribute("products", productService.getAllProductsByCategoryId(id));
         model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("urlList", storageService.getUrlList(productService.getAllProductsByCategoryId(id)));
 
         if (getCurrentUserRole().equals("[ROLE_USER]"))
             model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
@@ -155,6 +157,8 @@ public class HomeController {
                 model.addAttribute("inStock", "IN STOCK");
         else
             model.addAttribute("inStock", "IN STOCK");
+
+        model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
 
         return "viewProduct";
     }
