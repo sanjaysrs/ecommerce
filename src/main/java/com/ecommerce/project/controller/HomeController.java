@@ -5,10 +5,7 @@ import com.ecommerce.project.entity.CartItem;
 import com.ecommerce.project.entity.Product;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.repository.CartItemRepository;
-import com.ecommerce.project.service.CartService;
-import com.ecommerce.project.service.CategoryService;
-import com.ecommerce.project.service.ProductService;
-import com.ecommerce.project.service.UserService;
+import com.ecommerce.project.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,13 +31,13 @@ public class HomeController {
     UserService userService;
 
     @Autowired
-    CartItemRepository cartItemRepository;
-
-    @Autowired
     CartService cartService;
 
     @Autowired
     StorageService storageService;
+
+    @Autowired
+    WishlistService wishlistService;
 
     private String getCurrentUserRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -114,47 +111,29 @@ public class HomeController {
     }
 
     @GetMapping("/shop/viewproduct/{id}")
-    public String viewProduct(@PathVariable long id, Principal principal, Model model) {
+    public String viewProduct(@PathVariable long id, Model model) {
 
-        // Get the currently logged-in user
-        User user = userService.findUserByEmail(principal.getName());
+        Product product = productService.getProductById(id).get();
 
-        Optional<CartItem> cartItemOptional =
-                cartItemRepository.findCartItemByProductAndCart(productService.getProductById(id).get(),user.getCart());
+        if (getCurrentUserRole().equals("[ROLE_USER]")) {
 
-        if (cartItemOptional.isPresent()) {
-            CartItem cartItem = cartItemOptional.get();
-            model.addAttribute("quantityInCart", cartItem.getQuantity());
-        } else {
-            model.addAttribute("quantityInCart", 0);
+            model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
+            model.addAttribute("quantityInCart", cartService.getQuantityOfProductInCart(product, getCurrentUser().getCart()));
+
+
+            //Check to see if the product is there in the wishlist
+            boolean existsInWishlist = wishlistService.productExistsInWishlist(product, getCurrentUser().getWishlist());
+            if (existsInWishlist)
+                model.addAttribute("existsInWishlist", "Product is there in wishlist");
+            else
+                model.addAttribute("notInWishlist", "Product is not there in wishlist");
         }
-
-        boolean flag = user.getWishlist().getWishlistStatus(productService.getProductById(id).get());
-
-        if (flag) {
-            model.addAttribute("ondu", "Product is there in wishlist");
-        } else {
-            model.addAttribute("illa", "Product is not there in wishlist");
-        }
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
 
         model.addAttribute("product", productService.getProductById(id).get());
 
         //Check inventory for stock availability and add the required model attributes accordingly
-        Product product = productService.getProductById(id).get();
-        Optional<CartItem> cartItemOptional2 = cartItemRepository.findCartItemByProductAndCart(product, user.getCart());
         if (product.getQuantity()==0)
             model.addAttribute("outOfStock", "OUT OF STOCK");
-        else if (cartItemOptional2.isPresent())
-            if (product.getQuantity()==cartItemOptional2.get().getQuantity())
-                model.addAttribute("equalStock", "QUANTITY IN CART ALREADY EQUALS STOCK IN INVENTORY");
-            else if (product.getQuantity()<cartItemOptional2.get().getQuantity())
-                model.addAttribute("outOfStock", "OUT OF STOCK");
-            else
-                model.addAttribute("inStock", "IN STOCK");
         else
             model.addAttribute("inStock", "IN STOCK");
 

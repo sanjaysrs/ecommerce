@@ -88,14 +88,13 @@
             <p th:text="${product.category.name}"></p>
             <h6 class="text-success" th:text="${inStock}"></h6>
             <h6 class="text-danger" th:text="${outOfStock}"></h6>
-            <h6 class="text-warning" th:text="${equalStock}"></h6>
             <h2>₹ <span th:text="${product.price}"></span></h2>
             <p th:text="${product.description}"></p>
             <a href="" th:href="@{/removeFromCart/{id}(id = ${product.id})}" class="btn buntan"><strong>-</strong></a>
             <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn buntan">Add to cart</a>
             <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn buntan"><strong>+</strong></a>
-            <a th:if="${illa}" th:href="@{/addToWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">&#x2764;</a>
-            <a th:if="${ondu}" th:href="@{/removeFromWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">Remove from wishlist</a>
+            <a th:if="${notInWishlist}" th:href="@{/addToWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">&#x2764;</a>
+            <a th:if="${existsInWishlist}" th:href="@{/removeFromWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">Remove from wishlist</a>
             <p th:if="${addedToCart}" class="text-success"><strong th:text="${addedToCart}"></strong></p>
             <p th:if="${removedFromCart}" class="text-danger"><strong th:text="${removedFromCart}"></strong></p>
             <p th:if="${alreadyInWishlist}" class="text-dark" style="margin-left:250px;"><strong th:text="${alreadyInWishlist}"></strong></p>

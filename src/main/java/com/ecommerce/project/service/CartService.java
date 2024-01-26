@@ -54,4 +54,17 @@ public class CartService {
         return user.getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
     }
 
+    public int getQuantityOfProductInCart(Product product, Cart cart) {
+
+        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(product, cart);
+
+        if (cartItemOptional.isPresent()) {
+            CartItem cartItem = cartItemOptional.get();
+            return cartItem.getQuantity();
+        }
+
+        return  0;
+
+    }
+
 }

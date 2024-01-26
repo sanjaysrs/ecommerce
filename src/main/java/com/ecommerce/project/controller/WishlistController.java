@@ -126,7 +126,7 @@ public class WishlistController {
         User user = userService.findUserByEmail(principal.getName());
         Product product = productService.getProductById(id).orElse(null);
 
-        Optional<WishlistItem> wishlistItemOptional = wishlistItemRepository.findWishlistItemByProductAndWishlist(product, user.getWishlist());
+        Optional<WishlistItem> wishlistItemOptional = wishlistItemRepository.findByProductAndWishlist(product, user.getWishlist());
 
         if (wishlistItemOptional.isPresent()) {
             WishlistItem wishlistItem = wishlistItemOptional.get();
@@ -175,7 +175,7 @@ public class WishlistController {
         User user = userService.findUserByEmail(principal.getName());
         Product product = productService.getProductById(id).orElse(null);
 
-        Optional<WishlistItem> wishlistItemOptional = wishlistItemRepository.findWishlistItemByProductAndWishlist(product, user.getWishlist());
+        Optional<WishlistItem> wishlistItemOptional = wishlistItemRepository.findByProductAndWishlist(product, user.getWishlist());
 
         if (wishlistItemOptional.isPresent()) {
             WishlistItem wishlistItem = wishlistItemOptional.get();

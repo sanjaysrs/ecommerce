@@ -32,7 +32,7 @@ public class WishlistService {
         }
 
         Optional<WishlistItem> wishlistItemOptional =
-                wishlistItemRepository.findWishlistItemByProductAndWishlist(product, wishlist);
+                wishlistItemRepository.findByProductAndWishlist(product, wishlist);
 
         if (wishlistItemOptional.isEmpty()) {
             WishlistItem wishlistItem = new WishlistItem();
@@ -45,6 +45,10 @@ public class WishlistService {
             return false;
         }
 
+    }
+
+    public boolean productExistsInWishlist(Product product, Wishlist wishlist) {
+        return wishlistItemRepository.existsByProductAndWishlist(product, wishlist);
     }
 
 }

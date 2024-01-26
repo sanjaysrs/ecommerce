@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface WishlistItemRepository extends JpaRepository<WishlistItem, Long> {
 
-    Optional<WishlistItem> findWishlistItemByProductAndWishlist(Product product, Wishlist wishlist);
+    Optional<WishlistItem> findByProductAndWishlist(Product product, Wishlist wishlist);
+
+    boolean existsByProductAndWishlist(Product product, Wishlist wishlist);
 
 }
