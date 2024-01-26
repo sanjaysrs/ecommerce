@@ -86,14 +86,14 @@
         <div class="col-sm-7 mt-5">
             <h2 th:text="${product.name}"></h2>
             <p th:text="${product.category.name}"></p>
-            <h6 class="text-success" th:text="${inStock}"></h6>
-            <h6 class="text-danger" th:text="${outOfStock}"></h6>
+            <h6 class="text-success" th:if="${inStock}">IN STOCK</h6>
+            <h6 class="text-danger" th:unless="${inStock}">OUT OF STOCK</h6>
             <h2>₹ <span th:text="${product.price}"></span></h2>
             <p th:text="${product.description}"></p>
             <a href="" th:href="@{/removeFromCart/{id}(id = ${product.id})}" class="btn buntan"><strong>-</strong></a>
             <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn buntan">Add to cart</a>
             <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn buntan"><strong>+</strong></a>
-            <a th:if="${notInWishlist}" th:href="@{/addToWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">&#x2764;</a>
+            <a th:unless="${existsInWishlist}" th:href="@{/addToWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">&#x2764;</a>
             <a th:if="${existsInWishlist}" th:href="@{/removeFromWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">Remove from wishlist</a>
             <p th:if="${addedToCart}" class="text-success"><strong th:text="${addedToCart}"></strong></p>
             <p th:if="${removedFromCart}" class="text-danger"><strong th:text="${removedFromCart}"></strong></p>
@@ -101,7 +101,7 @@
             <p th:if="${addedToWishlist}" class="text-dark" style="margin-left:250px;"><strong th:text="${addedToWishlist}"></strong></p>
             <p th:if="${deletedFromWishlist}" class="text-dark" style="margin-left:250px;"><strong th:text="${deletedFromWishlist}"></strong></p>
             <p th:if="${notInWishlist}" class="text-dark" style="margin-left:250px;"><strong th:text="${notInWishlist}"></strong></p>
-            <p class="text-secondary">Quantity in Cart: <strong th:text="${quantityInCart}"></strong></p>
+            <p class="text-secondary" th:if="${quantityInCart}">Quantity in Cart: <strong th:text="${quantityInCart}"></strong></p>
         </div>
     </div>
 </div>

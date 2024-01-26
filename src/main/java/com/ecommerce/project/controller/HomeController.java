@@ -119,24 +119,12 @@ public class HomeController {
 
             model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
             model.addAttribute("quantityInCart", cartService.getQuantityOfProductInCart(product, getCurrentUser().getCart()));
+            model.addAttribute("existsInWishlist", wishlistService.productExistsInWishlist(product, getCurrentUser()));
 
-
-            //Check to see if the product is there in the wishlist
-            boolean existsInWishlist = wishlistService.productExistsInWishlist(product, getCurrentUser().getWishlist());
-            if (existsInWishlist)
-                model.addAttribute("existsInWishlist", "Product is there in wishlist");
-            else
-                model.addAttribute("notInWishlist", "Product is not there in wishlist");
         }
 
-        model.addAttribute("product", productService.getProductById(id).get());
-
-        //Check inventory for stock availability and add the required model attributes accordingly
-        if (product.getQuantity()==0)
-            model.addAttribute("outOfStock", "OUT OF STOCK");
-        else
-            model.addAttribute("inStock", "IN STOCK");
-
+        model.addAttribute("product", product);
+        model.addAttribute("inStock", product.getQuantity()>0);
         model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
 
         return "viewProduct";

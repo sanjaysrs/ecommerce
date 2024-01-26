@@ -47,8 +47,8 @@ public class WishlistService {
 
     }
 
-    public boolean productExistsInWishlist(Product product, Wishlist wishlist) {
-        return wishlistItemRepository.existsByProductAndWishlist(product, wishlist);
+    public boolean productExistsInWishlist(Product product, User user) {
+        return wishlistItemRepository.existsByProductAndWishlist(product, user.getWishlist());
     }
 
 }
