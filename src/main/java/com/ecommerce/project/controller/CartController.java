@@ -99,26 +99,25 @@ public class CartController {
 
         model.addAttribute("cartCount", cartService.getCartCount(user));
         model.addAttribute("total", cartService.getCartTotal(user));
-        model.addAttribute("cart", cartItems);
+        model.addAttribute("cartItems", cartItems);
         model.addAttribute("urlList", storageService.getUrlListForSingleCart(cart));
 
         return "cart";
     }
 
-    @GetMapping("/cart/removeItem/{index}")
-    public String cartItemRemove(@PathVariable int index, Principal principal) {
+    @GetMapping("/cart/removeItem/{id}")
+    public String cartItemRemove(@PathVariable long id) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
+        Optional<CartItem> cartItemOptional = cartItemRepository.findById(id);
+
+        if (cartItemOptional.isPresent()) {
+            CartItem cartItem = cartItemOptional.get();
+            if (cartItem.getCart().getUser().equals(getCurrentUser()))
+                cartItemRepository.delete(cartItem);
         }
 
-        User user = userService.findUserByEmail(principal.getName());
-        Cart userCart = user.getCart();
-        List<CartItem> cartItemList = userCart.getCartItems();
-        CartItem cartItem = cartItemList.get(index);
-        cartItemRepository.delete(cartItem);
         return "redirect:/cart";
+
     }
 
     @GetMapping("/checkout")
