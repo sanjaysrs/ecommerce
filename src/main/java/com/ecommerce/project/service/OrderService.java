@@ -1,16 +1,17 @@
 package com.ecommerce.project.service;
 
-import com.ecommerce.project.entity.Order;
-import com.ecommerce.project.entity.TransactionDetails;
-import com.ecommerce.project.entity.User;
+import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.OrderRepository;
+import com.ecommerce.project.repository.OrderStatusRepository;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 public class OrderService {
@@ -23,6 +24,15 @@ public class OrderService {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    OrderStatusRepository orderStatusRepository;
+
+    @Autowired
+    AddressService addressService;
+
+    @Autowired
+    PaymentMethodService paymentMethodService;
 
     public void saveOrder(Order order) {
         orderRepository.save(order);
@@ -67,6 +77,43 @@ public class OrderService {
         TransactionDetails transactionDetails = new TransactionDetails(orderId, currency, amount);
         return transactionDetails;
     }
+
+    public void createOrderAndSave(User user, Long selectedAddressId, int paymentMethodId, double total) {
+
+        Address address = addressService.getAddressById(selectedAddressId);
+        PaymentMethod paymentMethod = paymentMethodService.getPaymentMethodById(paymentMethodId);
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setAddress(address);
+        order.setPaymentMethod(paymentMethod);
+
+        Date date = new Date();
+        TimeZone istTimeZone = TimeZone.getTimeZone("Asia/Kolkata");
+        date.setTime(date.getTime() + istTimeZone.getRawOffset());
+        order.setOrderDate(date);
+
+        order.setTotalPrice(total);
+
+        OrderStatus orderStatus = orderStatusRepository.findById(1).get();
+        order.setOrderStatus(orderStatus);
+
+        addOrderItems(user.getCart(), order);
+        orderRepository.save(order);
+    }
+
+    private void addOrderItems(Cart cart, Order order) {
+
+        for (CartItem cartItem : cart.getCartItems()) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setOrder(order);
+            order.getOrderItems().add(orderItem);
+        }
+
+    }
+
 }
 
 

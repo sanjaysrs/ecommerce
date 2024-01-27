@@ -118,4 +118,10 @@ public class CartService {
         return cart.getCartItems().isEmpty();
     }
 
+    public void clearCart(Cart cart) {
+        // Clear the user's cart in the database
+        for (CartItem cartItem : cart.getCartItems()) {
+            cartItemRepository.delete(cartItem);
+        }
+    }
 }
