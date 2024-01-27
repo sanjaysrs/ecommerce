@@ -9,6 +9,7 @@ import com.ecommerce.project.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -19,6 +20,14 @@ public class CartService {
 
     @Autowired
     CartItemRepository cartItemRepository;
+
+    public double getCartTotal(User user) {
+
+        return user.getCart().getCartItems()
+                .stream()
+                .mapToDouble(CartItem::getTotalPrice)
+                .sum();
+    }
 
     private boolean isProductInStock(Product product) {
         return product.getQuantity()>0;
@@ -43,6 +52,25 @@ public class CartService {
             cartItem.setCart(cart);
             cartItem.setQuantity(1);
             cartItemRepository.save(cartItem);
+        }
+
+        return true;
+    }
+
+    public boolean removeProductFromCart(User user, Product product) {
+
+        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(product, user.getCart());
+
+        if (cartItemOptional.isEmpty())
+            return false;
+
+        CartItem cartItem = cartItemOptional.get();
+
+        if (cartItem.getQuantity()>1) {
+            cartItem.setQuantity(cartItem.getQuantity()-1);
+            cartItemRepository.save(cartItem);
+        } else if (cartItem.getQuantity()==1) {
+            cartItemRepository.delete(cartItem);
         }
 
         return true;

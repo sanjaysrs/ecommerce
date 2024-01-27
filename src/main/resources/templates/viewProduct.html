@@ -98,7 +98,7 @@
             <a th:if="${existsInWishlist}" th:href="@{/removeFromWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">Remove from wishlist</a>
             <p th:if="${addedToCart}" class="text-success"><strong>Added to Cart!</strong></p>
             <p th:if="${notAddedToCart}" class="text-warning"><strong>Insufficient stock. Could not add to cart.</strong></p>
-            <p th:if="${removedFromCart}" class="text-danger"><strong th:text="${removedFromCart}"></strong></p>
+            <p th:if="${removedFromCart}" class="text-danger"><strong>Removed from Cart!</strong></p>
             <p th:if="${alreadyInWishlist}" class="text-dark" style="margin-left:250px;"><strong th:text="${alreadyInWishlist}"></strong></p>
             <p th:if="${addedToWishlist}" class="text-dark" style="margin-left:250px;"><strong th:text="${addedToWishlist}"></strong></p>
             <p th:if="${deletedFromWishlist}" class="text-dark" style="margin-left:250px;"><strong th:text="${deletedFromWishlist}"></strong></p>

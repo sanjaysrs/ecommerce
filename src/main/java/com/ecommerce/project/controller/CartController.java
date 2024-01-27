@@ -78,103 +78,29 @@ public class CartController {
     }
 
     @GetMapping("/removeFromCart/{id}")
-    public String removeFromCart(@PathVariable long id, Principal principal, Model model) {
-
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        User user = userService.findUserByEmail(principal.getName());
+    public String removeFromCart(@PathVariable long id, RedirectAttributes redirectAttributes) {
 
         Product product = productService.getProductById(id).orElse(null);
 
-        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(product, user.getCart());
+        boolean removedFromCart = cartService.removeProductFromCart(getCurrentUser(), product);
 
-        if (cartItemOptional.isPresent()) {
-            CartItem cartItem = cartItemOptional.get();
-            if (cartItem.getQuantity()>1) {
-                cartItem.setQuantity(cartItem.getQuantity()-1);
-                cartItemRepository.save(cartItem);
-                model.addAttribute("removedFromCart", "Removed from Cart!");
-                model.addAttribute("quantityInCart", cartItem.getQuantity());
-            } else if (cartItem.getQuantity()==1) {
-                cartItemRepository.delete(cartItem);
-                model.addAttribute("quantityInCart", 0);
-                model.addAttribute("removedFromCart", "Removed from Cart!");
-            }
-        } else {
-            model.addAttribute("quantityInCart", 0);
-        }
+        redirectAttributes.addFlashAttribute("removedFromCart", true);
 
-
-        model.addAttribute("product", product);
-
-        boolean flag = user.getWishlist().getWishlistStatus(productService.getProductById(id).get());
-        if (flag) {
-            model.addAttribute("ondu", "Product is there in wishlist");
-        } else {
-            model.addAttribute("illa", "Product is not there in wishlist");
-        }
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
-        //Check inventory for stock availability and add the required model attributes accordingly
-        Optional<CartItem> cartItemOptional2 = cartItemRepository.findCartItemByProductAndCart(product, user.getCart());
-        if (product.getQuantity()==0)
-            model.addAttribute("outOfStock", "OUT OF STOCK");
-        else if (cartItemOptional2.isPresent())
-            if (product.getQuantity()==cartItemOptional2.get().getQuantity())
-                model.addAttribute("equalStock", "QUANTITY IN CART ALREADY EQUALS STOCK IN INVENTORY");
-            else if (product.getQuantity()<cartItemOptional2.get().getQuantity())
-                model.addAttribute("outOfStock", "OUT OF STOCK");
-            else
-                model.addAttribute("inStock", "IN STOCK");
-        else
-            model.addAttribute("inStock", "IN STOCK");
-
-        model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
-
-        return "viewProduct";
+        return "redirect:/shop/viewproduct/" + id;
 
     }
-
 
     @GetMapping("/cart")
     public String getCart(Model model) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
+        User user = getCurrentUser();
+        Cart cart = user.getCart();
+        List<CartItem> cartItems = cart.getCartItems();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.findUserByEmail(username);
-
-        int cartCount = user.getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
-        double total = 0.0;
-        if (user != null) {
-            Cart userCart = user.getCart();
-            if (userCart != null) {
-                List<CartItem> cartItems = userCart.getCartItems();
-                for (CartItem cartItem : cartItems) {
-                    total += cartItem.getProduct().getPrice() * cartItem.getQuantity();
-                }
-            }
-        }
-        model.addAttribute("total", total);
-
-        Cart userCartEntity = user.getCart();
-        List<CartItem> cartItemList = userCartEntity.getCartItems();
-
-        model.addAttribute("cart", cartItemList);
-
-        model.addAttribute("urlList", storageService.getUrlListForSingleCart(userCartEntity));
+        model.addAttribute("cartCount", cartService.getCartCount(user));
+        model.addAttribute("total", cartService.getCartTotal(user));
+        model.addAttribute("cart", cartItems);
+        model.addAttribute("urlList", storageService.getUrlListForSingleCart(cart));
 
         return "cart";
     }
