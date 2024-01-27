@@ -1,5 +1,6 @@
 package com.ecommerce.project.service;
 
+import com.ecommerce.project.dto.AddressDTO;
 import com.ecommerce.project.entity.Address;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.repository.AddressRepository;
@@ -18,8 +19,17 @@ public class AddressService {
         return addressRepository.findAllByUser(user);
     }
 
-    public Address saveAddress(Address address) {
-        return addressRepository.save(address);
+    public void saveAddress(AddressDTO addressDTO, User user) {
+
+        Address address = new Address();
+        address.setUser(user);
+        address.setStreetAddress(addressDTO.getStreetAddress());
+        address.setCity(addressDTO.getCity());
+        address.setState(addressDTO.getState());
+        address.setPostalCode(addressDTO.getPostalCode());
+        address.setCountry(addressDTO.getCountry());
+        addressRepository.save(address);
+
     }
 
     public void deleteAddressById(Long addressId) {

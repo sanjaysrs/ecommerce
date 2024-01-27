@@ -1,6 +1,7 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.aws.service.StorageService;
+import com.ecommerce.project.dto.AddressDTO;
 import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.AddressRepository;
 import com.ecommerce.project.repository.CartItemRepository;
@@ -35,9 +36,6 @@ public class CartController {
 
     @Autowired
     AddressService addressService;
-
-    @Autowired
-    AddressRepository addressRepository;
 
     @Autowired
     PaymentMethodService paymentMethodService;
@@ -128,28 +126,11 @@ public class CartController {
     }
 
     @PostMapping("/add-address-checkout")
-    public String addAddress(@ModelAttribute("address") Address address) {
+    public String addAddress(@ModelAttribute("address") AddressDTO addressDTO) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-
-        User user = userService.findUserByEmail(userEmail);
-
-        Address newAddress = new Address(user);
-        newAddress.setStreetAddress(address.getStreetAddress());
-        newAddress.setCity(address.getCity());
-        newAddress.setState(address.getState());
-        newAddress.setPostalCode(address.getPostalCode());
-        newAddress.setCountry(address.getCountry());
-
-        addressRepository.save(newAddress);
-
+        addressService.saveAddress(addressDTO, getCurrentUser());
         return "redirect:/checkout";
+
     }
 
 }
