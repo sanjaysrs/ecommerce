@@ -8,6 +8,7 @@ import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -49,6 +50,14 @@ public class CheckoutController {
 
     @Autowired
     private CouponService couponService;
+
+    @Autowired
+    CartService cartService;
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userService.findUserByEmail(authentication.getName());
+    }
 
 
     @PostMapping("/checkout/razorpay")
@@ -131,40 +140,30 @@ public class CheckoutController {
     @PostMapping("/checkout/process2")
     public String processOrder2(@ModelAttribute("address") Long selectedAddressId,
                                 @ModelAttribute("paymentMethod") int paymentMethodId,
-                                @ModelAttribute("total") double total,
-                                Model model,
                                 RedirectAttributes redirectAttributes) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
+        redirectAttributes.addFlashAttribute("address", selectedAddressId);
+        redirectAttributes.addFlashAttribute("paymentMethod", paymentMethodId);
 
-        //Check the inventory for required stock
-        User user = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName());
-        Cart userCartEntity = user.getCart();
-        List<CartItem> cartItemList = userCartEntity.getCartItems();
-        for (CartItem cartItem : cartItemList) {
-            if (cartItem.getQuantity()>cartItem.getProduct().getQuantity()) {
-                return "redirect:/cart";
-            }
-        }
-
-        //Check the payment method id for Cash On Delivery
-        if (paymentMethodId == 1) {
-            redirectAttributes.addFlashAttribute("address", selectedAddressId);
-            redirectAttributes.addFlashAttribute("paymentMethod", paymentMethodId);
-            redirectAttributes.addFlashAttribute("total", total);
+        if (paymentMethodId == 1)
             return "redirect:/checkout/COD";
-        }
 
-        //Check the payment method for Wallet
-        if (paymentMethodId == 3) {
-            redirectAttributes.addFlashAttribute("address", selectedAddressId);
-            redirectAttributes.addFlashAttribute("paymentMethod", paymentMethodId);
-            redirectAttributes.addFlashAttribute("total", total);
+        if (paymentMethodId == 2)
+            return "redirect:/checkout/razorpay";
+
+        if (paymentMethodId == 3)
             return "redirect:/checkout/wallet";
-        }
+
+        return "redirect:/checkout";
+
+    }
+
+    @GetMapping("/checkout/razorpay")
+    public String razorpay(@ModelAttribute("address") Long selectedAddressId,
+                           @ModelAttribute("paymentMethod") int paymentMethodId,
+                           Model model) {
+
+        double total = cartService.getCartTotal(getCurrentUser());
 
         //Create a Razorpay transaction(order) and get the response
         TransactionDetails transactionDetails = orderService.createTransaction(total);
@@ -175,14 +174,16 @@ public class CheckoutController {
         model.addAttribute("paymentMethod", paymentMethodId);
 
         return "xxx";
+
     }
 
     @GetMapping("/checkout/COD")
     public String COD(@ModelAttribute("address") Long selectedAddressId,
                       @ModelAttribute("paymentMethod") int paymentMethodId,
-                      @ModelAttribute("total") double total,
                       Model model,
                       Principal principal) {
+
+        double total = cartService.getCartTotal(getCurrentUser());
 
         //Already logged-in user block
         if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
@@ -247,9 +248,10 @@ public class CheckoutController {
     @GetMapping("/checkout/wallet")
     public String checkoutWallet(@ModelAttribute("address") Long selectedAddressId,
                                  @ModelAttribute("paymentMethod") int paymentMethodId,
-                                 @ModelAttribute("total") double total,
                                  Model model,
                                  Principal principal) {
+
+        double total = cartService.getCartTotal(getCurrentUser());
 
         //Already logged-in user block
         if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
