@@ -1,10 +1,8 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.aws.service.StorageService;
-import com.ecommerce.project.entity.CartItem;
 import com.ecommerce.project.entity.Product;
 import com.ecommerce.project.entity.User;
-import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,17 +119,19 @@ public class HomeController {
 
         Product product = productOptional.get();
 
+        model.addAttribute("product", product);
+        model.addAttribute("inStock", productService.isProductInStock(product));
+        model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
+        model.addAttribute("equalStock", false);
+        
         if (getCurrentUserRole().equals("[ROLE_USER]")) {
 
             model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
             model.addAttribute("quantityInCart", cartService.getQuantityOfProductInCart(product, getCurrentUser().getCart()));
             model.addAttribute("existsInWishlist", wishlistService.productExistsInWishlist(product, getCurrentUser()));
+            model.addAttribute("equalStock", cartService.isQuantityInCartEqualToOrGreaterThanStock(product, getCurrentUser().getCart()));
 
         }
-
-        model.addAttribute("product", product);
-        model.addAttribute("inStock", product.getQuantity()>0);
-        model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
 
         return "viewProduct";
     }

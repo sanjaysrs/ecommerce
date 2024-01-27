@@ -86,8 +86,9 @@
         <div class="col-sm-7 mt-5">
             <h2 th:text="${product.name}"></h2>
             <p th:text="${product.category.name}"></p>
-            <h6 class="text-success" th:if="${inStock}">IN STOCK</h6>
+            <h6 class="text-success" th:if="${inStock and !equalStock}">IN STOCK</h6>
             <h6 class="text-danger" th:unless="${inStock}">OUT OF STOCK</h6>
+            <h6 class="text-warning" th:if="${equalStock}">QUANTITY IN CART ALREADY EQUALS STOCK IN INVENTORY</h6>
             <h2>₹ <span th:text="${product.price}"></span></h2>
             <p th:text="${product.description}"></p>
             <a href="" th:href="@{/removeFromCart/{id}(id = ${product.id})}" class="btn buntan"><strong>-</strong></a>
@@ -95,7 +96,8 @@
             <a href="" th:href="@{/addToCart/{id}(id = ${product.id})}" class="btn buntan"><strong>+</strong></a>
             <a th:unless="${existsInWishlist}" th:href="@{/addToWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">&#x2764;</a>
             <a th:if="${existsInWishlist}" th:href="@{/removeFromWishlist/{id}(id = ${product.id})}" class="btn btn-outline-dark" style="margin-left:70px;">Remove from wishlist</a>
-            <p th:if="${addedToCart}" class="text-success"><strong th:text="${addedToCart}"></strong></p>
+            <p th:if="${addedToCart}" class="text-success"><strong>Added to Cart!</strong></p>
+            <p th:if="${notAddedToCart}" class="text-warning"><strong>Insufficient stock. Could not add to cart.</strong></p>
             <p th:if="${removedFromCart}" class="text-danger"><strong th:text="${removedFromCart}"></strong></p>
             <p th:if="${alreadyInWishlist}" class="text-dark" style="margin-left:250px;"><strong th:text="${alreadyInWishlist}"></strong></p>
             <p th:if="${addedToWishlist}" class="text-dark" style="margin-left:250px;"><strong th:text="${addedToWishlist}"></strong></p>

@@ -20,14 +20,16 @@ public class CartService {
     @Autowired
     CartItemRepository cartItemRepository;
 
-    public void addProductToCart(User user, Product product) {
+    private boolean isProductInStock(Product product) {
+        return product.getQuantity()>0;
+    }
+
+    public boolean addProductToCart(User user, Product product) {
+
+        if (!isProductInStock(product) || isQuantityInCartEqualToOrGreaterThanStock(product, user.getCart()))
+            return false;
+
         Cart cart = user.getCart();
-        if (cart == null) {
-            cart = new Cart();
-            cart.setUser(user);
-            user.setCart(cart);
-        }
-//        cart.getProducts().add(product);
 
         Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(product, cart);
 
@@ -41,9 +43,9 @@ public class CartService {
             cartItem.setCart(cart);
             cartItem.setQuantity(1);
             cartItemRepository.save(cartItem);
-            cart.getCartItems().add(cartItem);
-            cartRepository.save(cart);
         }
+
+        return true;
     }
 
     public void save(Cart cart) {
@@ -65,6 +67,13 @@ public class CartService {
 
         return  0;
 
+    }
+
+    public boolean isQuantityInCartEqualToOrGreaterThanStock(Product product, Cart cart) {
+        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(product, cart);
+        if (cartItemOptional.isEmpty())
+            return false;
+        return product.getQuantity()<=cartItemOptional.get().getQuantity();
     }
 
 }

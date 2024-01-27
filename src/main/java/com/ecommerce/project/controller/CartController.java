@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -47,68 +48,32 @@ public class CartController {
     @Autowired
     StorageService storageService;
 
+    private String getCurrentUserRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().toString();
+    }
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userService.findUserByEmail(authentication.getName());
+    }
+
     @GetMapping("/addToCart/{id}")
-    public String addToCart(@PathVariable long id, Principal principal, Model model) {
+    public String addToCart(@PathVariable long id, RedirectAttributes redirectAttributes) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
+        Optional<Product> productOptional = productService.getProductById(id);
 
-        User user = userService.findUserByEmail(principal.getName());
+        if (productOptional.isEmpty())
+            return "redirect:/shop";
 
-        Product product = productService.getProductById(id).orElse(null);
+        boolean addedToCart = cartService.addProductToCart(getCurrentUser(), productOptional.get());
 
-        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(product, user.getCart());
-
-        //Check inventory if the product is in stock
-        if (product.getQuantity()==0)
-            return "redirect:/shop/viewproduct/" +id;
-        if (cartItemOptional.isPresent())
-            if (product.getQuantity()<=cartItemOptional.get().getQuantity())
-                return "redirect:/shop/viewproduct/" +id;
-
-        model.addAttribute("product", product);
-        model.addAttribute("addedToCart", "Added to Cart!");
-
-        boolean flag = user.getWishlist().getWishlistStatus(productService.getProductById(id).get());
-        if (flag) {
-            model.addAttribute("ondu", "Product is there in wishlist");
-        } else {
-            model.addAttribute("illa", "Product is not there in wishlist");
-        }
-
-        // Add the product to the user's cart
-        cartService.addProductToCart(user, product);
-
-        if (cartItemOptional.isPresent()) {
-            CartItem cartItem = cartItemOptional.get();
-            model.addAttribute("quantityInCart", cartItem.getQuantity());
-        } else {
-            model.addAttribute("quantityInCart", 1);
-        }
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
-        //Check inventory for stock availability and add the required model attributes accordingly
-        Optional<CartItem> cartItemOptional2 = cartItemRepository.findCartItemByProductAndCart(product, user.getCart());
-        if (product.getQuantity()==0)
-            model.addAttribute("outOfStock", "OUT OF STOCK");
-        else if (cartItemOptional2.isPresent())
-            if (product.getQuantity()==cartItemOptional2.get().getQuantity())
-                model.addAttribute("equalStock", "QUANTITY IN CART ALREADY EQUALS STOCK IN INVENTORY");
-            else if (product.getQuantity()<cartItemOptional2.get().getQuantity())
-                model.addAttribute("outOfStock", "OUT OF STOCK");
-            else
-                model.addAttribute("inStock", "IN STOCK");
+        if (addedToCart)
+            redirectAttributes.addFlashAttribute("addedToCart", true);
         else
-            model.addAttribute("inStock", "IN STOCK");
+            redirectAttributes.addFlashAttribute("notAddedToCart", true);
 
-        model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
-
-        return "viewProduct";
+        return "redirect:/shop/viewproduct/" + id;
 
     }
 

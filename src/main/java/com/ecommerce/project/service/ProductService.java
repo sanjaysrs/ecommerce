@@ -52,4 +52,8 @@ public class ProductService {
         return getProductsByNameAndCategory(keyword, categoryId);
     }
 
+    public boolean isProductInStock(Product product) {
+        return product.getQuantity()>0;
+    }
+
 }
