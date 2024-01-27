@@ -6,6 +6,7 @@ import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.AddressRepository;
 import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.service.*;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,7 +50,7 @@ public class CartController {
     }
 
     @GetMapping("/addToCart/{id}")
-    public String addToCart(@PathVariable long id, RedirectAttributes redirectAttributes) {
+    public String addToCart(@PathVariable long id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
         Optional<Product> productOptional = productService.getProductById(id);
 
@@ -57,6 +58,10 @@ public class CartController {
             return "redirect:/shop";
 
         boolean addedToCart = cartService.addProductToCart(getCurrentUser(), productOptional.get());
+
+        String referer = request.getHeader("Referer");
+        if (referer!=null && referer.contains("cart"))
+            return "redirect:/cart";
 
         if (addedToCart)
             redirectAttributes.addFlashAttribute("addedToCart", true);
@@ -68,11 +73,15 @@ public class CartController {
     }
 
     @GetMapping("/removeFromCart/{id}")
-    public String removeFromCart(@PathVariable long id, RedirectAttributes redirectAttributes) {
+    public String removeFromCart(@PathVariable long id, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
         Product product = productService.getProductById(id).orElse(null);
 
         boolean removedFromCart = cartService.removeProductFromCart(getCurrentUser(), product);
+
+        String referer = request.getHeader("Referer");
+        if (referer!=null && referer.contains("cart"))
+            return "redirect:/cart";
 
         redirectAttributes.addFlashAttribute("removedFromCart", removedFromCart);
 
