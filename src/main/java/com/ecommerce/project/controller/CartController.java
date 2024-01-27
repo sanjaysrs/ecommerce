@@ -43,11 +43,6 @@ public class CartController {
     @Autowired
     StorageService storageService;
 
-    private String getCurrentUserRole() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getAuthorities().toString();
-    }
-
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return userService.findUserByEmail(authentication.getName());
