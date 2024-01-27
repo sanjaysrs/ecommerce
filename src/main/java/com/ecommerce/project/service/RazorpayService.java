@@ -1,6 +1,7 @@
 package com.ecommerce.project.service;
 
 import com.ecommerce.project.entity.TransactionDetails;
+import com.razorpay.Order;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import org.json.JSONObject;
@@ -34,7 +35,7 @@ public class RazorpayService {
         return null;
     }
 
-    private TransactionDetails prepareTransactionDetails(com.razorpay.Order order) {
+    private TransactionDetails prepareTransactionDetails(Order order) {
         String orderId = order.get("id");
         String currency = order.get("currency");
         Integer amount = order.get("amount");
