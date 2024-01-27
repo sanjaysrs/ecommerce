@@ -4,6 +4,7 @@ import com.ecommerce.project.entity.TransactionDetails;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.entity.Wallet;
 import com.ecommerce.project.service.OrderService;
+import com.ecommerce.project.service.RazorpayService;
 import com.ecommerce.project.service.UserService;
 import com.ecommerce.project.service.WalletService;
 import com.razorpay.Payment;
@@ -31,6 +32,9 @@ public class WalletController {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    RazorpayService razorpayService;
 
     @GetMapping("/wallet")
     public String getWallet(Model model, Principal principal) {
@@ -60,7 +64,7 @@ public class WalletController {
             return "redirect:/logout";
         }
 
-        TransactionDetails transactionDetails = orderService.createTransaction(amount);
+        TransactionDetails transactionDetails = razorpayService.createTransaction(amount);
         model.addAttribute("amount", amount*100);
         model.addAttribute("orderId", transactionDetails.getOrderId());
 

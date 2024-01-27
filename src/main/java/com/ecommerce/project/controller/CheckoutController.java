@@ -57,21 +57,73 @@ public class CheckoutController {
     @Autowired
     InventoryService inventoryService;
 
+    @Autowired
+    RazorpayService razorpayService;
+
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return userService.findUserByEmail(authentication.getName());
     }
 
+    @PostMapping("/checkout/process2")
+    public String processOrder2(@ModelAttribute("address") Long selectedAddressId,
+                                @ModelAttribute("paymentMethod") int paymentMethodId,
+                                RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("address", selectedAddressId);
+        redirectAttributes.addFlashAttribute("paymentMethod", paymentMethodId);
+
+        if (paymentMethodId == 1)
+            return "redirect:/checkout/COD";
+
+        if (paymentMethodId == 2)
+            return "redirect:/checkout/razorpay";
+
+        if (paymentMethodId == 3)
+            return "redirect:/checkout/wallet";
+
+        return "redirect:/checkout";
+
+    }
+
+    @GetMapping("/checkout/COD")
+    public String COD(@ModelAttribute("address") Long selectedAddressId,
+                      @ModelAttribute("paymentMethod") int paymentMethodId,
+                      Model model) {
+
+        inventoryService.updateInventory(getCurrentUser().getCart());
+        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, paymentMethodId, cartService.getCartTotal(getCurrentUser()));
+        cartService.clearCart(getCurrentUser().getCart());
+
+        model.addAttribute("successMessage", "Your order has been placed successfully!");
+        model.addAttribute("cartCount", 0);
+
+        return "checkoutConfirmation";
+    }
+
+    @GetMapping("/checkout/razorpay")
+    public String razorpay(@ModelAttribute("address") Long selectedAddressId,
+                           @ModelAttribute("paymentMethod") int paymentMethodId,
+                           Model model) {
+
+        double total = cartService.getCartTotal(getCurrentUser());
+
+        //Create a Razorpay transaction(order) and get the response
+        TransactionDetails transactionDetails = razorpayService.createTransaction(total);
+
+        model.addAttribute("amount", total*100);
+        model.addAttribute("orderId", transactionDetails.getOrderId());
+        model.addAttribute("address", selectedAddressId);
+        model.addAttribute("paymentMethod", paymentMethodId);
+
+        return "xxx";
+
+    }
 
     @PostMapping("/checkout/razorpay")
     public String processOrder(@ModelAttribute("razorpay_payment_id") String id,
                                 Model model,
                                Principal principal) throws RazorpayException {
-
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
 
         //Fetch the razorpay payment by its id
         RazorpayClient razorpayClient = new RazorpayClient("rzp_test_amAJ6g1mhBlQKL", "xW9gfY6xByn88aKq8GixUNZ0");
@@ -135,61 +187,6 @@ public class CheckoutController {
         model.addAttribute("successMessage", "Your order has been placed successfully!");
 
         //  Add cartCount
-        model.addAttribute("cartCount", 0);
-
-        return "checkoutConfirmation";
-    }
-
-    @PostMapping("/checkout/process2")
-    public String processOrder2(@ModelAttribute("address") Long selectedAddressId,
-                                @ModelAttribute("paymentMethod") int paymentMethodId,
-                                RedirectAttributes redirectAttributes) {
-
-        redirectAttributes.addFlashAttribute("address", selectedAddressId);
-        redirectAttributes.addFlashAttribute("paymentMethod", paymentMethodId);
-
-        if (paymentMethodId == 1)
-            return "redirect:/checkout/COD";
-
-        if (paymentMethodId == 2)
-            return "redirect:/checkout/razorpay";
-
-        if (paymentMethodId == 3)
-            return "redirect:/checkout/wallet";
-
-        return "redirect:/checkout";
-
-    }
-
-    @GetMapping("/checkout/razorpay")
-    public String razorpay(@ModelAttribute("address") Long selectedAddressId,
-                           @ModelAttribute("paymentMethod") int paymentMethodId,
-                           Model model) {
-
-        double total = cartService.getCartTotal(getCurrentUser());
-
-        //Create a Razorpay transaction(order) and get the response
-        TransactionDetails transactionDetails = orderService.createTransaction(total);
-
-        model.addAttribute("amount", total*100);
-        model.addAttribute("orderId", transactionDetails.getOrderId());
-        model.addAttribute("address", selectedAddressId);
-        model.addAttribute("paymentMethod", paymentMethodId);
-
-        return "xxx";
-
-    }
-
-    @GetMapping("/checkout/COD")
-    public String COD(@ModelAttribute("address") Long selectedAddressId,
-                      @ModelAttribute("paymentMethod") int paymentMethodId,
-                      Model model) {
-
-        inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, paymentMethodId, cartService.getCartTotal(getCurrentUser()));
-        cartService.clearCart(getCurrentUser().getCart());
-
-        model.addAttribute("successMessage", "Your order has been placed successfully!");
         model.addAttribute("cartCount", 0);
 
         return "checkoutConfirmation";
