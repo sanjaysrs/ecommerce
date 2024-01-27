@@ -72,7 +72,7 @@
                 </thead>
                 <tbody>
                 <!-- Use Thymeleaf to iterate over cart items and display them -->
-                <tr th:each="ct : ${cart}">
+                <tr th:each="ct : ${cartItems}">
                     <td th:text="${ct.product.name}"></td>
                     <td th:text="${ct.product.price}"></td>
                     <td th:text="${ct.quantity}"></td>

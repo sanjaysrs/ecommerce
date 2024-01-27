@@ -114,4 +114,8 @@ public class CartService {
         return product.getQuantity()<=cartItemOptional.get().getQuantity();
     }
 
+    public boolean isCartEmpty(Cart cart) {
+        return cart.getCartItems().isEmpty();
+    }
+
 }

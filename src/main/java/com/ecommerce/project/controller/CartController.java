@@ -114,38 +114,15 @@ public class CartController {
     public String checkout(Model model) {
 
         User user = getCurrentUser();
-        List<Address> userAddresses = addressService.getAddressesForUser(user);
 
-        Cart userCartEntity = user.getCart();
-        List<CartItem> cartItemList = userCartEntity.getCartItems();
-        if (cartItemList.isEmpty())
+        if (cartService.isCartEmpty(user.getCart()))
             return "redirect:/cart";
-        for (CartItem cartItem : cartItemList) {
-            if (cartItem.getQuantity()>cartItem.getProduct().getQuantity()) {
-                return "redirect:/cart";
-            }
-        }
 
-        model.addAttribute("cart", cartItemList);
-
-        double total = 0.0;
-        if (user != null) {
-            Cart userCart = user.getCart();
-            if (userCart != null) {
-                List<CartItem> cartItems = userCart.getCartItems();
-                for (CartItem cartItem : cartItems) {
-                    total += cartItem.getProduct().getPrice() * cartItem.getQuantity();
-                }
-            }
-        }
-
-        model.addAttribute("total", total);
-        model.addAttribute("userAddresses", userAddresses);
+        model.addAttribute("cartItems", user.getCart().getCartItems());
+        model.addAttribute("total", cartService.getCartTotal(user));
+        model.addAttribute("userAddresses", addressService.getAddressesForUser(user));
         model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
+        model.addAttribute("cartCount", cartService.getCartCount(user));
 
         return "checkoutNew";
     }
