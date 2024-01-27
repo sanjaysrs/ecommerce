@@ -198,93 +198,22 @@ public class CheckoutController {
     @GetMapping("/checkout/wallet")
     public String checkoutWallet(@ModelAttribute("address") Long selectedAddressId,
                                  @ModelAttribute("paymentMethod") int paymentMethodId,
-                                 Model model,
-                                 Principal principal) {
+                                 RedirectAttributes redirectAttributes,
+                                 Model model) {
 
-        double total = cartService.getCartTotal(getCurrentUser());
+        if (walletService.insufficientFundsInWallet(getCurrentUser())) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        User user = userService.findUserByEmail(principal.getName());
-        Wallet wallet = user.getWallet();
-        if (wallet.getAmount() < total) {
-
-            model.addAttribute("insufficient", "Insufficient funds in wallet. Try another payment method.");
-
-            List<Address> userAddresses = addressService.getAddressesForUser(user);
-
-            Cart userCartEntity = user.getCart();
-            List<CartItem> cartItemList = userCartEntity.getCartItems();
-            model.addAttribute("cart", cartItemList);
-
-            model.addAttribute("total", total);
-
-            model.addAttribute("userAddresses", userAddresses);
-
-            model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
-
-            //  Add cartCount
-            int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-            model.addAttribute("cartCount", cartCount);
-
+            redirectAttributes.addFlashAttribute("insufficient", "Insufficient funds in wallet. Try another payment method.");
             return "checkoutNew";
+
         }
 
-        wallet.setAmount(wallet.getAmount() - total);
-        walletService.save(wallet);
-
-        Address selectedAddress = addressService.getAddressById(selectedAddressId);
-        PaymentMethod paymentMethod = paymentMethodService.getPaymentMethodById(paymentMethodId);
-
-        Cart userCartEntity = user.getCart();
-        List<CartItem> cartItemList = userCartEntity.getCartItems();
-
-        //Inventory management
-        for (CartItem cartItem : cartItemList) {
-            Product product = cartItem.getProduct();
-            product.setQuantity(product.getQuantity() - cartItem.getQuantity());
-            productService.addProduct(product);
-        }
-
-        // Create and save the order
-        Order order = new Order();
-        order.setUser(user);
-        order.setAddress(selectedAddress);
-        order.setPaymentMethod(paymentMethod);
-
-        Date date = new Date();
-        TimeZone istTimeZone = TimeZone.getTimeZone("Asia/Kolkata");
-        date.setTime(date.getTime() + istTimeZone.getRawOffset());
-        order.setOrderDate(date);
-
-        order.setTotalPrice(total);
-
-        OrderStatus orderStatus = orderStatusService.findById(1);
-        order.setOrderStatus(orderStatus);
-
-        // Add products to the order
-        for (CartItem cartItem : cartItemList) {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(cartItem.getProduct());
-            orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setOrder(order);
-            order.getOrderItems().add(orderItem);
-        }
-
-        // Save the order
-        orderService.saveOrder(order);
-
-        // Clear the user's cart in the database
-        for (CartItem cartItem : cartItemList) {
-            cartItemRepository.delete(cartItem);
-        }
+        walletService.debitFromWallet(getCurrentUser());
+        inventoryService.updateInventory(getCurrentUser().getCart());
+        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, paymentMethodId, cartService.getCartTotal(getCurrentUser()));
+        cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("successMessage", "Your order has been placed successfully!");
-
-        //  Add cartCount
         model.addAttribute("cartCount", 0);
 
         return "checkoutConfirmation";
