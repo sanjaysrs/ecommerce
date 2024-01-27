@@ -84,7 +84,7 @@ public class CartController {
 
         boolean removedFromCart = cartService.removeProductFromCart(getCurrentUser(), product);
 
-        redirectAttributes.addFlashAttribute("removedFromCart", true);
+        redirectAttributes.addFlashAttribute("removedFromCart", removedFromCart);
 
         return "redirect:/shop/viewproduct/" + id;
 
@@ -108,27 +108,15 @@ public class CartController {
     @GetMapping("/cart/removeItem/{id}")
     public String cartItemRemove(@PathVariable long id) {
 
-        Optional<CartItem> cartItemOptional = cartItemRepository.findById(id);
-
-        if (cartItemOptional.isPresent()) {
-            CartItem cartItem = cartItemOptional.get();
-            if (cartItem.getCart().getUser().equals(getCurrentUser()))
-                cartItemRepository.delete(cartItem);
-        }
-
+        cartService.deleteCartItemFromCart(id, getCurrentUser());
         return "redirect:/cart";
 
     }
 
     @GetMapping("/checkout")
-    public String checkout(Model model, Principal principal) {
+    public String checkout(Model model) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        User user = userService.findUserByEmail(principal.getName());
+        User user = getCurrentUser();
         List<Address> userAddresses = addressService.getAddressesForUser(user);
 
         Cart userCartEntity = user.getCart();

@@ -21,6 +21,16 @@ public class CartService {
     @Autowired
     CartItemRepository cartItemRepository;
 
+    public void deleteCartItemFromCart(long id, User user) {
+        Optional<CartItem> cartItemOptional = cartItemRepository.findById(id);
+
+        if (cartItemOptional.isPresent()) {
+            CartItem cartItem = cartItemOptional.get();
+            if (cartItem.getCart().getUser().equals(user))
+                cartItemRepository.delete(cartItem);
+        }
+    }
+
     public double getCartTotal(User user) {
 
         return user.getCart().getCartItems()
