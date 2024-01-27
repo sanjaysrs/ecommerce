@@ -37,9 +37,6 @@ public class CartController {
     AddressService addressService;
 
     @Autowired
-    CartItemRepository cartItemRepository;
-
-    @Autowired
     AddressRepository addressRepository;
 
     @Autowired
