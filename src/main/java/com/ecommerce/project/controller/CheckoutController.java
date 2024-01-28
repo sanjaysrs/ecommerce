@@ -108,7 +108,6 @@ public class CheckoutController {
 
         double total = cartService.getCartTotal(getCurrentUser());
 
-        //Create a Razorpay transaction(order) and get the response
         TransactionDetails transactionDetails = razorpayService.createTransaction(total);
 
         model.addAttribute("amount", total*100);
@@ -121,72 +120,14 @@ public class CheckoutController {
     }
 
     @PostMapping("/checkout/razorpay")
-    public String processOrder(@ModelAttribute("razorpay_payment_id") String id,
-                                Model model,
-                               Principal principal) throws RazorpayException {
+    public String processOrder(@ModelAttribute("razorpay_payment_id") String id, Model model) throws RazorpayException {
 
-        //Fetch the razorpay payment by its id
-        RazorpayClient razorpayClient = new RazorpayClient("rzp_test_amAJ6g1mhBlQKL", "xW9gfY6xByn88aKq8GixUNZ0");
-        Payment payment = razorpayClient.payments.fetch(id);
-        JSONObject notes = payment.get("notes");
-
-        User user = userService.findUserByEmail(principal.getName());
-
-        // Retrieve the selected address from the Razorpay payments response
-        Address selectedAddress = addressService.getAddressById(notes.getLong("address"));
-
-        // Retrieve the selected payment method from the Razorpay payments response
-        PaymentMethod paymentMethod = paymentMethodService.getPaymentMethodById(notes.getInt("paymentMethod"));
-
-        Cart userCartEntity = user.getCart();
-        List<CartItem> cartItemList = userCartEntity.getCartItems();
-
-        //Inventory management
-        for (CartItem cartItem : cartItemList) {
-            Product product = cartItem.getProduct();
-            product.setQuantity(product.getQuantity() - cartItem.getQuantity());
-            productService.addProduct(product);
-        }
-
-        int razorAmount = payment.get("amount");
-        double totalPrice = (double) razorAmount /100.0;
-
-        // Create and save the order
-        Order order = new Order();
-        order.setUser(user);
-        order.setAddress(selectedAddress);
-        order.setPaymentMethod(paymentMethod);
-
-        Date date = new Date();
-        TimeZone istTimeZone = TimeZone.getTimeZone("Asia/Kolkata");
-        date.setTime(date.getTime() + istTimeZone.getRawOffset());
-        order.setOrderDate(date);
-
-        order.setTotalPrice(totalPrice);
-
-        OrderStatus orderStatus = orderStatusService.findById(1);
-        order.setOrderStatus(orderStatus);
-
-        // Add products to the order
-        for (CartItem cartItem : cartItemList) {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(cartItem.getProduct());
-            orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setOrder(order);
-            order.getOrderItems().add(orderItem);
-        }
-
-        // Save the order
-        orderService.saveOrder(order);
-
-        // Clear the user's cart in the database
-        for (CartItem cartItem : cartItemList) {
-            cartItemRepository.delete(cartItem);
-        }
+        JSONObject notes = razorpayService.fetchPaymentNotes(id);
+        inventoryService.updateInventory(getCurrentUser().getCart());
+        orderService.createOrderAndSave(getCurrentUser(), notes.getLong("address"), notes.getInt("paymentMethod"), cartService.getCartTotal(getCurrentUser()));
+        cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("successMessage", "Your order has been placed successfully!");
-
-        //  Add cartCount
         model.addAttribute("cartCount", 0);
 
         return "checkoutConfirmation";

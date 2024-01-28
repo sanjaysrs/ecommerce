@@ -2,19 +2,24 @@ package com.ecommerce.project.service;
 
 import com.ecommerce.project.entity.TransactionDetails;
 import com.razorpay.Order;
+import com.razorpay.Payment;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RazorpayService {
 
-    private static final String KEY = "rzp_test_amAJ6g1mhBlQKL";
+    @Value("${razorpay.key.public}")
+    private String KEY;
 
-    private static final String KEY_SECRET = "xW9gfY6xByn88aKq8GixUNZ0";
+    @Value("${razorpay.key.secret}")
+    private String KEY_SECRET;
 
-    private static final String CURRENCY = "INR";
+    @Value("${razorpay.currency}")
+    private String CURRENCY;
 
     public TransactionDetails createTransaction(Double amount) {
 
@@ -44,4 +49,9 @@ public class RazorpayService {
         return transactionDetails;
     }
 
+    public JSONObject fetchPaymentNotes(String id) throws RazorpayException {
+        RazorpayClient razorpayClient = new RazorpayClient(KEY, KEY_SECRET);
+        Payment payment = razorpayClient.payments.fetch(id);
+        return payment.get("notes");
+    }
 }
