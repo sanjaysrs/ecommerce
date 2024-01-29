@@ -49,19 +49,8 @@ public class ProfileController {
     @GetMapping("/profileDetails")
     public String getProfileDetails(Model model, Principal principal) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
-        //Get the currently logged-in user
-        User user = userService.findUserByEmail(principal.getName());
-        model.addAttribute("user", user);
-
+        model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
+        model.addAttribute("user", getCurrentUser());
         return "profileDetails";
     }
 
