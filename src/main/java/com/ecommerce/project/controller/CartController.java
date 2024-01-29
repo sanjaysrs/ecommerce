@@ -87,12 +87,11 @@ public class CartController {
 
         User user = getCurrentUser();
         Cart cart = user.getCart();
-        List<CartItem> cartItems = cart.getCartItems();
 
         model.addAttribute("cartCount", cartService.getCartCount(user));
         model.addAttribute("total", cartService.getCartTotalWithCouponDiscount(user));
         model.addAttribute("totalWithoutCoupon", cartService.getCartTotalWithoutCouponDiscount(user));
-        model.addAttribute("cartItems", cartItems);
+        model.addAttribute("cart", cart);
         model.addAttribute("urlList", storageService.getUrlListForSingleCart(cart));
 
         return "cart";
