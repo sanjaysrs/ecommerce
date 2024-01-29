@@ -57,22 +57,9 @@ public class ProfileController {
     @GetMapping("/addresses")
     public String listAddresses(Model model) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName(); // Get the user's email from authentication
-
-        // Find the user by email and retrieve their addresses
-        User user = userService.findUserByEmail(userEmail);
+        User user = getCurrentUser();
         model.addAttribute("userAddresses", user.getAddresses());
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
+        model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         return "addresses";
     }
 
