@@ -23,6 +23,8 @@ public class AddressService {
     public void saveAddress(AddressDTO addressDTO, User user) {
 
         Address address = new Address();
+        if (addressDTO.getId()!=null)
+            address.setId(addressDTO.getId());
         address.setUser(user);
         address.setStreetAddress(addressDTO.getStreetAddress());
         address.setCity(addressDTO.getCity());
@@ -56,9 +58,12 @@ public class AddressService {
         return address;
     }
 
-    public AddressDTO getAddressDTOById(Long id) {
+    public AddressDTO getAddressDTOById(Long id, User user) {
         Optional<Address> addressOptional = addressRepository.findByIdAndDeletedFalse(id);
         Address address = addressOptional.orElse(new Address());
+
+        if (!address.getUser().equals(user))
+            return new AddressDTO();
 
         AddressDTO addressDTO = new AddressDTO();
         addressDTO.setStreetAddress(address.getStreetAddress());

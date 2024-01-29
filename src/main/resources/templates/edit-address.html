@@ -55,7 +55,8 @@
 
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <form th:action="@{'/edit-address/' + ${address.id}}" th:object="${address}" method="post">
+            <form th:action="@{/edit-address}" th:object="${address}" method="post">
+                <input th:field="*{id}" th:value="${address.id}" type="hidden">
                 <div class="form-group">
                     <label for="streetAddress">Street Address:</label>
                     <input th:field="*{streetAddress}" type="text" id="streetAddress" name="streetAddress" class="form-control">

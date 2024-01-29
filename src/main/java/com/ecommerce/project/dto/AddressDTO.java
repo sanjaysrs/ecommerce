@@ -9,6 +9,8 @@ import lombok.Setter;
 @Setter
 public class AddressDTO {
 
+    private Long id;
+
     @NotBlank(message = "Street address cannot be blank")
     private String streetAddress;
 

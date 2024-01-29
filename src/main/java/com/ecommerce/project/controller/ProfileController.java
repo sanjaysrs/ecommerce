@@ -105,28 +105,15 @@ public class ProfileController {
     @GetMapping("/addresses/edit/{id}")
     public String editAddress(@PathVariable Long id, Model model) {
 
-        model.addAttribute("address", addressService.getAddressDTOById(id));
+        model.addAttribute("address", addressService.getAddressDTOById(id, getCurrentUser()));
         model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         return "edit-address";
     }
 
-    @PostMapping("/edit-address/{id}")
-    public String postEditAddress(@PathVariable Long id,
-                                  @ModelAttribute Address addressFromForm) {
+    @PostMapping("/edit-address")
+    public String postEditAddress(@ModelAttribute AddressDTO addressDTO) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        Optional<Address> addressOptional = addressRepository.findById(id);
-        Address address = addressOptional.get();
-
-        addressFromForm.setId(address.getId());
-        addressFromForm.setUser(address.getUser());
-
-        addressRepository.save(addressFromForm);
-
+        addressService.saveAddress(addressDTO, getCurrentUser());
         return "redirect:/addresses";
     }
 
