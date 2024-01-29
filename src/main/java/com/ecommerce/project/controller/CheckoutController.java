@@ -116,7 +116,6 @@ public class CheckoutController {
         orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 1, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
 
-        model.addAttribute("successMessage", "Your order has been placed successfully!");
         model.addAttribute("cartCount", 0);
 
         return "checkoutConfirmation";
@@ -146,7 +145,6 @@ public class CheckoutController {
         orderService.createOrderAndSave(getCurrentUser(), notes.getLong("address"), 2, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
 
-        model.addAttribute("successMessage", "Your order has been placed successfully!");
         model.addAttribute("cartCount", 0);
 
         return "checkoutConfirmation";
@@ -169,7 +167,6 @@ public class CheckoutController {
         orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 3, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
 
-        model.addAttribute("successMessage", "Your order has been placed successfully!");
         model.addAttribute("cartCount", 0);
 
         return "checkoutConfirmation";
