@@ -27,7 +27,6 @@ public class AddressService {
         address.setCity(addressDTO.getCity());
         address.setState(addressDTO.getState());
         address.setPostalCode(addressDTO.getPostalCode());
-        address.setCountry(addressDTO.getCountry());
         addressRepository.save(address);
 
     }

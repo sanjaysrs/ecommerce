@@ -1,11 +1,14 @@
 package com.ecommerce.project.controller;
 
+import com.ecommerce.project.dto.AddressDTO;
 import com.ecommerce.project.entity.Address;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.repository.AddressRepository;
 import com.ecommerce.project.repository.UserRepository;
+import com.ecommerce.project.service.AddressService;
 import com.ecommerce.project.service.CartService;
 import com.ecommerce.project.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,6 +34,9 @@ public class ProfileController {
 
     @Autowired
     private AddressRepository addressRepository;
+
+    @Autowired
+    private AddressService addressService;
 
     @Autowired
     CartService cartService;
@@ -66,42 +73,24 @@ public class ProfileController {
     @GetMapping("/add-address")
     public String showAddAddressForm(Model model) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        model.addAttribute("address", new Address());
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
+        if (!model.containsAttribute("address"))
+            model.addAttribute("address", new AddressDTO());
+        model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         return "add-address";
     }
 
     @PostMapping("/add-address")
-    public String addAddress(@ModelAttribute("address") Address address) {
+    public String addAddress(@Valid @ModelAttribute("address") AddressDTO addressDTO,
+                             BindingResult bindingResult,
+                             RedirectAttributes redirectAttributes) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("address", addressDTO);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.address", bindingResult);
+            return "redirect:/add-address";
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userEmail = authentication.getName();
-
-        User user = userService.findUserByEmail(userEmail);
-
-        Address newAddress = new Address(user); // Create a new Address with the User
-        newAddress.setStreetAddress(address.getStreetAddress());
-        newAddress.setCity(address.getCity());
-        newAddress.setState(address.getState());
-        newAddress.setPostalCode(address.getPostalCode());
-        newAddress.setCountry(address.getCountry());
-
-        addressRepository.save(newAddress);
-
+        addressService.saveAddress(addressDTO, getCurrentUser());
         return "redirect:/addresses";
     }
 

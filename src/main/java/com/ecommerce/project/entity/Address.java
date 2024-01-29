@@ -15,14 +15,13 @@ public class Address {
     private String city;
     private String state;
     private String postalCode;
-    private String country;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
     public String getFullAddress() {
-        return streetAddress + ", " + city + ", " + state + ", " + postalCode + ", " + country;
+        return streetAddress + ", " + city + ", " + state + ", " + postalCode;
     }
 
     public Address(User user) {

@@ -82,7 +82,6 @@
                     <th>City</th>
                     <th>State</th>
                     <th>Postal Code</th>
-                    <th>Country</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -93,7 +92,6 @@
                     <td th:text="${address.city}"></td>
                     <td th:text="${address.state}"></td>
                     <td th:text="${address.postalCode}"></td>
-                    <td th:text="${address.country}"></td>
                     <td>
                         <a th:href="@{'/addresses/edit/' + ${address.id}}" class="btn btn-warning">Edit</a>
                         <a th:href="@{'/addresses/delete/' + ${address.id}}" class="btn btn-danger">Delete</a>

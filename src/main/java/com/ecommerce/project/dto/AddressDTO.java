@@ -21,7 +21,4 @@ public class AddressDTO {
     @Pattern(regexp = "\\d{6}", message = "Enter a valid postal code")
     private String postalCode;
 
-    @NotBlank(message = "Country cannot be null")
-    private String country;
-
 }
