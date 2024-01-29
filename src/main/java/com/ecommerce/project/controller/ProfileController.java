@@ -4,6 +4,7 @@ import com.ecommerce.project.entity.Address;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.repository.AddressRepository;
 import com.ecommerce.project.repository.UserRepository;
+import com.ecommerce.project.service.CartService;
 import com.ecommerce.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -30,18 +31,18 @@ public class ProfileController {
     @Autowired
     private AddressRepository addressRepository;
 
+    @Autowired
+    CartService cartService;
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userService.findUserByEmail(authentication.getName());
+    }
+
     @GetMapping("/profile")
     public String getProfile(Model model) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
+        model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         return "profile";
     }
 
