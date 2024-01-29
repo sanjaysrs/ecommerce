@@ -112,29 +112,4 @@ public class CartController {
 
     }
 
-    @GetMapping("/checkout")
-    public String checkout(Model model) {
-
-        User user = getCurrentUser();
-
-        if (cartService.isCartEmpty(user.getCart()))
-            return "redirect:/cart";
-
-        model.addAttribute("cartItems", user.getCart().getCartItems());
-        model.addAttribute("total", cartService.getCartTotal(user));
-        model.addAttribute("userAddresses", addressService.getAddressesForUser(user));
-        model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
-        model.addAttribute("cartCount", cartService.getCartCount(user));
-
-        return "checkoutNew";
-    }
-
-    @PostMapping("/add-address-checkout")
-    public String addAddress(@ModelAttribute("address") AddressDTO addressDTO) {
-
-        addressService.saveAddress(addressDTO, getCurrentUser());
-        return "redirect:/checkout";
-
-    }
-
 }

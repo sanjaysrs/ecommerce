@@ -103,7 +103,7 @@
             </div>
 
             <!-- Form to select an address -->
-            <form th:action="@{/checkout/process2}" method="post" class="mt-3">
+            <form th:action="@{/checkout/process}" method="post" class="mt-3">
                 <div class="form-group">
                     <label for="address">Select an Address:</label>
                     <select id="address" name="address" class="form-control" required>
@@ -134,7 +134,7 @@
                 <button class="btn btn-outline-dark" id="toggleButton2">Apply Coupon</button>
                 <br><br>
                 <div id="hideThis2" style="display : none;">
-                    <form th:action="@{/checkout/applyCoupon}" method="post" class="form-inline">
+                    <form th:action="@{/checkout/applyCoupon}" method="get" class="form-inline">
                         <input type="text" placeholder="Enter Coupon" name="couponCode" class="form-control">
                         <input type="submit" value="Apply" class="btn btn-dark">
                     </form>

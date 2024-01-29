@@ -18,6 +18,8 @@ public class Cart {
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems;
 
+    private int couponId;
+
     public Long getId() {
         return id;
     }

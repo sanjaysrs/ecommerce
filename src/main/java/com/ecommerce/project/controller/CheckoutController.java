@@ -1,5 +1,6 @@
 package com.ecommerce.project.controller;
 
+import com.ecommerce.project.dto.AddressDTO;
 import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.service.*;
@@ -65,7 +66,32 @@ public class CheckoutController {
         return userService.findUserByEmail(authentication.getName());
     }
 
-    @PostMapping("/checkout/process2")
+    @GetMapping("/checkout")
+    public String checkout(Model model) {
+
+        User user = getCurrentUser();
+
+        if (cartService.isCartEmpty(user.getCart()))
+            return "redirect:/cart";
+
+        model.addAttribute("cartItems", user.getCart().getCartItems());
+        model.addAttribute("total", cartService.getCartTotal(user));
+        model.addAttribute("userAddresses", addressService.getAddressesForUser(user));
+        model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
+        model.addAttribute("cartCount", cartService.getCartCount(user));
+
+        return "checkoutNew";
+    }
+
+    @PostMapping("/add-address-checkout")
+    public String addAddress(@ModelAttribute("address") AddressDTO addressDTO) {
+
+        addressService.saveAddress(addressDTO, getCurrentUser());
+        return "redirect:/checkout";
+
+    }
+
+    @PostMapping("/checkout/process")
     public String processOrder2(@ModelAttribute("address") Long selectedAddressId,
                                 @ModelAttribute("paymentMethod") int paymentMethodId,
                                 RedirectAttributes redirectAttributes) {
@@ -88,11 +114,10 @@ public class CheckoutController {
 
     @GetMapping("/checkout/COD")
     public String COD(@ModelAttribute("address") Long selectedAddressId,
-                      @ModelAttribute("paymentMethod") int paymentMethodId,
                       Model model) {
 
         inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, paymentMethodId, cartService.getCartTotal(getCurrentUser()));
+        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 1, cartService.getCartTotal(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("successMessage", "Your order has been placed successfully!");
@@ -103,7 +128,6 @@ public class CheckoutController {
 
     @GetMapping("/checkout/razorpay")
     public String razorpay(@ModelAttribute("address") Long selectedAddressId,
-                           @ModelAttribute("paymentMethod") int paymentMethodId,
                            Model model) {
 
         double total = cartService.getCartTotal(getCurrentUser());
@@ -113,7 +137,6 @@ public class CheckoutController {
         model.addAttribute("amount", total*100);
         model.addAttribute("orderId", transactionDetails.getOrderId());
         model.addAttribute("address", selectedAddressId);
-        model.addAttribute("paymentMethod", paymentMethodId);
 
         return "xxx";
 
@@ -124,7 +147,7 @@ public class CheckoutController {
 
         JSONObject notes = razorpayService.fetchPaymentNotes(id);
         inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), notes.getLong("address"), notes.getInt("paymentMethod"), cartService.getCartTotal(getCurrentUser()));
+        orderService.createOrderAndSave(getCurrentUser(), notes.getLong("address"), 2, cartService.getCartTotal(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("successMessage", "Your order has been placed successfully!");
@@ -135,7 +158,6 @@ public class CheckoutController {
 
     @GetMapping("/checkout/wallet")
     public String checkoutWallet(@ModelAttribute("address") Long selectedAddressId,
-                                 @ModelAttribute("paymentMethod") int paymentMethodId,
                                  RedirectAttributes redirectAttributes,
                                  Model model) {
 
@@ -148,7 +170,7 @@ public class CheckoutController {
 
         walletService.debitFromWallet(getCurrentUser());
         inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, paymentMethodId, cartService.getCartTotal(getCurrentUser()));
+        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 3, cartService.getCartTotal(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("successMessage", "Your order has been placed successfully!");
@@ -157,89 +179,36 @@ public class CheckoutController {
         return "checkoutConfirmation";
     }
 
-    @PostMapping("/checkout/applyCoupon")
-    public String applyCoupon(@ModelAttribute("couponCode") String couponCode, Model model, Principal principal) {
+    @GetMapping("/checkout/applyCoupon")
+    public String applyCoupon(@RequestParam String couponCode, RedirectAttributes redirectAttributes) {
 
         Optional<Coupon> couponOptional = couponService.getCouponByCouponCode(couponCode);
 
-        User user = userService.findUserByEmail(principal.getName());
-        List<Address> userAddresses = addressService.getAddressesForUser(user);
-
-        Cart userCartEntity = user.getCart();
-        List<CartItem> cartItemList = userCartEntity.getCartItems();
-
-        double total = 0.0;
-        if (user != null) {
-            Cart userCart = user.getCart();
-            if (userCart != null) {
-                List<CartItem> cartItems = userCart.getCartItems();
-                for (CartItem cartItem : cartItems) {
-                    total += cartItem.getProduct().getPrice() * cartItem.getQuantity();
-                }
-            }
-        }
+        double total = cartService.getCartTotal(getCurrentUser());
 
         if (couponOptional.isEmpty()) {
-            model.addAttribute("invalidCoupon", "Invalid coupon code");
-
-            model.addAttribute("cart", cartItemList);
-
-            model.addAttribute("total", total);
-
-            model.addAttribute("userAddresses", userAddresses);
-
-            model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
-
-            //  Add cartCount
-            int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-            model.addAttribute("cartCount", cartCount);
-
-            return "checkoutNew";
+            redirectAttributes.addFlashAttribute("invalidCoupon", "Invalid coupon code");
+            return "redirect:/checkout";
         }
 
         if (total < couponOptional.get().getMinimumPurchase()) {
-            model.addAttribute("invalidCoupon", "This coupon is only valid for purchases of " + couponOptional.get().getMinimumPurchase() + " and above");
-
-            model.addAttribute("cart", cartItemList);
-
-            model.addAttribute("total", total);
-
-            model.addAttribute("userAddresses", userAddresses);
-
-            model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
-
-            //  Add cartCount
-            int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-            model.addAttribute("cartCount", cartCount);
-
-            return "checkoutNew";
+            redirectAttributes.addFlashAttribute("invalidCoupon", "This coupon is only valid for purchases of " + couponOptional.get().getMinimumPurchase() + " and above");
+            return "redirect:/checkout";
         }
 
         if (couponOptional.get().getDiscountType().equals("ABSOLUTE")) {
             total = total - couponOptional.get().getDiscountValue();
-            model.addAttribute("discountApplied", "You get a discount of ₹" + couponOptional.get().getDiscountValue());
+            redirectAttributes.addFlashAttribute("discountApplied", "You get a discount of ₹" + couponOptional.get().getDiscountValue());
         }
 
         if (couponOptional.get().getDiscountType().equals("PERCENTAGE")) {
             total = total - (couponOptional.get().getDiscountValue()/100*total);
-            model.addAttribute("discountApplied", "You get a discount of " + couponOptional.get().getDiscountValue() + "%");
+            redirectAttributes.addFlashAttribute("discountApplied", "You get a discount of " + couponOptional.get().getDiscountValue() + "%");
         }
 
-        model.addAttribute("couponApplied", "Coupon applied");
+        redirectAttributes.addFlashAttribute("couponApplied", "Coupon applied");
 
-        model.addAttribute("cart", cartItemList);
-
-        model.addAttribute("total", total);
-
-        model.addAttribute("userAddresses", userAddresses);
-
-        model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
-        return "checkoutNew";
+        return "redirect:/checkout";
 
     }
 }
