@@ -70,7 +70,8 @@ public class CheckoutController {
 
         model.addAttribute("discount", couponService.getDiscountString(user.getCart()));
         model.addAttribute("cart", user.getCart());
-        model.addAttribute("total", cartService.getCartTotal(user));
+        model.addAttribute("total", cartService.getCartTotalWithCouponDiscount(user));
+        model.addAttribute("totalWithoutCoupon", cartService.getCartTotalWithoutCouponDiscount(user));
         model.addAttribute("userAddresses", addressService.getAddressesForUser(user));
         model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
         model.addAttribute("cartCount", cartService.getCartCount(user));
@@ -112,7 +113,7 @@ public class CheckoutController {
                       Model model) {
 
         inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 1, cartService.getCartTotal(getCurrentUser()));
+        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 1, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("successMessage", "Your order has been placed successfully!");
@@ -125,7 +126,7 @@ public class CheckoutController {
     public String razorpay(@ModelAttribute("address") Long selectedAddressId,
                            Model model) {
 
-        double total = cartService.getCartTotal(getCurrentUser());
+        double total = cartService.getCartTotalWithCouponDiscount(getCurrentUser());
 
         TransactionDetails transactionDetails = razorpayService.createTransaction(total);
 
@@ -142,7 +143,7 @@ public class CheckoutController {
 
         JSONObject notes = razorpayService.fetchPaymentNotes(id);
         inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), notes.getLong("address"), 2, cartService.getCartTotal(getCurrentUser()));
+        orderService.createOrderAndSave(getCurrentUser(), notes.getLong("address"), 2, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("successMessage", "Your order has been placed successfully!");
@@ -165,7 +166,7 @@ public class CheckoutController {
 
         walletService.debitFromWallet(getCurrentUser());
         inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 3, cartService.getCartTotal(getCurrentUser()));
+        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 3, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("successMessage", "Your order has been placed successfully!");
@@ -179,8 +180,6 @@ public class CheckoutController {
 
         Optional<Coupon> couponOptional = couponService.getCouponByCouponCode(couponCode);
 
-        double total = cartService.getCartTotal(getCurrentUser());
-
         if (couponOptional.isEmpty()) {
             redirectAttributes.addFlashAttribute("invalidCoupon", "Invalid coupon code");
             return "redirect:/checkout";
@@ -188,6 +187,7 @@ public class CheckoutController {
 
         Coupon coupon = couponOptional.get();
 
+        double total = cartService.getCartTotalWithoutCouponDiscount(getCurrentUser());
         if (total < coupon.getMinimumPurchase()) {
             redirectAttributes.addFlashAttribute("invalidCoupon", "This coupon is only valid for purchases of " + coupon.getMinimumPurchase() + " and above");
             return "redirect:/checkout";

@@ -26,12 +26,12 @@ public class WalletService {
     }
 
     public boolean insufficientFundsInWallet(User user) {
-        return user.getWallet().getAmount() < cartService.getCartTotal(user);
+        return user.getWallet().getAmount() < cartService.getCartTotalWithCouponDiscount(user);
     }
 
     public void debitFromWallet(User user) {
         Wallet wallet = user.getWallet();
-        wallet.setAmount(wallet.getAmount() - cartService.getCartTotal(user));
+        wallet.setAmount(wallet.getAmount() - cartService.getCartTotalWithCouponDiscount(user));
         walletRepository.save(wallet);
     }
 }

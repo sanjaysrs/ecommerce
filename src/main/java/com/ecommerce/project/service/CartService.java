@@ -30,8 +30,29 @@ public class CartService {
         }
     }
 
-    public double getCartTotal(User user) {
+    public double getCartTotalWithCouponDiscount(User user) {
 
+        double total = user.getCart().getCartItems()
+                .stream()
+                .mapToDouble(CartItem::getTotalPrice)
+                .sum();
+
+        Coupon coupon = user.getCart().getCoupon();
+
+        if(coupon!=null) {
+            if (coupon.getDiscountType().equals("ABSOLUTE")) {
+                total = total - coupon.getDiscountValue();
+            }
+
+            if (coupon.getDiscountType().equals("PERCENTAGE")) {
+                total = total - (coupon.getDiscountValue()/100*total);
+            }
+        }
+
+        return total;
+    }
+
+    public double getCartTotalWithoutCouponDiscount(User user) {
         return user.getCart().getCartItems()
                 .stream()
                 .mapToDouble(CartItem::getTotalPrice)

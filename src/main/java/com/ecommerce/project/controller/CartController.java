@@ -1,10 +1,7 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.aws.service.StorageService;
-import com.ecommerce.project.dto.AddressDTO;
 import com.ecommerce.project.entity.*;
-import com.ecommerce.project.repository.AddressRepository;
-import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +10,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,7 +90,8 @@ public class CartController {
         List<CartItem> cartItems = cart.getCartItems();
 
         model.addAttribute("cartCount", cartService.getCartCount(user));
-        model.addAttribute("total", cartService.getCartTotal(user));
+        model.addAttribute("total", cartService.getCartTotalWithCouponDiscount(user));
+        model.addAttribute("totalWithoutCoupon", cartService.getCartTotalWithoutCouponDiscount(user));
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("urlList", storageService.getUrlListForSingleCart(cart));
 
