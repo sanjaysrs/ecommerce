@@ -1,8 +1,11 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.aws.service.StorageService;
+import com.ecommerce.project.entity.Order;
+import com.ecommerce.project.entity.OrderItem;
 import com.ecommerce.project.entity.Product;
 import com.ecommerce.project.entity.User;
+import com.ecommerce.project.repository.OrderRepository;
 import com.ecommerce.project.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +57,7 @@ public class HomeController {
         }
 
         if (getCurrentUserRole().equals("[ROLE_USER]")) {
+
             model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
             return "indexNew";
         }

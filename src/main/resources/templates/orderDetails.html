@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,7 +86,7 @@
       <h2 class="card-title">Order Information</h2>
       <p class="card-text"><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
       <p class="card-text"><strong>Order Date:</strong> <span th:text="${#dates.format(order.orderDate, 'dd-MM-yyyy, hh:mm a')}"></span></p>
-      <p class="card-text"><strong>Total Amount:</strong> ₹<span th:text="${order.totalPrice}"></span> <strong class="text-success" th:text="${couponApplied}"></strong></p>
+      <p class="card-text"><strong>Total Amount:</strong> ₹<span th:text="${order.totalPrice}"></span> <strong class="text-success" th:if="${order.isCouponApplied()}">Coupon Applied!</strong></p>
       <p class="card-text"><strong>Order Status: </strong><span th:text="${order.orderStatus.status}"></span></p>
       <p class="card-text"><strong>Payment Method: </strong><span th:text="${order.paymentMethod.method}"></span></p>
     </div>

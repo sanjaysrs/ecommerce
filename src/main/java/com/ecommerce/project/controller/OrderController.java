@@ -76,20 +76,7 @@ public class OrderController {
         }
 
         model.addAttribute("order", order);
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
-        //13-10-2023 coupon check
-        List<OrderItem> orderItems = order.getOrderItems();
-        double actualTotal=0.0;
-        for (OrderItem orderItem : orderItems) {
-            actualTotal += orderItem.getProduct().getPrice() * orderItem.getQuantity();
-        }
-        if (order.getTotalPrice()!=actualTotal)
-            model.addAttribute("couponApplied", "Coupon Applied!");
-
+        model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         model.addAttribute("urlList", storageService.getUrlListForSingleOrder(order));
 
         return "orderDetails";

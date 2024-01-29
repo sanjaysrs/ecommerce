@@ -40,6 +40,8 @@ public class Order implements Comparable<Order>{
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
+    private boolean couponApplied;
+
     public Order() {
     }
 
