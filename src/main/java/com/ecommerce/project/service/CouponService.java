@@ -49,4 +49,9 @@ public class CouponService {
         return "You get a discount of " + coupon.getDiscountValue() + "%";
 
     }
+
+    public boolean isCouponCodeValid(String couponCode) {
+        Optional<Coupon> couponOptional = couponRepository.findCouponByCouponCode(couponCode);
+        return couponOptional.isPresent();
+    }
 }

@@ -117,7 +117,6 @@ public class CheckoutController {
         cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("cartCount", 0);
-
         return "checkoutConfirmation";
     }
 
@@ -146,7 +145,6 @@ public class CheckoutController {
         cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("cartCount", 0);
-
         return "checkoutConfirmation";
     }
 
@@ -168,24 +166,20 @@ public class CheckoutController {
         cartService.clearCart(getCurrentUser().getCart());
 
         model.addAttribute("cartCount", 0);
-
         return "checkoutConfirmation";
     }
 
     @GetMapping("/checkout/applyCoupon")
     public String applyCoupon(@RequestParam String couponCode, RedirectAttributes redirectAttributes) {
 
-        Optional<Coupon> couponOptional = couponService.getCouponByCouponCode(couponCode);
-
-        if (couponOptional.isEmpty()) {
+        if (!couponService.isCouponCodeValid(couponCode)) {
             redirectAttributes.addFlashAttribute("invalidCoupon", "Invalid coupon code");
             return "redirect:/checkout";
         }
 
-        Coupon coupon = couponOptional.get();
+        Coupon coupon = couponService.getCouponByCouponCode(couponCode).orElseThrow();
 
-        double total = cartService.getCartTotalWithoutCouponDiscount(getCurrentUser());
-        if (total < coupon.getMinimumPurchase()) {
+        if (!cartService.hasMinimumPurchase(coupon, getCurrentUser())) {
             redirectAttributes.addFlashAttribute("invalidCoupon", "This coupon is only valid for purchases of " + coupon.getMinimumPurchase() + " and above");
             return "redirect:/checkout";
         }

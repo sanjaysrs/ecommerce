@@ -157,4 +157,8 @@ public class CartService {
         cartRepository.save(cart);
 
     }
+
+    public boolean hasMinimumPurchase(Coupon coupon, User user) {
+        return getCartTotalWithoutCouponDiscount(user) >= coupon.getMinimumPurchase();
+    }
 }
