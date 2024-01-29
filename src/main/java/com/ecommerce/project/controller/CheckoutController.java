@@ -5,6 +5,7 @@ import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.service.*;
 import com.razorpay.RazorpayException;
+import jakarta.servlet.http.HttpSession;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -88,7 +89,7 @@ public class CheckoutController {
     }
 
     @PostMapping("/checkout/process")
-    public String processOrder2(@ModelAttribute("address") Long addressId,
+    public String processOrder(@ModelAttribute("address") Long addressId,
                                 @ModelAttribute("paymentMethod") int paymentMethodId,
                                 RedirectAttributes redirectAttributes) {
 
@@ -134,7 +135,7 @@ public class CheckoutController {
     }
 
     @PostMapping("/checkout/razorpay")
-    public String processOrder(@ModelAttribute("razorpay_payment_id") String id, RedirectAttributes redirectAttributes) throws RazorpayException {
+    public String processRazorpayOrder(@ModelAttribute("razorpay_payment_id") String id, RedirectAttributes redirectAttributes) throws RazorpayException {
 
         JSONObject notes = razorpayService.fetchPaymentNotes(id);
         redirectAttributes.addFlashAttribute("addressId", notes.getLong("address"));
@@ -164,15 +165,31 @@ public class CheckoutController {
     @GetMapping("/checkoutConfirmation")
     public String confirmCheckout(@ModelAttribute Long addressId,
                                   @ModelAttribute int paymentMethodId,
-                                  Model model) {
+                                  HttpSession session,
+                                  RedirectAttributes redirectAttributes) {
 
         inventoryService.updateInventory(getCurrentUser().getCart());
         orderService.createOrderAndSave(getCurrentUser(), addressId, paymentMethodId, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
         cartService.removeCouponFromCart(getCurrentUser());
 
-        model.addAttribute("cartCount", 0);
-        return "checkoutConfirmation";
+        UUID token = generateToken();
+        session.setAttribute("token", token);
+        redirectAttributes.addFlashAttribute("token", token);
+
+        return "redirect:/checkout/confirm";
+    }
+
+    @GetMapping("/checkout/confirm")
+    public String renderCheckoutConfirmation(Model model, HttpSession session) {
+
+        if (isValidToken(session.getAttribute("token"), model.getAttribute("token"))) {
+            session.removeAttribute("token");
+            model.addAttribute("cartCount", 0);
+            return "checkoutConfirmation";
+        }
+
+        return "redirect:/cart";
     }
 
     @GetMapping("/checkout/applyCoupon")
@@ -201,6 +218,14 @@ public class CheckoutController {
 
         cartService.removeCouponFromCart(getCurrentUser());
         return "redirect:/checkout";
+    }
+
+    private UUID generateToken() {
+        return UUID.randomUUID();
+    }
+
+    private boolean isValidToken(Object sessionToken, Object modelToken) {
+        return  (sessionToken != null && sessionToken.equals(modelToken));
     }
 }
 
