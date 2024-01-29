@@ -60,11 +60,7 @@ public class OrderController {
 
     @GetMapping("/orders/{orderId}")
     public String viewOrderDetails(@PathVariable Long orderId,
-                                   Model model,
-                                   @ModelAttribute("bug") String bug) {
-
-        if (!bug.isEmpty())
-            model.addAttribute("invoiceDownload", "Invoice has been downloaded");
+                                   Model model) {
 
         Order order = orderService.getOrderById(orderId);
         if (order == null)

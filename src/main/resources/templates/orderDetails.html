@@ -62,18 +62,6 @@
     </div>
   </div>
 
-  <div class="form-group" th:if="${invoiceDownload}">
-    <div class="col-xs-15">
-      <div>
-        <div th:if="${invoiceDownload}">
-          <div class="alert alert-info col-xs-offset-1 col-xs-10">
-            <span th:text="${invoiceDownload}"></span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Display order information -->
   <div class="card mt-4">
     <div class="card-body">
@@ -121,10 +109,6 @@
     <div class="card-body">
       <h2 class="card-title">Shipping Address</h2>
       <p class="card-text"><strong>Full Address:</strong> <span th:text="${order.address.getFullAddress()}"></span></p>
-      <!--  <p class="card-text"><strong>Address:</strong> <span th:text="${order.address.addressLine1}, ${order.shippingAddress.addressLine2}"></span></p>-->
-      <!--  <p class="card-text"><strong>City:</strong> <span th:text="${order.address.city}"></span></p>-->
-      <!--  <p class="card-text"><strong>Postcode / ZIP:</strong> <span th:text="${order.address.postcode}"></span></p>-->
-      <!--  <p class="card-text"><strong>Country:</strong> <span th:text="${order.address.country}"></span></p>-->
     </div>
   </div>
 
