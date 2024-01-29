@@ -5,6 +5,7 @@ import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -138,10 +139,9 @@ public class CartService {
         return cart.getCartItems().isEmpty();
     }
 
+    @Transactional
     public void clearCart(Cart cart) {
-        for (CartItem cartItem : cart.getCartItems()) {
-            cartItemRepository.delete(cartItem);
-        }
+        cartItemRepository.deleteByCart(cart);
     }
 
     public void applyCouponToCart(User user, Coupon coupon) {

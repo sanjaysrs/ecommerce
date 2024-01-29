@@ -109,7 +109,7 @@ public class CheckoutController {
     }
 
     @GetMapping("/checkout/COD")
-    public String COD(@ModelAttribute Long addressId,
+    public String COD(@ModelAttribute("addressId") Long addressId,
                       RedirectAttributes redirectAttributes) {
 
         redirectAttributes.addFlashAttribute("addressId", addressId);
@@ -119,7 +119,7 @@ public class CheckoutController {
     }
 
     @GetMapping("/checkout/razorpay")
-    public String razorpay(@ModelAttribute Long addressId,
+    public String razorpay(@ModelAttribute("addressId") Long addressId,
                            Model model) {
 
         double total = cartService.getCartTotalWithCouponDiscount(getCurrentUser());
@@ -145,7 +145,7 @@ public class CheckoutController {
     }
 
     @GetMapping("/checkout/wallet")
-    public String checkoutWallet(@ModelAttribute Long addressId,
+    public String checkoutWallet(@ModelAttribute("addressId") Long addressId,
                                  RedirectAttributes redirectAttributes) {
 
         if (walletService.insufficientFundsInWallet(getCurrentUser())) {
@@ -163,15 +163,15 @@ public class CheckoutController {
     }
 
     @GetMapping("/checkoutConfirmation")
-    public String confirmCheckout(@ModelAttribute Long addressId,
-                                  @ModelAttribute int paymentMethodId,
+    public String confirmCheckout(@ModelAttribute("addressId") Long addressId,
+                                  @ModelAttribute("paymentMethodId") int paymentMethodId,
                                   HttpSession session,
                                   RedirectAttributes redirectAttributes) {
 
         inventoryService.updateInventory(getCurrentUser().getCart());
         orderService.createOrderAndSave(getCurrentUser(), addressId, paymentMethodId, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
-        cartService.clearCart(getCurrentUser().getCart());
         cartService.removeCouponFromCart(getCurrentUser());
+        cartService.clearCart(getCurrentUser().getCart());
 
         UUID token = generateToken();
         session.setAttribute("token", token);
