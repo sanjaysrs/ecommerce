@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AddressService {
@@ -16,7 +17,7 @@ public class AddressService {
     private AddressRepository addressRepository;
 
     public List<Address> getAddressesForUser(User user) {
-        return addressRepository.findAllByUser(user);
+        return addressRepository.findByUserAndDeletedFalse(user);
     }
 
     public void saveAddress(AddressDTO addressDTO, User user) {
@@ -31,8 +32,22 @@ public class AddressService {
 
     }
 
-    public void deleteAddressById(Long addressId) {
-        addressRepository.deleteById(addressId);
+    public boolean deleteAddressById(Long id) {
+
+        Optional<Address> addressOptional = addressRepository.findById(id);
+        if (addressOptional.isEmpty())
+            return false;
+
+        try {
+            addressRepository.deleteById(id);
+        } catch (Exception e) {
+            Address address = addressOptional.get();
+            address.setDeleted(true);
+            address.setUser(null);
+            addressRepository.save(address);
+        }
+
+        return true;
     }
 
     public Address getAddressById(Long selectedAddressId) {

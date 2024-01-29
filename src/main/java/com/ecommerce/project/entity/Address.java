@@ -20,6 +20,8 @@ public class Address {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private boolean deleted;
+
     public String getFullAddress() {
         return streetAddress + ", " + city + ", " + state + ", " + postalCode;
     }

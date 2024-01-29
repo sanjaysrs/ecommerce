@@ -97,21 +97,8 @@ public class ProfileController {
     @GetMapping("/addresses/delete/{id}")
     public String deleteAddress(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        Optional<Address> addressOptional = addressRepository.findById(id);
-        if (addressOptional.isPresent()) {
-            try {
-                addressRepository.deleteById(id);
-            } catch (Exception e) {
-                redirectAttributes.addFlashAttribute("cannotDelete", "This address is associated with an order and cannot be deleted");
-                return "redirect:/addresses";
-            }
-        }
-
+        if (addressService.deleteAddressById(id))
+            redirectAttributes.addFlashAttribute("deleted", "Address deleted");
         return "redirect:/addresses";
     }
 
