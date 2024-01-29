@@ -60,12 +60,13 @@ public class AddressService {
 
     public AddressDTO getAddressDTOById(Long id, User user) {
         Optional<Address> addressOptional = addressRepository.findByIdAndDeletedFalse(id);
-        Address address = addressOptional.orElse(new Address());
 
-        if (!address.getUser().equals(user))
+        if (addressOptional.isEmpty() || !addressOptional.get().getUser().equals(user))
             return new AddressDTO();
 
+        Address address = addressOptional.get();
         AddressDTO addressDTO = new AddressDTO();
+        addressDTO.setId(id);
         addressDTO.setStreetAddress(address.getStreetAddress());
         addressDTO.setCity(address.getCity());
         addressDTO.setState(address.getState());
