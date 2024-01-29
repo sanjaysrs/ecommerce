@@ -92,8 +92,9 @@
                         <!-- Use Thymeleaf to display the total price -->
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <h4>Total Price:
-                            <span class="badge buntan badge-pill" th:text="${total}"></span>
+                                <span class="badge buntan badge-pill" th:text="${total}"></span>
                             </h4>
+                            <span th:if="${cart.getCoupon()}"><s th:text="${total}"></s></span>
                         </li>
                         <li th:if="${cart.getCoupon()}" class="list-group-item d-flex justify-content-between align-items-center">
                             <h6 class="text-success"><span th:text="${cart.getCoupon().getCouponCode()}"></span> coupon applied</h6>
