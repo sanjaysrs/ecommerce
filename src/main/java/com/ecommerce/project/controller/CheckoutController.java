@@ -198,6 +198,13 @@ public class CheckoutController {
         return "redirect:/checkout";
 
     }
+
+    @GetMapping("/checkout/removeCoupon")
+    public String removeCoupon() {
+
+        cartService.removeCouponFromCart(getCurrentUser());
+        return "redirect:/checkout";
+    }
 }
 
 

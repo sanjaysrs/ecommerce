@@ -149,4 +149,12 @@ public class CartService {
         cart.setCoupon(coupon);
         cartRepository.save(cart);
     }
+
+    public void removeCouponFromCart(User user) {
+
+        Cart cart = user.getCart();
+        cart.setCoupon(null);
+        cartRepository.save(cart);
+
+    }
 }

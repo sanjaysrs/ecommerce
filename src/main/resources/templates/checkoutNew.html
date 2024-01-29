@@ -134,7 +134,8 @@
             </div>
 
             <div id="couponArea" class="text-center">
-                <button class="btn btn-outline-dark" id="toggleButton2">Apply Coupon</button>
+                <button class="btn btn-outline-dark" id="toggleButton2" th:unless="${cart.getCoupon()}">Apply Coupon</button>
+                <a href="/checkout/removeCoupon" class="btn btn-outline-dark" th:if="${cart.getCoupon()}">Remove Coupon</a>
                 <br><br>
                 <div id="hideThis2" style="display : none;">
                     <form th:action="@{/checkout/applyCoupon}" method="get" class="form-inline">
