@@ -72,7 +72,7 @@
                 </thead>
                 <tbody>
                 <!-- Use Thymeleaf to iterate over cart items and display them -->
-                <tr th:each="ct : ${cartItems}">
+                <tr th:each="ct : ${cart.getCartItems()}">
                     <td th:text="${ct.product.name}"></td>
                     <td th:text="${ct.product.price}"></td>
                     <td th:text="${ct.quantity}"></td>
@@ -95,8 +95,11 @@
                             <span class="badge buntan badge-pill" th:text="${total}"></span>
                             </h4>
                         </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <h6 class="text-success" th:text="${couponApplied}"></h6>
+                        <li th:if="${cart.getCoupon()}" class="list-group-item d-flex justify-content-between align-items-center">
+                            <h6 class="text-success"><span th:text="${cart.getCoupon().getCouponCode()}"></span> coupon applied</h6>
+                        </li>
+                        <li th:if="${discount}" class="list-group-item d-flex justify-content-between align-items-center">
+                            <p class="text-center text-success" th:text="${discount}"></p>
                         </li>
                     </ul>
                 </div>
@@ -122,7 +125,6 @@
                                 th:text="${pm.method}"></option>
                     </select>
                 </div>
-                <input type="hidden" th:value="${total}" name="total">
                 <button type="submit" class="btn buntan btn-block">Place Order</button>
             </form>
 
@@ -142,7 +144,6 @@
             </div>
 
             <p class="text-center text-danger" th:text="${invalidCoupon}"></p>
-            <p class="text-center text-success" th:text="${discountApplied}"></p>
 
         </div>
         <button class="btn btn-secondary" id="toggleButton">Add New Address</button>

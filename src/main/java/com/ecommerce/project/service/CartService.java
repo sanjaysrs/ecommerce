@@ -1,15 +1,11 @@
 package com.ecommerce.project.service;
 
-import com.ecommerce.project.entity.Cart;
-import com.ecommerce.project.entity.CartItem;
-import com.ecommerce.project.entity.Product;
-import com.ecommerce.project.entity.User;
+import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +16,9 @@ public class CartService {
 
     @Autowired
     CartItemRepository cartItemRepository;
+
+    @Autowired
+    CouponService couponService;
 
     public void deleteCartItemFromCart(long id, User user) {
         Optional<CartItem> cartItemOptional = cartItemRepository.findById(id);
@@ -119,9 +118,14 @@ public class CartService {
     }
 
     public void clearCart(Cart cart) {
-        // Clear the user's cart in the database
         for (CartItem cartItem : cart.getCartItems()) {
             cartItemRepository.delete(cartItem);
         }
+    }
+
+    public void applyCouponToCart(User user, Coupon coupon) {
+        Cart cart = user.getCart();
+        cart.setCoupon(coupon);
+        cartRepository.save(cart);
     }
 }

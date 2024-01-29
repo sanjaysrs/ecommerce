@@ -1,5 +1,6 @@
 package com.ecommerce.project.service;
 
+import com.ecommerce.project.entity.Cart;
 import com.ecommerce.project.entity.Coupon;
 import com.ecommerce.project.repository.CouponRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,5 +33,20 @@ public class CouponService {
 
     public Optional<Coupon> getCouponByCouponCode(String couponCode) {
         return couponRepository.findCouponByCouponCode(couponCode);
+    }
+
+    public String getDiscountString(Cart cart) {
+
+        Coupon coupon = cart.getCoupon();
+
+        if (coupon==null)
+            return null;
+
+        if (coupon.getDiscountType().equals("ABSOLUTE")) {
+            return "You get a discount of ₹" + coupon.getDiscountValue();
+        }
+
+        return "You get a discount of " + coupon.getDiscountValue() + "%";
+
     }
 }

@@ -4,8 +4,6 @@ import com.ecommerce.project.dto.AddressDTO;
 import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.service.*;
-import com.razorpay.Payment;
-import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 @Controller
@@ -74,7 +68,8 @@ public class CheckoutController {
         if (cartService.isCartEmpty(user.getCart()))
             return "redirect:/cart";
 
-        model.addAttribute("cartItems", user.getCart().getCartItems());
+        model.addAttribute("discount", couponService.getDiscountString(user.getCart()));
+        model.addAttribute("cart", user.getCart());
         model.addAttribute("total", cartService.getCartTotal(user));
         model.addAttribute("userAddresses", addressService.getAddressesForUser(user));
         model.addAttribute("paymentMethods", paymentMethodService.getAllPaymentMethods());
@@ -191,22 +186,14 @@ public class CheckoutController {
             return "redirect:/checkout";
         }
 
-        if (total < couponOptional.get().getMinimumPurchase()) {
-            redirectAttributes.addFlashAttribute("invalidCoupon", "This coupon is only valid for purchases of " + couponOptional.get().getMinimumPurchase() + " and above");
+        Coupon coupon = couponOptional.get();
+
+        if (total < coupon.getMinimumPurchase()) {
+            redirectAttributes.addFlashAttribute("invalidCoupon", "This coupon is only valid for purchases of " + coupon.getMinimumPurchase() + " and above");
             return "redirect:/checkout";
         }
 
-        if (couponOptional.get().getDiscountType().equals("ABSOLUTE")) {
-            total = total - couponOptional.get().getDiscountValue();
-            redirectAttributes.addFlashAttribute("discountApplied", "You get a discount of ₹" + couponOptional.get().getDiscountValue());
-        }
-
-        if (couponOptional.get().getDiscountType().equals("PERCENTAGE")) {
-            total = total - (couponOptional.get().getDiscountValue()/100*total);
-            redirectAttributes.addFlashAttribute("discountApplied", "You get a discount of " + couponOptional.get().getDiscountValue() + "%");
-        }
-
-        redirectAttributes.addFlashAttribute("couponApplied", "Coupon applied");
+        cartService.applyCouponToCart(getCurrentUser(), coupon);
 
         return "redirect:/checkout";
 

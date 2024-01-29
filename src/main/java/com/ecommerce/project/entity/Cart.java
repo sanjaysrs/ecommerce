@@ -18,7 +18,9 @@ public class Cart {
     @OneToMany(mappedBy = "cart")
     private List<CartItem> cartItems;
 
-    private int couponId;
+    @ManyToOne
+    @JoinColumn(name = "coupon_id")
+    private Coupon coupon;
 
     public Long getId() {
         return id;
@@ -44,4 +46,11 @@ public class Cart {
         this.cartItems = cartItems;
     }
 
+    public Coupon getCoupon() {
+        return coupon;
+    }
+
+    public void setCoupon(Coupon coupon) {
+        this.coupon = coupon;
+    }
 }
