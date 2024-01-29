@@ -33,9 +33,6 @@ public class ProfileController {
     private UserService userService;
 
     @Autowired
-    private AddressRepository addressRepository;
-
-    @Autowired
     private AddressService addressService;
 
     @Autowired
