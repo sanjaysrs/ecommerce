@@ -5,6 +5,7 @@ import com.ecommerce.project.entity.Order;
 import com.ecommerce.project.entity.OrderItem;
 import com.ecommerce.project.entity.OrderStatus;
 import com.ecommerce.project.entity.User;
+import com.ecommerce.project.service.CartService;
 import com.ecommerce.project.service.OrderService;
 import com.ecommerce.project.service.OrderStatusService;
 import com.ecommerce.project.service.UserService;
@@ -38,24 +39,21 @@ public class OrderController {
     @Autowired
     private StorageService storageService;
 
+    @Autowired
+    private CartService cartService;
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userService.findUserByEmail(authentication.getName());
+    }
+
     @GetMapping("/orders")
     public String listOrders(Model model) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findUserByEmail(authentication.getName());
-
-        List<Order> userOrders = orderService.getOrdersByUser(user);
-        Collections.reverse(userOrders);
-        model.addAttribute("userOrders", userOrders);
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
+        List<Order> orders = orderService.getOrdersByUser(getCurrentUser());
+        Collections.reverse(orders);
+        model.addAttribute("userOrders", orders);
+        model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
 
         return "orders";
     }
@@ -65,11 +63,6 @@ public class OrderController {
                                    Model model,
                                    @ModelAttribute("moneyCredited") String moneyCredited,
                                    @ModelAttribute("bug") String bug) {
-
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
 
         if (!moneyCredited.isEmpty())
             model.addAttribute("moneyCreditedCheck", "Money Credited Check");
