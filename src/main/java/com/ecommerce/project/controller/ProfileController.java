@@ -105,20 +105,8 @@ public class ProfileController {
     @GetMapping("/addresses/edit/{id}")
     public String editAddress(@PathVariable Long id, Model model) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        Optional<Address> addressOptional = addressRepository.findById(id);
-        Address address = addressOptional.get();
-
-        model.addAttribute("address", address);
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
+        model.addAttribute("address", addressService.getAddressDTOById(id));
+        model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         return "edit-address";
     }
 

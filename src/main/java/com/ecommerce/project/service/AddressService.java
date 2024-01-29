@@ -50,8 +50,23 @@ public class AddressService {
         return true;
     }
 
-    public Address getAddressById(Long selectedAddressId) {
-        return addressRepository.findById(selectedAddressId).get();
+    public Address getAddressById(Long id) {
+        Optional<Address> addressOptional = addressRepository.findByIdAndDeletedFalse(id);
+        Address address = addressOptional.orElse(null);
+        return address;
+    }
+
+    public AddressDTO getAddressDTOById(Long id) {
+        Optional<Address> addressOptional = addressRepository.findByIdAndDeletedFalse(id);
+        Address address = addressOptional.orElse(new Address());
+
+        AddressDTO addressDTO = new AddressDTO();
+        addressDTO.setStreetAddress(address.getStreetAddress());
+        addressDTO.setCity(address.getCity());
+        addressDTO.setState(address.getState());
+        addressDTO.setPostalCode(address.getPostalCode());
+        return addressDTO;
+
     }
 
 }
