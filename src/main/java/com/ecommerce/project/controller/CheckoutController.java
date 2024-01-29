@@ -88,12 +88,11 @@ public class CheckoutController {
     }
 
     @PostMapping("/checkout/process")
-    public String processOrder2(@ModelAttribute("address") Long selectedAddressId,
+    public String processOrder2(@ModelAttribute("address") Long addressId,
                                 @ModelAttribute("paymentMethod") int paymentMethodId,
                                 RedirectAttributes redirectAttributes) {
 
-        redirectAttributes.addFlashAttribute("address", selectedAddressId);
-        redirectAttributes.addFlashAttribute("paymentMethod", paymentMethodId);
+        redirectAttributes.addFlashAttribute("addressId", addressId);
 
         if (paymentMethodId == 1)
             return "redirect:/checkout/COD";
@@ -109,19 +108,17 @@ public class CheckoutController {
     }
 
     @GetMapping("/checkout/COD")
-    public String COD(@ModelAttribute("address") Long selectedAddressId,
-                      Model model) {
+    public String COD(@ModelAttribute Long addressId,
+                      RedirectAttributes redirectAttributes) {
 
-        inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 1, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
-        cartService.clearCart(getCurrentUser().getCart());
+        redirectAttributes.addFlashAttribute("addressId", addressId);
+        redirectAttributes.addFlashAttribute("paymentMethodId", 1);
+        return "redirect:/checkoutConfirmation";
 
-        model.addAttribute("cartCount", 0);
-        return "checkoutConfirmation";
     }
 
     @GetMapping("/checkout/razorpay")
-    public String razorpay(@ModelAttribute("address") Long selectedAddressId,
+    public String razorpay(@ModelAttribute Long addressId,
                            Model model) {
 
         double total = cartService.getCartTotalWithCouponDiscount(getCurrentUser());
@@ -130,40 +127,49 @@ public class CheckoutController {
 
         model.addAttribute("amount", total*100);
         model.addAttribute("orderId", transactionDetails.getOrderId());
-        model.addAttribute("address", selectedAddressId);
+        model.addAttribute("address", addressId);
 
-        return "xxx";
+        return "razorpayCheckout";
 
     }
 
     @PostMapping("/checkout/razorpay")
-    public String processOrder(@ModelAttribute("razorpay_payment_id") String id, Model model) throws RazorpayException {
+    public String processOrder(@ModelAttribute("razorpay_payment_id") String id, RedirectAttributes redirectAttributes) throws RazorpayException {
 
         JSONObject notes = razorpayService.fetchPaymentNotes(id);
-        inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), notes.getLong("address"), 2, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
-        cartService.clearCart(getCurrentUser().getCart());
+        redirectAttributes.addFlashAttribute("addressId", notes.getLong("address"));
+        redirectAttributes.addFlashAttribute("paymentMethodId", 2);
+        return "redirect:/checkoutConfirmation";
 
-        model.addAttribute("cartCount", 0);
-        return "checkoutConfirmation";
     }
 
     @GetMapping("/checkout/wallet")
-    public String checkoutWallet(@ModelAttribute("address") Long selectedAddressId,
-                                 RedirectAttributes redirectAttributes,
-                                 Model model) {
+    public String checkoutWallet(@ModelAttribute Long addressId,
+                                 RedirectAttributes redirectAttributes) {
 
         if (walletService.insufficientFundsInWallet(getCurrentUser())) {
 
             redirectAttributes.addFlashAttribute("insufficient", "Insufficient funds in wallet. Try another payment method.");
-            return "checkoutNew";
+            return "redirect:/checkout";
 
         }
 
         walletService.debitFromWallet(getCurrentUser());
+        redirectAttributes.addFlashAttribute("addressId", addressId);
+        redirectAttributes.addFlashAttribute("paymentMethodId", 3);
+
+        return "redirect:/checkoutConfirmation";
+    }
+
+    @GetMapping("/checkoutConfirmation")
+    public String confirmCheckout(@ModelAttribute Long addressId,
+                                  @ModelAttribute int paymentMethodId,
+                                  Model model) {
+
         inventoryService.updateInventory(getCurrentUser().getCart());
-        orderService.createOrderAndSave(getCurrentUser(), selectedAddressId, 3, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
+        orderService.createOrderAndSave(getCurrentUser(), addressId, paymentMethodId, cartService.getCartTotalWithCouponDiscount(getCurrentUser()));
         cartService.clearCart(getCurrentUser().getCart());
+        cartService.removeCouponFromCart(getCurrentUser());
 
         model.addAttribute("cartCount", 0);
         return "checkoutConfirmation";
