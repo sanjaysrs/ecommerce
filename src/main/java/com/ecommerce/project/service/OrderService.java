@@ -28,6 +28,9 @@ public class OrderService {
     @Autowired
     PaymentMethodService paymentMethodService;
 
+    @Autowired
+    WalletService walletService;
+
     public void saveOrder(Order order) {
         orderRepository.save(order);
     }
@@ -80,6 +83,26 @@ public class OrderService {
 
     }
 
+    public void cancelOrder(Long orderId) {
+        Order order = getOrderById(orderId);
+        OrderStatus orderStatus = orderStatusRepository.findById(6).orElseThrow();
+        order.setOrderStatus(orderStatus);
+        orderRepository.save(order);
+    }
+
+    public double refundIfWallet(Long orderId, User user) {
+        Order order = getOrderById(orderId);
+
+        if (order.getPaymentMethod().getId()!=3)
+            return 0;
+
+        double refundAmount = order.getTotalPrice();
+        Wallet wallet = user.getWallet();
+        wallet.setAmount(wallet.getAmount() + refundAmount);
+        walletService.save(wallet);
+        return refundAmount;
+
+    }
 }
 
 

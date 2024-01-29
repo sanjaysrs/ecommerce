@@ -61,19 +61,14 @@ public class OrderController {
     @GetMapping("/orders/{orderId}")
     public String viewOrderDetails(@PathVariable Long orderId,
                                    Model model,
-                                   @ModelAttribute("moneyCredited") String moneyCredited,
                                    @ModelAttribute("bug") String bug) {
-
-        if (!moneyCredited.isEmpty())
-            model.addAttribute("moneyCreditedCheck", "Money Credited Check");
 
         if (!bug.isEmpty())
             model.addAttribute("invoiceDownload", "Invoice has been downloaded");
 
         Order order = orderService.getOrderById(orderId);
-        if (order == null) {
+        if (order == null)
             return "redirect:/orders";
-        }
 
         model.addAttribute("order", order);
         model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
@@ -83,25 +78,12 @@ public class OrderController {
     }
 
     @GetMapping("/cancelOrder/{id}")
-    public String cancelOrder(@PathVariable("id") Long orderId, Principal principal, RedirectAttributes redirectAttributes) {
+    public String cancelOrder(@PathVariable("id") Long orderId, RedirectAttributes redirectAttributes) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        Order order = orderService.getOrderById(orderId);
-        OrderStatus orderStatus = orderStatusService.findById(6);
-        order.setOrderStatus(orderStatus);
-        orderService.saveOrder(order);
-
-        if (order.getPaymentMethod().getId()==3) {
-            User user = userService.findUserByEmail(principal.getName());
-            double backToWallet = order.getTotalPrice();
-            user.getWallet().setAmount(user.getWallet().getAmount() + backToWallet);
-            userService.save(user);
-            redirectAttributes.addFlashAttribute("moneyCredited", "Invoice amount of ₹" + backToWallet + " has been credited back to your wallet");
-        }
+        orderService.cancelOrder(orderId);
+        double refund = orderService.refundIfWallet(orderId, getCurrentUser());
+        if (refund!=0)
+            redirectAttributes.addFlashAttribute("moneyCredited", "Invoice amount of ₹" + refund + " has been credited back to your wallet");
 
         return "redirect:/orders/" + orderId;
     }
