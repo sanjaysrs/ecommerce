@@ -65,7 +65,7 @@ public class WishlistController {
     }
 
     @GetMapping("/removeFromWishlist/{id}")
-    public String removeFromWishlist(@PathVariable long productId, RedirectAttributes redirectAttributes, HttpServletRequest request) {
+    public String removeFromWishlist(@PathVariable("id") long productId, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
         boolean removedFromWishlist = wishlistService.removeProductFromWishlist(getCurrentUser(), productId);
 
