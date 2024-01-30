@@ -1,15 +1,15 @@
 package com.ecommerce.project.controller;
 
+import com.ecommerce.project.dto.RegisterDTO;
 import com.ecommerce.project.entity.*;
 //import com.ecommerce.project.global.GlobalData;
 import com.ecommerce.project.otp.dto.OtpDto;
 import com.ecommerce.project.otp.entity.Otp;
 import com.ecommerce.project.otp.repository.OtpRepository;
+import com.ecommerce.project.otp.service.OtpService;
 import com.ecommerce.project.repository.RoleRepository;
 import com.ecommerce.project.repository.UserRepository;
 import com.ecommerce.project.service.UserService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 public class LoginController {
@@ -53,6 +54,9 @@ public class LoginController {
     @Autowired
     private OtpRepository otpRepository;
 
+    @Autowired
+    private OtpService otpService;
+
     private boolean isAnonymous() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (authentication==null || authentication instanceof AnonymousAuthenticationToken);
@@ -60,6 +64,9 @@ public class LoginController {
 
     @GetMapping("/login/failure")
     public String loginFailure(RedirectAttributes redirectAttributes, HttpSession session) {
+
+        if (!isAnonymous())
+            return "redirect:/";
 
         Exception exception = (Exception) session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
         String error = exception instanceof BadCredentialsException ? "Invalid password" : exception.getMessage();
@@ -76,9 +83,8 @@ public class LoginController {
     @GetMapping("/login")
     public String login() {
 
-        if(isAnonymous()) {
+        if(isAnonymous())
             return "login";
-        }
 
         return "redirect:/";
 
@@ -88,7 +94,8 @@ public class LoginController {
     public String registerGet(Model model) {
 
         if(isAnonymous()) {
-            model.addAttribute("user", new User());
+            if (!model.containsAttribute("user"))
+                model.addAttribute("user", new RegisterDTO());
             return "register";
         }
 
@@ -98,58 +105,43 @@ public class LoginController {
 
     @PostMapping("/register")
     public String registerPost(
-            @Valid @ModelAttribute("user") User user,
+            @Valid @ModelAttribute("user") RegisterDTO registerDTO,
             BindingResult bindingResult,
-            Model model) {
+            RedirectAttributes redirectAttributes,
+            HttpSession session) {
 
         if (bindingResult.hasErrors()){
-            model.addAttribute("user", user);
-            return "register";
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.user", bindingResult);
+            redirectAttributes.addFlashAttribute("user", registerDTO);
+            return "redirect:/register";
         }
 
-        // check the database if user already exists
-        Optional<User> existing = userRepository.findUserByEmail(user.getEmail());
+        if (userService.unverifiedRegisteredUser(registerDTO.getEmail()))
+            userService.deleteOldUserAndOtp(registerDTO.getEmail());
 
-        if (existing.isPresent() && !existing.get().isVerified()) {
-            Otp otpToDelete = otpRepository.findByUser_Id(existing.get().getId()).get();
-            otpRepository.delete(otpToDelete);
-            userRepository.deleteById(existing.get().getId());
+        if (userService.verifiedExistingUser(registerDTO.getEmail())){
+            redirectAttributes.addFlashAttribute("user", registerDTO);
+            redirectAttributes.addFlashAttribute("registrationError", "Email" + registerDTO.getEmail() + "is already registered.");
+            return "redirect:/register";
         }
 
-        if (existing.isPresent() && existing.get().isVerified()){
-            model.addAttribute("user", user);
-            model.addAttribute("registrationError", "Email already exists.");
-            return "register";
+        userService.registerUser(registerDTO);
+        otpService.sendOtp(registerDTO.getEmail());
+        redirectAttributes.addFlashAttribute("otpDto", otpService.getOtpDto(registerDTO.getEmail()));
+        redirectAttributes.addFlashAttribute("user", userService.findUserByEmail(registerDTO.getEmail()));
+        UUID token = generateToken();
+        session.setAttribute("token", token);
+        redirectAttributes.addFlashAttribute("token", token);
+        return "redirect:/register/verify";
+    }
+
+    @GetMapping("/register/verify")
+    public String renderRegistrationConfirmation(HttpSession session, Model model) {
+        if (isValidToken(session.getAttribute("token"), model.getAttribute("token"))) {
+            session.removeAttribute("token");
+            return "registration-confirmation";
         }
-
-        String password = user.getPassword();
-        user.setPassword(bCryptPasswordEncoder.encode(password));
-        List<Role> roles = new ArrayList<>();
-        roles.add(roleRepository.findById(2).get());
-        user.setRoles(roles);
-        user.setEnabled(true);
-
-        Cart cart = new Cart();
-        cart.setUser(user);
-        user.setCart(cart);
-
-        Wishlist wishlist = new Wishlist();
-        wishlist.setUser(user);
-        user.setWishlist(wishlist);
-
-        Wallet wallet = new Wallet();
-        wallet.setUser(user);
-        user.setWallet(wallet);
-        userRepository.save(user);
-
-        userService.register(user);
-
-        OtpDto otpDto = new OtpDto();
-        otpDto.setEmail(user.getEmail());
-        model.addAttribute("otpDto", otpDto);
-
-        return "registration-confirmation";
-
+        return "redirect:/register";
     }
 
     @PostMapping("/verify-account")
@@ -194,7 +186,7 @@ public class LoginController {
         otpRepository.delete(otpToDelete);
 
         //Send the new otp and save the new otp to database
-        userService.register(user);
+        otpService.sendOtp(user.getEmail());
 
         model.addAttribute("again", "New OTP has been sent");
         model.addAttribute("user", user);
@@ -207,6 +199,14 @@ public class LoginController {
         StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
 
         dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+    }
+
+    private UUID generateToken() {
+        return UUID.randomUUID();
+    }
+
+    private boolean isValidToken(Object sessionToken, Object modelToken) {
+        return  (sessionToken != null && sessionToken.equals(modelToken));
     }
 
 }
