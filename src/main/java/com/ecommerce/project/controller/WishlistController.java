@@ -66,9 +66,7 @@ public class WishlistController {
 
         boolean addedToWishlist = wishlistService.addProductToWishlist(getCurrentUser(), productId);
 
-        if (!addedToWishlist)
-            redirectAttributes.addFlashAttribute("alreadyInWishlist", "Product is already in wishlist");
-        else
+        if (addedToWishlist)
             redirectAttributes.addFlashAttribute("addedToWishlist", "Product added to wishlist");
 
         return "redirect:/shop/viewproduct/" + productId;
