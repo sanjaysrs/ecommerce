@@ -29,16 +29,7 @@ public class WishlistController {
     UserService userService;
 
     @Autowired
-    ProductService productService;
-
-    @Autowired
     WishlistService wishlistService;
-
-    @Autowired
-    WishlistItemRepository wishlistItemRepository;
-
-    @Autowired
-    CartItemRepository cartItemRepository;
 
     @Autowired
     StorageService storageService;
