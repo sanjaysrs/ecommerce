@@ -25,11 +25,14 @@ public class WishlistService {
 
     public boolean addProductToWishlist(User user, long productId) {
 
-        Product product = productService.getProductById(productId).orElse(null);
-        Wishlist wishlist = user.getWishlist();
+        Optional<Product> productOptional = productService.getProductById(productId);
 
-        Optional<WishlistItem> wishlistItemOptional =
-                wishlistItemRepository.findByProductAndWishlist(product, wishlist);
+        if (productOptional.isEmpty())
+            return false;
+
+        Product product = productOptional.get();
+        Wishlist wishlist = user.getWishlist();
+        Optional<WishlistItem> wishlistItemOptional = wishlistItemRepository.findByProductAndWishlist(product, wishlist);
 
         if (wishlistItemOptional.isPresent())
             return false;
