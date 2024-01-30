@@ -53,6 +53,11 @@ public class LoginController {
     @Autowired
     private OtpRepository otpRepository;
 
+    private boolean isAnonymous() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (authentication==null || authentication instanceof AnonymousAuthenticationToken);
+    }
+
     @GetMapping("/login/failure")
     public String loginFailure(RedirectAttributes redirectAttributes, HttpSession session) {
 
@@ -71,9 +76,7 @@ public class LoginController {
     @GetMapping("/login")
     public String login() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if(authentication==null || authentication instanceof AnonymousAuthenticationToken) {
+        if(isAnonymous()) {
             return "login";
         }
 
@@ -84,9 +87,7 @@ public class LoginController {
     @GetMapping("/register")
     public String registerGet(Model model) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if(authentication==null || authentication instanceof AnonymousAuthenticationToken) {
+        if(isAnonymous()) {
             model.addAttribute("user", new User());
             return "register";
         }
