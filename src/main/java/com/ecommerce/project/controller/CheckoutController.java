@@ -80,14 +80,6 @@ public class CheckoutController {
         return "checkoutNew";
     }
 
-    @PostMapping("/add-address-checkout")
-    public String addAddress(@ModelAttribute("address") AddressDTO addressDTO) {
-
-        addressService.saveAddress(addressDTO, getCurrentUser());
-        return "redirect:/checkout";
-
-    }
-
     @PostMapping("/checkout/process")
     public String processOrder(@ModelAttribute("address") Long addressId,
                                 @ModelAttribute("paymentMethod") int paymentMethodId,

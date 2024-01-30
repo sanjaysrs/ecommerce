@@ -147,39 +147,8 @@
 
             <p class="text-center text-danger" th:text="${invalidCoupon}"></p>
 
-        </div>
-        <button class="btn btn-secondary" id="toggleButton">Add New Address</button>
-        <div class="container mt-5" id="hideThis" style="display : none;">
-            <h2 class="text-center">Add New Address</h2>
-
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <form th:action="@{/add-address-checkout}" method="post">
-                        <div class="form-group">
-                            <label for="streetAddress">Street Address:</label>
-                            <input type="text" id="streetAddress" name="streetAddress" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="city">City:</label>
-                            <input type="text" id="city" name="city" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="state">State:</label>
-                            <input type="text" id="state" name="state" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="postalCode">Postal Code:</label>
-                            <input type="text" id="postalCode" name="postalCode" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="country">Country:</label>
-                            <input type="text" id="country" name="country" class="form-control" required>
-                        </div>
-                        <div class="form-group text-center">
-                            <button type="submit" class="btn buntan">Add Address</button>
-                        </div>
-                    </form>
-                </div>
+            <div class="text-center">
+                <a class="btn btn-secondary" href="/add-address">Add New Address</a>
             </div>
         </div>
     </div>
@@ -189,23 +158,6 @@
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-<script>
-    const toggleButton = document.getElementById('toggleButton');
-const myDiv = document.getElementById('hideThis');
-
-toggleButton.addEventListener('click', ()=>{
-
-    if (myDiv.style.display == 'none') {
-
-        myDiv.style.display = 'block';
-    } else {
-
-        myDiv.style.display = 'none';
-
-    }
-
-});
-</script>
 <script>
     const toggleButton2 = document.getElementById('toggleButton2');
 const myDiv2 = document.getElementById('hideThis2');

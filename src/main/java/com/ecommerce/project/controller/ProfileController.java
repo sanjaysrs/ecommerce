@@ -8,6 +8,7 @@ import com.ecommerce.project.repository.UserRepository;
 import com.ecommerce.project.service.AddressService;
 import com.ecommerce.project.service.CartService;
 import com.ecommerce.project.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -68,10 +69,14 @@ public class ProfileController {
     }
 
     @GetMapping("/add-address")
-    public String showAddAddressForm(Model model) {
+    public String showAddAddressForm(Model model, HttpServletRequest request) {
 
-        if (!model.containsAttribute("address"))
-            model.addAttribute("address", new AddressDTO());
+        if (!model.containsAttribute("address")) {
+            AddressDTO addressDTO = new AddressDTO();
+            addressDTO.setReferer(request.getHeader("Referer"));
+            model.addAttribute("address", addressDTO);
+        }
+
         model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         return "add-address";
     }
@@ -88,29 +93,41 @@ public class ProfileController {
         }
 
         addressService.saveAddress(addressDTO, getCurrentUser());
-        return "redirect:/addresses";
+        redirectAttributes.addFlashAttribute("info", "Address added");
+        String referer = addressDTO.getReferer();
+        return "redirect:" + (referer != null ? referer : "/addresses");
     }
 
     @GetMapping("/addresses/delete/{id}")
     public String deleteAddress(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
         if (addressService.deleteAddressById(id))
-            redirectAttributes.addFlashAttribute("deleted", "Address deleted");
+            redirectAttributes.addFlashAttribute("info", "Address deleted");
         return "redirect:/addresses";
     }
 
     @GetMapping("/addresses/edit/{id}")
     public String editAddress(@PathVariable Long id, Model model) {
 
-        model.addAttribute("address", addressService.getAddressDTOById(id, getCurrentUser()));
+        if (!model.containsAttribute("address"))
+            model.addAttribute("address", addressService.getAddressDTOById(id, getCurrentUser()));
         model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         return "edit-address";
     }
 
     @PostMapping("/edit-address")
-    public String postEditAddress(@ModelAttribute AddressDTO addressDTO) {
+    public String postEditAddress(@ModelAttribute("address") @Valid AddressDTO addressDTO,
+                                  BindingResult bindingResult,
+                                  RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("address", addressDTO);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.address", bindingResult);
+            return "redirect:/addresses/edit/" + addressDTO.getId();
+        }
 
         addressService.saveAddress(addressDTO, getCurrentUser());
+        redirectAttributes.addFlashAttribute("info", "Address edited");
         return "redirect:/addresses";
     }
 

@@ -59,22 +59,22 @@
                 <input th:field="*{id}" th:value="${address.id}" type="hidden">
                 <div class="form-group">
                     <label for="streetAddress">Street Address:</label>
-                    <input th:field="*{streetAddress}" type="text" id="streetAddress" name="streetAddress" class="form-control">
+                    <input th:field="*{streetAddress}" type="text" id="streetAddress" class="form-control">
                     <div th:if="${#fields.hasErrors('streetAddress')}" class="text-danger" th:errors="*{streetAddress}"></div>
                 </div>
                 <div class="form-group">
                     <label for="city">City:</label>
-                    <input th:field="*{city}" type="text" id="city" name="city" class="form-control">
+                    <input th:field="*{city}" type="text" id="city" class="form-control">
                     <div th:if="${#fields.hasErrors('city')}" class="text-danger" th:errors="*{city}"></div>
                 </div>
                 <div class="form-group">
                     <label for="state">State:</label>
-                    <input th:field="*{state}" type="text" id="state" name="state" class="form-control">
+                    <input th:field="*{state}" type="text" id="state" class="form-control">
                     <div th:if="${#fields.hasErrors('state')}" class="text-danger" th:errors="*{state}"></div>
                 </div>
                 <div class="form-group">
                     <label for="postalCode">Postal Code:</label>
-                    <input th:field="*{postalCode}" type="text" id="postalCode" name="postalCode" class="form-control">
+                    <input th:field="*{postalCode}" type="text" id="postalCode" class="form-control">
                     <div th:if="${#fields.hasErrors('postalCode')}" class="text-danger" th:errors="*{postalCode}"></div>
                 </div>
                 <div class="form-group text-center">
