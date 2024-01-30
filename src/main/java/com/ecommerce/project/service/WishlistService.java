@@ -20,30 +20,25 @@ public class WishlistService {
     @Autowired
     WishlistItemRepository wishlistItemRepository;
 
+    @Autowired
+    ProductService productService;
 
-    public boolean addProductToWishlist(User user, Product product) {
+    public boolean addProductToWishlist(User user, long productId) {
 
+        Product product = productService.getProductById(productId).orElse(null);
         Wishlist wishlist = user.getWishlist();
-        if (wishlist==null) {
-            wishlist = new Wishlist();
-            wishlist.setUser(user);
-            user.setWishlist(wishlist);
-            wishlistRepository.save(wishlist);
-        }
 
         Optional<WishlistItem> wishlistItemOptional =
                 wishlistItemRepository.findByProductAndWishlist(product, wishlist);
 
-        if (wishlistItemOptional.isEmpty()) {
-            WishlistItem wishlistItem = new WishlistItem();
-            wishlistItem.setProduct(product);
-            wishlistItem.setWishlist(wishlist);
-            wishlistItemRepository.save(wishlistItem);
-
-            return true;
-        } else {
+        if (wishlistItemOptional.isPresent())
             return false;
-        }
+
+        WishlistItem wishlistItem = new WishlistItem();
+        wishlistItem.setProduct(product);
+        wishlistItem.setWishlist(wishlist);
+        wishlistItemRepository.save(wishlistItem);
+        return true;
 
     }
 
