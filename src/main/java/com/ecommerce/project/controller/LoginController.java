@@ -10,10 +10,12 @@ import com.ecommerce.project.repository.UserRepository;
 import com.ecommerce.project.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -49,6 +52,16 @@ public class LoginController {
 
     @Autowired
     private OtpRepository otpRepository;
+
+    @GetMapping("/login/failure")
+    public String loginFailure(RedirectAttributes redirectAttributes, HttpSession session) {
+
+        Exception exception = (Exception) session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
+        String error = exception instanceof BadCredentialsException ? "Invalid password" : exception.getMessage();
+        redirectAttributes.addFlashAttribute("error", error);
+        return "redirect:/login";
+
+    }
 
     @GetMapping("/access-denied")
     public String access() {

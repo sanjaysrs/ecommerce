@@ -61,11 +61,9 @@
                     <input type="password" class="form-control form-control-lg" placeholder="Password" name="password" id="password" required>
                 </div>
 
-                <div th:if="${param.error}" class="alert alert-error text-danger">
-                    <span th:if="${session.SPRING_SECURITY_LAST_EXCEPTION.message}=='Bad credentials'">Invalid email or password</span>
-                    <span th:if="${session.SPRING_SECURITY_LAST_EXCEPTION.message}!='Bad credentials'" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></span>
+                <div th:if="${error}" class="alert alert-error text-danger">
+                    <span th:text="${error}"></span>
                 </div>
-
                 <input type="submit" value="Login" class="btn btn-block font-weight-bold" style="background-color : rgb(135, 16, 216); color : white;">
 
                 <br>

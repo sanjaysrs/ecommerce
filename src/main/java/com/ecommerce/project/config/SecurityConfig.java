@@ -19,15 +19,14 @@ public class SecurityConfig {
         http.authorizeHttpRequests(configurer ->
                         configurer
                                 .requestMatchers("/resources/**", "/static/**", "/images/**", "/productImages/**", "/css/**", "/js/**", "/mobi/**").permitAll()
-                                .requestMatchers("/", "/shop/**", "/register", "/verify-account", "/resend-otp", "/createTransaction/**").permitAll()
+                                .requestMatchers("/", "/shop/**", "/register", "/verify-account", "/resend-otp", "/createTransaction/**", "/login/**").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .formLogin(form ->
                         form
                                 .loginPage("/login")
-                                .permitAll()
-                                .failureUrl("/login?error=true")
+                                .failureUrl("/login/failure")
                                 .defaultSuccessUrl("/", true)
                                 .usernameParameter("email")
                                 .passwordParameter("password")

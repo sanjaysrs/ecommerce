@@ -4,6 +4,7 @@ import com.ecommerce.project.entity.User;
 import com.ecommerce.project.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,16 +28,15 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<User> userOptional = userRepository.findUserByEmail(username);
 
         if (userOptional.isEmpty())
-            throw new RuntimeException("Invalid username");
+            throw new RuntimeException("Invalid email");
 
         User user = userOptional.get();
 
         if (!user.isEnabled())
             throw new DisabledException("User is disabled");
 
-        if (!user.isVerified()) {
-            throw new DisabledException("User account is not verified");
-        }
+        if (!user.isVerified())
+            throw new RuntimeException("Invalid email");
 
         String password = user.getPassword();
 
