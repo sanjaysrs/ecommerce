@@ -3,15 +3,13 @@ package com.ecommerce.project.controller;
 import com.ecommerce.project.entity.TransactionDetails;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.entity.Wallet;
-import com.ecommerce.project.service.OrderService;
-import com.ecommerce.project.service.RazorpayService;
-import com.ecommerce.project.service.UserService;
-import com.ecommerce.project.service.WalletService;
+import com.ecommerce.project.service.*;
 import com.razorpay.Payment;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -36,23 +34,19 @@ public class WalletController {
     @Autowired
     RazorpayService razorpayService;
 
+    @Autowired
+    CartService cartService;
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userService.findUserByEmail(authentication.getName());
+    }
+
     @GetMapping("/wallet")
-    public String getWallet(Model model, Principal principal) {
+    public String getWallet(Model model) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        User user = userService.findUserByEmail(principal.getName());
-        Wallet wallet = user.getWallet();
-
-        model.addAttribute("wallet", wallet);
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
+        model.addAttribute("wallet", getCurrentUser().getWallet());
+        model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         return "wallet";
     }
 
