@@ -4,6 +4,7 @@ import com.ecommerce.project.aws.service.StorageService;
 import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.CartItemRepository;
 import com.ecommerce.project.repository.WishlistItemRepository;
+import com.ecommerce.project.service.CartService;
 import com.ecommerce.project.service.ProductService;
 import com.ecommerce.project.service.UserService;
 import com.ecommerce.project.service.WishlistService;
@@ -40,28 +41,20 @@ public class WishlistController {
     @Autowired
     StorageService storageService;
 
+    @Autowired
+    CartService cartService;
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return userService.findUserByEmail(authentication.getName());
+    }
+
     @GetMapping("/wishlist")
     public String getWishlist(Model model) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userService.findUserByEmail(username);
-
-        Wishlist wishlist = user.getWishlist();
-        List<WishlistItem> wishlistItemList = wishlist.getWishlistItems();
-
-        model.addAttribute("cart", wishlistItemList);
-        model.addAttribute("wishlistCount", wishlistItemList.size());
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
+        Wishlist wishlist = getCurrentUser().getWishlist();
+        model.addAttribute("wishlist", wishlist);
+        model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
         model.addAttribute("urlList", storageService.getUrlListForSingleWishlist(wishlist));
 
         return "wishlist";
@@ -69,11 +62,6 @@ public class WishlistController {
 
     @GetMapping("/addToWishlist/{id}")
     public String addToWishlist(@PathVariable long id, Principal principal, Model model) {
-
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
 
         User user = userService.findUserByEmail(principal.getName());
         Product product = productService.getProductById(id).orElse(null);
