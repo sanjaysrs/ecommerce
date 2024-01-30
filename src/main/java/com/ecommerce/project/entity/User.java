@@ -58,16 +58,6 @@ public class User {
 
     private boolean verified;
 
-    public User(User user) {
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.roles = user.getRoles();
-    }
-
-    public User() {
-    }
 }
 
 
