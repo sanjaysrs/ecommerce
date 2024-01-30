@@ -33,9 +33,6 @@ public class WalletController {
     WalletService walletService;
 
     @Autowired
-    OrderService orderService;
-
-    @Autowired
     RazorpayService razorpayService;
 
     @Autowired
@@ -86,33 +83,11 @@ public class WalletController {
 
     @PostMapping("/addedToWallet")
     public String addedToWallet(@ModelAttribute("razorpay_payment_id") String id,
-                                Model model,
-                                Principal principal) throws RazorpayException {
+                                RedirectAttributes redirectAttributes) throws RazorpayException {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
-
-        Wallet wallet = userService.findUserByEmail(principal.getName()).getWallet();
-
-        //Fetch the razorpay payment by its id
-        RazorpayClient razorpayClient = new RazorpayClient("rzp_test_amAJ6g1mhBlQKL", "xW9gfY6xByn88aKq8GixUNZ0");
-        Payment payment = razorpayClient.payments.fetch(id);
-        int amountInt = payment.get("amount");
-        double amount = (double) amountInt /100;
-
-        wallet.setAmount(wallet.getAmount() + amount);
-        walletService.save(wallet);
-        model.addAttribute("wallet", wallet);
-        model.addAttribute("addedToWallet", "The amount was successfully added to the wallet");
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
-        return "wallet";
+        walletService.addToWallet(getCurrentUser(), razorpayService.getTransactionAmount(id));
+        redirectAttributes.addFlashAttribute("addedToWallet", "The amount was successfully added to the wallet");
+        return "redirect:/wallet";
     }
-
 
 }

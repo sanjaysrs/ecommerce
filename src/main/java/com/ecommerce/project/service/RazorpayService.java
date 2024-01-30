@@ -50,8 +50,18 @@ public class RazorpayService {
     }
 
     public JSONObject fetchPaymentNotes(String id) throws RazorpayException {
+        return getPayment(id).get("notes");
+    }
+
+    public double getTransactionAmount(String id) throws RazorpayException {
+        int amountInt = getPayment(id).get("amount");
+        double amount = (double) amountInt /100;
+        return amount;
+    }
+
+    public Payment getPayment(String id) throws RazorpayException {
         RazorpayClient razorpayClient = new RazorpayClient(KEY, KEY_SECRET);
         Payment payment = razorpayClient.payments.fetch(id);
-        return payment.get("notes");
+        return payment;
     }
 }

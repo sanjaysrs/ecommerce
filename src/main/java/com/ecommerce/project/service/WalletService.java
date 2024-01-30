@@ -34,4 +34,10 @@ public class WalletService {
         wallet.setAmount(wallet.getAmount() - cartService.getCartTotalWithCouponDiscount(user));
         walletRepository.save(wallet);
     }
+
+    public void addToWallet(User user, double amount) {
+        Wallet wallet = user.getWallet();
+        wallet.setAmount(wallet.getAmount() + amount);
+        walletRepository.save(wallet);
+    }
 }
