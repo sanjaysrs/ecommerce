@@ -49,4 +49,21 @@ public class WishlistService {
         return wishlistItemRepository.existsByProductAndWishlist(product, user.getWishlist());
     }
 
+    public boolean removeProductFromWishlist(User user, long productId) {
+        Optional<Product> productOptional = productService.getProductById(productId);
+
+        if (productOptional.isEmpty())
+            return false;
+
+        Product product = productOptional.get();
+        Wishlist wishlist = user.getWishlist();
+        Optional<WishlistItem> wishlistItemOptional = wishlistItemRepository.findByProductAndWishlist(product, wishlist);
+
+        if (wishlistItemOptional.isEmpty())
+            return false;
+
+        WishlistItem wishlistItem = wishlistItemOptional.get();
+        wishlistItemRepository.delete(wishlistItem);
+        return true;
+    }
 }

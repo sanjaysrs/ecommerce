@@ -73,52 +73,14 @@ public class WishlistController {
     }
 
     @GetMapping("/removeFromWishlist/{id}")
-    public String removeFromWishlist(@PathVariable long id, Principal principal, Model model) {
+    public String removeFromWishlist(@PathVariable long productId, RedirectAttributes redirectAttributes) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
-        }
+        boolean removedFromWishlist = wishlistService.removeProductFromWishlist(getCurrentUser(), productId);
 
-        User user = userService.findUserByEmail(principal.getName());
-        Product product = productService.getProductById(id).orElse(null);
+        if (removedFromWishlist)
+            redirectAttributes.addFlashAttribute("deletedFromWishlist", "Product was deleted from wishlist");
 
-        Optional<WishlistItem> wishlistItemOptional = wishlistItemRepository.findByProductAndWishlist(product, user.getWishlist());
-
-        if (wishlistItemOptional.isPresent()) {
-            WishlistItem wishlistItem = wishlistItemOptional.get();
-            wishlistItemRepository.delete(wishlistItem);
-            model.addAttribute("deletedFromWishlist", "Product was deleted from wishlist");
-        } else {
-            model.addAttribute("notInWishlist", "Product is not in wishlist");
-        }
-
-        Optional<CartItem> cartItemOptional =
-                cartItemRepository.findCartItemByProductAndCart(product,user.getCart());
-
-        if (cartItemOptional.isPresent()) {
-            CartItem cartItem = cartItemOptional.get();
-            model.addAttribute("quantityInCart", cartItem.getQuantity());
-        } else {
-            model.addAttribute("quantityInCart", 0);
-        }
-
-        boolean flag = user.getWishlist().getWishlistStatus(productService.getProductById(id).get());
-        if (flag) {
-            model.addAttribute("ondu", "Product is there in wishlist");
-        } else {
-            model.addAttribute("illa", "Product is not there in wishlist");
-        }
-
-        model.addAttribute("product", product);
-
-        //  Add cartCount
-        int cartCount = userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).getCart().getCartItems().stream().map(x->x.getQuantity()).reduce(0,(a,b)->a+b);
-        model.addAttribute("cartCount", cartCount);
-
-        model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
-
-        return "viewProduct";
+        return "redirect:/shop/viewproduct/" + productId;
     }
 
     @GetMapping("/removeFromWishlistAtWishlist/{id}")

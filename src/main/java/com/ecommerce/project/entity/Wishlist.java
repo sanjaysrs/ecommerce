@@ -23,15 +23,4 @@ public class Wishlist {
     @OneToMany(mappedBy = "wishlist")
     private List<WishlistItem> wishlistItems;
 
-    public boolean getWishlistStatus(Product product) {
-        boolean flag=false;
-        for (WishlistItem wishlistItem : wishlistItems) {
-            if (wishlistItem.getProduct().equals(product)){
-                flag = true;
-                break;
-            }
-        }
-        return flag;
-    }
-
 }
