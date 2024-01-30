@@ -2,6 +2,7 @@ package com.ecommerce.project.service;
 
 import com.ecommerce.project.dto.RegisterDTO;
 import com.ecommerce.project.entity.*;
+import com.ecommerce.project.otp.dto.OtpDto;
 import com.ecommerce.project.otp.entity.Otp;
 import com.ecommerce.project.otp.repository.OtpRepository;
 import com.ecommerce.project.otp.util.EmailUtil;
@@ -80,22 +81,23 @@ public class UserService {
 
     }
 
-    public int verifyAccount(String email, String otp) {
+    public int verifyAccount(OtpDto otpDto) {
+
+        String email = otpDto.getEmail();
+        String otpString = otpDto.getOtp();
 
         User user = userRepository.findUserByEmail(email).get();
+        Otp otp = otpRepository.findByUser_Id(user.getId()).get();
 
-        Otp otp1 = otpRepository.findByUser_Id(user.getId()).get();
-
-        if (otp1.getOtp().equals(otp) &&
-                Duration.between(otp1.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() <= (2 * 60) ) {
+        if (otp.getOtp().equals(otpString) && Duration.between(otp.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() <= (2 * 60) ) {
             user.setVerified(true);
             userRepository.save(user);
-            otpRepository.delete(otp1);
+            otpRepository.delete(otp);
             return 1;
-        } else if (otp1.getOtp().equals(otp) &&
-                Duration.between(otp1.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() > (2 * 60)) {
-            return 2;
         }
+
+        if (otp.getOtp().equals(otpString) && Duration.between(otp.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() > (2 * 60))
+            return 2;
 
         return 0;
     }

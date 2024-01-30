@@ -129,9 +129,11 @@ public class LoginController {
         otpService.sendOtp(registerDTO.getEmail());
         redirectAttributes.addFlashAttribute("otpDto", otpService.getOtpDto(registerDTO.getEmail()));
         redirectAttributes.addFlashAttribute("user", userService.findUserByEmail(registerDTO.getEmail()));
+
         UUID token = generateToken();
         session.setAttribute("token", token);
         redirectAttributes.addFlashAttribute("token", token);
+
         return "redirect:/register/verify";
     }
 
@@ -145,23 +147,25 @@ public class LoginController {
     }
 
     @PostMapping("/verify-account")
-    public String postOtp(@ModelAttribute OtpDto otpDto, Model model) {
+    public String postOtp(@ModelAttribute OtpDto otpDto, RedirectAttributes redirectAttributes, HttpSession session) {
 
-        int flag = userService.verifyAccount(otpDto.getEmail(), otpDto.getOtp());
+        int flag = userService.verifyAccount(otpDto);
         if (flag==1)
             return "user-verified";
 
-        if (flag==2) {
-            model.addAttribute("again", "Time's up. Resend OTP");
-            User user = userService.findUserByEmail(otpDto.getEmail());
-            model.addAttribute("user", user);
-            return "registration-confirmation";
-        }
+        redirectAttributes.addFlashAttribute("user", userService.findUserByEmail(otpDto.getEmail()));
+        redirectAttributes.addFlashAttribute("otpDto", otpDto);
 
-        model.addAttribute("again", "Wrong OTP. Please try again.");
-        User user = userService.findUserByEmail(otpDto.getEmail());
-        model.addAttribute("user", user);
-        return "registration-confirmation";
+        if (flag==2)
+            redirectAttributes.addFlashAttribute("error", "Time's up. Resend OTP");
+        else
+            redirectAttributes.addFlashAttribute("error", "Wrong OTP. Please try again.");
+
+        UUID token = generateToken();
+        session.setAttribute("token", token);
+        redirectAttributes.addFlashAttribute("token", token);
+
+        return "redirect:/register/verify";
     }
 
     @PostMapping("/resend-otp")
@@ -177,7 +181,7 @@ public class LoginController {
             long timeLeft = (2 * 60) + 1 - Duration.between(otpToDelete.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds();
             long minutesLeft = timeLeft/60;
             long secondsLeft = timeLeft%60;
-            model.addAttribute("again", "Resend OTP in " + minutesLeft + " minutes " + secondsLeft + " seconds");
+            model.addAttribute("error", "Resend OTP in " + minutesLeft + " minutes " + secondsLeft + " seconds");
             model.addAttribute("user", user);
             return "registration-confirmation";
         }
@@ -188,7 +192,7 @@ public class LoginController {
         //Send the new otp and save the new otp to database
         otpService.sendOtp(user.getEmail());
 
-        model.addAttribute("again", "New OTP has been sent");
+        model.addAttribute("error", "New OTP has been sent");
         model.addAttribute("user", user);
         return "registration-confirmation";
     }
