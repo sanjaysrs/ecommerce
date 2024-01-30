@@ -1,5 +1,6 @@
 package com.ecommerce.project.controller;
 
+import com.ecommerce.project.dto.WalletDTO;
 import com.ecommerce.project.entity.TransactionDetails;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.entity.Wallet;
@@ -7,15 +8,18 @@ import com.ecommerce.project.service.*;
 import com.razorpay.Payment;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
+import jakarta.validation.Valid;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -47,22 +51,37 @@ public class WalletController {
 
         model.addAttribute("wallet", getCurrentUser().getWallet());
         model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
+        if (!model.containsAttribute("amount"))
+            model.addAttribute("amount", new WalletDTO());
+        if (!model.containsAttribute("display"))
+            model.addAttribute("display", "none");
         return "wallet";
     }
 
     @PostMapping("/addAmountToWallet")
-    public String addAmountToWallet(@ModelAttribute("amount") double amount, Model model) {
+    public String addAmountToWallet(@ModelAttribute("amount") @Valid WalletDTO walletDTO,
+                                    BindingResult bindingResult,
+                                    RedirectAttributes redirectAttributes) {
 
-        //Already logged-in user block
-        if (!userService.findUserByEmail(SecurityContextHolder.getContext().getAuthentication().getName()).isEnabled()) {
-            return "redirect:/logout";
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("display", "block");
+            redirectAttributes.addFlashAttribute("amount", walletDTO);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.amount", bindingResult);
+            return "redirect:/wallet";
         }
 
-        TransactionDetails transactionDetails = razorpayService.createTransaction(amount);
-        model.addAttribute("amount", amount*100);
-        model.addAttribute("orderId", transactionDetails.getOrderId());
+        TransactionDetails transactionDetails = razorpayService.createTransaction(walletDTO.getAmount());
+        redirectAttributes.addFlashAttribute("amount", walletDTO.getAmount()*100);
+        redirectAttributes.addFlashAttribute("orderId", transactionDetails.getOrderId());
 
-        return "xxx2";
+        return "redirect:/addAmountToWallet";
+    }
+
+    @GetMapping("/addAmountToWallet")
+    public String renderRazorpayWallet(Model model) {
+        if (!model.containsAttribute("amount") || !model.containsAttribute("orderId"))
+            return "redirect:/wallet";
+        return "razorpayWallet";
     }
 
     @PostMapping("/addedToWallet")

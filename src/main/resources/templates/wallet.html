@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wallet</title>
-    <!-- Link to Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Additional custom styles can be added here */
         .wallet-container {
             max-width: 400px;
             margin: 0 auto;
@@ -16,8 +14,8 @@
             text-align: center;
         }
         .wallet-amount {
-            font-size: 2rem; /* Larger font size for amount */
-            font-weight: bold; /* Bold text for emphasis */
+            font-size: 2rem;
+            font-weight: bold;
         }
         .buntan {background-color:rgb(135, 16, 216); color:white;}
     </style>
@@ -72,9 +70,10 @@
             <div class="wallet-button-container">
                 <button class="btn buntan" id="toggleButton">Add Amount to Wallet</button>
                 <br><br>
-                <form id="hideThis" th:action="@{/addAmountToWallet}" method="post" style="display: none;">
+                <form id="hideThis" th:action="@{/addAmountToWallet}" method="post" th:object="${amount}" th:style="'display: ' + ${display}">
                     <div class="form-group">
-                        <input type="number" class="form-control" name="amount" min="1" placeholder="Enter amount">
+                        <input type="number" class="form-control" th:field="*{amount}" placeholder="Enter amount" required>
+                        <div th:if="${#fields.hasErrors('amount')}" class="text-danger" th:errors="*{amount}"></div>
                     </div>
                     <button type="submit" class="btn btn-success">Add Amount</button>
                 </form>
