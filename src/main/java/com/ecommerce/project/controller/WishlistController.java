@@ -8,6 +8,7 @@ import com.ecommerce.project.service.CartService;
 import com.ecommerce.project.service.ProductService;
 import com.ecommerce.project.service.UserService;
 import com.ecommerce.project.service.WishlistService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -73,30 +74,15 @@ public class WishlistController {
     }
 
     @GetMapping("/removeFromWishlist/{id}")
-    public String removeFromWishlist(@PathVariable long productId, RedirectAttributes redirectAttributes) {
+    public String removeFromWishlist(@PathVariable long productId, RedirectAttributes redirectAttributes, HttpServletRequest request) {
 
         boolean removedFromWishlist = wishlistService.removeProductFromWishlist(getCurrentUser(), productId);
 
         if (removedFromWishlist)
             redirectAttributes.addFlashAttribute("deletedFromWishlist", "Product was deleted from wishlist");
 
-        return "redirect:/shop/viewproduct/" + productId;
-    }
-
-    @GetMapping("/removeFromWishlistAtWishlist/{id}")
-    public String removeFromWishlistAtWishlist(@PathVariable long id) {
-
-        User user = getCurrentUser();
-        Product product = productService.getProductById(id).orElse(null);
-
-        Optional<WishlistItem> wishlistItemOptional = wishlistItemRepository.findByProductAndWishlist(product, user.getWishlist());
-
-        if (wishlistItemOptional.isPresent()) {
-            WishlistItem wishlistItem = wishlistItemOptional.get();
-            wishlistItemRepository.delete(wishlistItem);
-        }
-
-        return "redirect:/wishlist";
+        String referer = request.getHeader("Referer");
+        return "redirect:" + (referer != null ? referer : "/wishlist");
     }
 
 }

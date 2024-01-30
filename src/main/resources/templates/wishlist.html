@@ -92,7 +92,7 @@
                                         </div>
                                         <div class="mt-5 d-flex justify-content-between align-items-center">
                                             <div>
-                                                <a href="#!" th:href="@{/removeFromWishlistAtWishlist/{id}(id=${item.product.id})}"  type="button" class="card-link-secondary small text-uppercase mr-3"><i
+                                                <a th:href="@{/removeFromWishlist/{id}(id=${item.product.id})}"  type="button" class="card-link-secondary small text-uppercase mr-3"><i
                                                         class="fas fa-trash-alt mr-1"></i> Remove product from wishlist </a>
                                             </div>
                                             <p class="mb-0"><strong>₹<span th:text="${item.product.price}"></span></strong></p>
