@@ -40,26 +40,19 @@ import java.util.UUID;
 public class LoginController {
 
     @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
-    private OtpRepository otpRepository;
 
     @Autowired
     private OtpService otpService;
 
-    private boolean isAnonymous() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (authentication==null || authentication instanceof AnonymousAuthenticationToken);
+    @GetMapping("/login")
+    public String login() {
+
+        if(isAnonymous())
+            return "login";
+
+        return "redirect:/";
+
     }
 
     @GetMapping("/login/failure")
@@ -72,21 +65,6 @@ public class LoginController {
         String error = exception instanceof BadCredentialsException ? "Invalid password" : exception.getMessage();
         redirectAttributes.addFlashAttribute("error", error);
         return "redirect:/login";
-
-    }
-
-    @GetMapping("/access-denied")
-    public String access() {
-        return "access-denied";
-    }
-
-    @GetMapping("/login")
-    public String login() {
-
-        if(isAnonymous())
-            return "login";
-
-        return "redirect:/";
 
     }
 
@@ -149,17 +127,40 @@ public class LoginController {
     @PostMapping("/verify-account")
     public String postOtp(@ModelAttribute OtpDto otpDto, RedirectAttributes redirectAttributes, HttpSession session) {
 
+        UUID token = generateToken();
+        session.setAttribute("token", token);
+        redirectAttributes.addFlashAttribute("token", token);
+
         int flag = userService.verifyAccount(otpDto);
         if (flag==1)
-            return "user-verified";
+            return "redirect:/userVerified";
 
         redirectAttributes.addFlashAttribute("user", userService.findUserByEmail(otpDto.getEmail()));
         redirectAttributes.addFlashAttribute("otpDto", otpDto);
 
         if (flag==2)
-            redirectAttributes.addFlashAttribute("error", "Time's up. Resend OTP");
+            redirectAttributes.addFlashAttribute("message", "Time's up. Resend OTP");
         else
-            redirectAttributes.addFlashAttribute("error", "Wrong OTP. Please try again.");
+            redirectAttributes.addFlashAttribute("message", "Wrong OTP. Please try again.");
+
+        return "redirect:/register/verify";
+    }
+
+    @GetMapping("/userVerified")
+    public String userVerified(HttpSession session, Model model) {
+        if (isValidToken(session.getAttribute("token"), model.getAttribute("token"))) {
+            session.removeAttribute("token");
+            return "user-verified";
+        }
+        return "redirect:/";
+    }
+
+    @PostMapping("/resend-otp")
+    public String resendOtp(@ModelAttribute OtpDto otpDto, RedirectAttributes redirectAttributes, HttpSession session) {
+
+        redirectAttributes.addFlashAttribute("message", otpService.resendOtp(otpDto.getEmail()));
+        redirectAttributes.addFlashAttribute("user", userService.findUserByEmail(otpDto.getEmail()));
+        redirectAttributes.addFlashAttribute("otpDto", otpService.getOtpDto(otpDto.getEmail()));
 
         UUID token = generateToken();
         session.setAttribute("token", token);
@@ -168,33 +169,9 @@ public class LoginController {
         return "redirect:/register/verify";
     }
 
-    @PostMapping("/resend-otp")
-    public String resendOtp(@ModelAttribute OtpDto otpDto, Model model) {
-
-        User user = userService.findUserByEmail(otpDto.getEmail());
-
-        //Get the user's existing OTP
-        Otp otpToDelete = otpRepository.findByUser_Id(user.getId()).get();
-
-        //Check if the OTP's time has not expired
-        if (Duration.between(otpToDelete.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds() <= (2 * 60) ) {
-            long timeLeft = (2 * 60) + 1 - Duration.between(otpToDelete.getOtpGeneratedTime(), LocalDateTime.now()).getSeconds();
-            long minutesLeft = timeLeft/60;
-            long secondsLeft = timeLeft%60;
-            model.addAttribute("error", "Resend OTP in " + minutesLeft + " minutes " + secondsLeft + " seconds");
-            model.addAttribute("user", user);
-            return "registration-confirmation";
-        }
-
-        //Delete the already existing otp entry
-        otpRepository.delete(otpToDelete);
-
-        //Send the new otp and save the new otp to database
-        otpService.sendOtp(user.getEmail());
-
-        model.addAttribute("error", "New OTP has been sent");
-        model.addAttribute("user", user);
-        return "registration-confirmation";
+    @GetMapping("/access-denied")
+    public String access() {
+        return "access-denied";
     }
 
     @InitBinder
@@ -203,6 +180,11 @@ public class LoginController {
         StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
 
         dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
+    }
+
+    private boolean isAnonymous() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (authentication==null || authentication instanceof AnonymousAuthenticationToken);
     }
 
     private UUID generateToken() {
