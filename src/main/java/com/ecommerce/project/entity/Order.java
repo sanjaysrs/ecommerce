@@ -3,6 +3,7 @@ package com.ecommerce.project.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +27,8 @@ public class Order implements Comparable<Order>{
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date orderDate;
+
+    private LocalDateTime date;
 
     private double totalPrice;
 
