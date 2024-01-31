@@ -581,24 +581,23 @@ public class AdminController {
 
         List<Order> userOrders = adminDashboardService.getAllOrdersToDashboard();
         List<Order> filteredUserOrders = adminDashboardService.getAllNonCancelledOrdersInReverseOrderToDashboard();
-        List<LocalDate> localDateList = adminDashboardService.getLocalDateList();
 
-        //Daily orders
+        //Orders today
         List<Order> dailyOrders = adminDashboardService.getDailyOrders();
         model.addAttribute("dailyOrders", dailyOrders.size());
         model.addAttribute("dailySales", Math.round(dailyOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum) * 100.0)/100.0);
 
-        //Weekly Orders
+        //Orders this week
         List<Order> weeklyOrders = adminDashboardService.getWeeklyOrders();
         model.addAttribute("weeklyOrders", weeklyOrders.size());
         model.addAttribute("weeklySales", Math.round(weeklyOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum) * 100.0)/100.0);
 
-        //Monthly orders
+        //Orders this month
         List<Order> monthlyOrders = adminDashboardService.getMonthlyOrders();
         model.addAttribute("monthlyOrders", monthlyOrders.size());
         model.addAttribute("monthlySales", Math.round(monthlyOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum) * 100.0)/100.0);
 
-        //Yearly Orders
+        //Orders this year
         List<Order> yearlyOrders = adminDashboardService.getYearlyOrders();
         model.addAttribute("yearlyOrders", yearlyOrders.size());
         model.addAttribute("yearlySales", Math.round(yearlyOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum) * 100.0)/100.0);
@@ -624,13 +623,9 @@ public class AdminController {
         model.addAttribute("chartDataWeeklyRevenue", chartService.getChartDataWeeklyRevenue());
 
         //Chart Monthly
-        List<String> barColors = Arrays.asList("black","maroon","red","purple","fuchsia","green","lime","olive","yellow","navy","blue","teal","aqua",
-                "blueviolet","brown","burlywood","cadetblue","chartreuse","chocolate","cornflowerblue","crimson","cyan","darkblue","darkcyan",
-                "darkgoldenrod","darkgreen","darkmagenta","darkorange","darkslategrey","firebrick");
-
         model.addAttribute("chartData", chartService.getChartDataMonthlyOrders().get(0));
         model.addAttribute("chartData2", chartService.getChartDataMonthlyOrders().get(1));
-        model.addAttribute("barColors", barColors);
+        model.addAttribute("barColors", chartService.getBarColors());
         model.addAttribute("chartData3", chartService.getChartDataMonthlyRevenue().get(0));
         model.addAttribute("chartData4", chartService.getChartDataMonthlyRevenue().get(1));
 

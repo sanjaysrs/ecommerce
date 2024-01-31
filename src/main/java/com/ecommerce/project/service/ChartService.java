@@ -745,4 +745,9 @@ public class ChartService {
         return rowsInGraph;
     }
 
+    public List<String> getBarColors() {
+        return Arrays.asList("black","maroon","red","purple","fuchsia","green","lime","olive","yellow","navy","blue","teal","aqua",
+                "blueviolet","brown","burlywood","cadetblue","chartreuse","chocolate","cornflowerblue","crimson","cyan","darkblue","darkcyan",
+                "darkgoldenrod","darkgreen","darkmagenta","darkorange","darkslategrey","firebrick");
+    }
 }
