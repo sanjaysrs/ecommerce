@@ -17,7 +17,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     int countByOrderStatusIdNot(int id);
 
-    @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.orderStatus.id != :orderStatusId")
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE o.orderStatus.id != :orderStatusId")
     double sumTotalPriceByOrderStatusIdNot(@Param("orderStatusId") int orderStatusId);
 
     int countByOrderStatusId(int id);
@@ -26,4 +26,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COUNT(o) FROM Order o WHERE DATE(o.date) = :date")
     int countByDate(@Param("date") LocalDate date);
+
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE DATE(o.date) = :date")
+    double sumTotalPriceByDate(@Param("date") LocalDate date);
 }

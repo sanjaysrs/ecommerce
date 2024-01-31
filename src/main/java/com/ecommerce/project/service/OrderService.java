@@ -74,6 +74,11 @@ public class OrderService {
         return orderRepository.countByDate(LocalDate.now());
     }
 
+    public double getSalesMadeToday() {
+        double sales = orderRepository.sumTotalPriceByDate(LocalDate.now());
+        return Math.round(sales * 100)/100.0;
+    }
+
     public void saveOrder(Order order) {
         orderRepository.save(order);
     }
