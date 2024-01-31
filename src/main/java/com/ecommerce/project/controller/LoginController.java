@@ -58,11 +58,13 @@ public class LoginController {
     @GetMapping("/login/failure")
     public String loginFailure(RedirectAttributes redirectAttributes, HttpSession session) {
 
-        if (!isAnonymous())
+        Exception exception = (Exception) session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
+
+        if (!isAnonymous() || exception == null)
             return "redirect:/";
 
-        Exception exception = (Exception) session.getAttribute("SPRING_SECURITY_LAST_EXCEPTION");
         String error = exception instanceof BadCredentialsException ? "Invalid password" : exception.getMessage();
+        session.removeAttribute("SPRING_SECURITY_LAST_EXCEPTION");
         redirectAttributes.addFlashAttribute("error", error);
         return "redirect:/login";
 
