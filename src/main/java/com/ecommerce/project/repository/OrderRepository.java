@@ -24,9 +24,16 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     long count();
 
-    @Query("SELECT COUNT(o) FROM Order o WHERE DATE(o.date) = :date")
+    @Query("SELECT COUNT(o) FROM Order o WHERE DATE(o.date) = :date AND o.orderStatus.id <> 6")
     int countByDate(@Param("date") LocalDate date);
 
-    @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE DATE(o.date) = :date")
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE DATE(o.date) = :date AND o.orderStatus.id <> 6")
     double sumTotalPriceByDate(@Param("date") LocalDate date);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE YEARWEEK(o.date) = YEARWEEK(CURDATE()) AND o.orderStatus.id <> 6")
+    long countOrdersForThisWeek();
+
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE YEARWEEK(o.date) = YEARWEEK(CURRENT_DATE) AND o.orderStatus.id <> 6")
+    double sumTotalPriceForThisWeek();
+
 }

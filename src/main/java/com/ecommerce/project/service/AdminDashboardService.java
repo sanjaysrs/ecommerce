@@ -38,23 +38,6 @@ public class AdminDashboardService {
 
     }
 
-    public List<Order> getDailyOrders() {
-        LocalDate today = LocalDate.now();
-        List<Order> filteredUserOrders = getAllNonCancelledOrdersInReverseOrderToDashboard();
-        List<LocalDate> localDateList = getLocalDateList();
-
-        List<Order> dailyOrders = new ArrayList<>();
-
-        for (int i=0; i<localDateList.size(); i++) {
-            LocalDate localDate = localDateList.get(i);
-            if (localDate.isEqual(today)) {
-                dailyOrders.add(filteredUserOrders.get(i));
-            }
-        }
-
-        return dailyOrders;
-    }
-
     public List<Order> getWeeklyOrders() {
         LocalDate today = LocalDate.now();
         List<Order> filteredUserOrders = getAllNonCancelledOrdersInReverseOrderToDashboard();

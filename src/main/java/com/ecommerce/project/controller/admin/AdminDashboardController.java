@@ -41,14 +41,12 @@ public class AdminDashboardController {
         model.addAttribute("ordersCancelled", orderService.getCountOfAllCancelledOrders());
 
         //Orders today
-        List<Order> dailyOrders = adminDashboardService.getDailyOrders();
         model.addAttribute("dailyOrders", orderService.getCountOfOrdersMadeToday());
         model.addAttribute("dailySales", orderService.getSalesMadeToday());
 
         //Orders this week
-        List<Order> weeklyOrders = adminDashboardService.getWeeklyOrders();
-        model.addAttribute("weeklyOrders", weeklyOrders.size());
-        model.addAttribute("weeklySales", Math.round(weeklyOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum) * 100.0)/100.0);
+        model.addAttribute("weeklyOrders", orderService.getCountOfOrdersMadeThisWeek());
+        model.addAttribute("weeklySales", orderService.getSalesMadeThisWeek());
 
         //Orders this month
         List<Order> monthlyOrders = adminDashboardService.getMonthlyOrders();

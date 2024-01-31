@@ -79,6 +79,15 @@ public class OrderService {
         return Math.round(sales * 100)/100.0;
     }
 
+    public long getCountOfOrdersMadeThisWeek() {
+        return orderRepository.countOrdersForThisWeek();
+    }
+
+    public double getSalesMadeThisWeek() {
+        double sales = orderRepository.sumTotalPriceForThisWeek();
+        return Math.round(sales * 100)/100.0;
+    }
+
     public void saveOrder(Order order) {
         orderRepository.save(order);
     }
