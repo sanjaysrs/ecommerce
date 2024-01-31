@@ -23,8 +23,7 @@ public class AdminDashboardService {
     }
 
     public List<Order> getAllNonCancelledOrdersInReverseOrderToDashboard() {
-        List<Order> userOrders = getAllOrdersToDashboard();
-        List<Order> filteredUserOrders = new ArrayList<>(userOrders.stream().filter(order -> order.getOrderStatus().getId() != 6).toList());
+        List<Order> filteredUserOrders = orderService.getAllNonCancelledOrders();
         Collections.reverse(filteredUserOrders);
         return filteredUserOrders;
     }

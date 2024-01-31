@@ -31,6 +31,10 @@ public class OrderService {
     @Autowired
     WalletService walletService;
 
+    public List<Order> getAllNonCancelledOrders() {
+        return orderRepository.findByOrderStatusIdNot(6);
+    }
+
     public void saveOrder(Order order) {
         orderRepository.save(order);
     }
