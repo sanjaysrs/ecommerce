@@ -85,8 +85,7 @@ public class LoginController {
     public String registerPost(
             @Valid @ModelAttribute("user") RegisterDTO registerDTO,
             BindingResult bindingResult,
-            RedirectAttributes redirectAttributes,
-            HttpSession session) {
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()){
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.user", bindingResult);
@@ -108,32 +107,25 @@ public class LoginController {
         redirectAttributes.addFlashAttribute("otpDto", otpService.getOtpDto(registerDTO.getEmail()));
         redirectAttributes.addFlashAttribute("user", userService.findUserByEmail(registerDTO.getEmail()));
 
-        UUID token = generateToken();
-        session.setAttribute("token", token);
-        redirectAttributes.addFlashAttribute("token", token);
-
         return "redirect:/register/verify";
     }
 
     @GetMapping("/register/verify")
-    public String renderRegistrationConfirmation(HttpSession session, Model model) {
-        if (isValidToken(session.getAttribute("token"), model.getAttribute("token"))) {
-            session.removeAttribute("token");
+    public String renderRegistrationConfirmation(Model model) {
+        if (model.containsAttribute("otpDto")) {
             return "registration-confirmation";
         }
         return "redirect:/register";
     }
 
     @PostMapping("/verify-account")
-    public String postOtp(@ModelAttribute OtpDto otpDto, RedirectAttributes redirectAttributes, HttpSession session) {
-
-        UUID token = generateToken();
-        session.setAttribute("token", token);
-        redirectAttributes.addFlashAttribute("token", token);
+    public String postOtp(@ModelAttribute OtpDto otpDto, RedirectAttributes redirectAttributes) {
 
         int flag = userService.verifyAccount(otpDto);
-        if (flag==1)
+        if (flag==1) {
+            redirectAttributes.addFlashAttribute("redirect", true);
             return "redirect:/userVerified";
+        }
 
         redirectAttributes.addFlashAttribute("user", userService.findUserByEmail(otpDto.getEmail()));
         redirectAttributes.addFlashAttribute("otpDto", otpDto);
@@ -147,25 +139,19 @@ public class LoginController {
     }
 
     @GetMapping("/userVerified")
-    public String userVerified(HttpSession session, Model model) {
-        if (isValidToken(session.getAttribute("token"), model.getAttribute("token"))) {
-            session.removeAttribute("token");
+    public String userVerified(Model model) {
+        if (model.containsAttribute("redirect")) {
             return "user-verified";
         }
         return "redirect:/";
     }
 
     @PostMapping("/resend-otp")
-    public String resendOtp(@ModelAttribute OtpDto otpDto, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String resendOtp(@ModelAttribute OtpDto otpDto, RedirectAttributes redirectAttributes) {
 
         redirectAttributes.addFlashAttribute("message", otpService.resendOtp(otpDto.getEmail()));
         redirectAttributes.addFlashAttribute("user", userService.findUserByEmail(otpDto.getEmail()));
         redirectAttributes.addFlashAttribute("otpDto", otpService.getOtpDto(otpDto.getEmail()));
-
-        UUID token = generateToken();
-        session.setAttribute("token", token);
-        redirectAttributes.addFlashAttribute("token", token);
-
         return "redirect:/register/verify";
     }
 
@@ -185,14 +171,6 @@ public class LoginController {
     private boolean isAnonymous() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return (authentication==null || authentication instanceof AnonymousAuthenticationToken);
-    }
-
-    private UUID generateToken() {
-        return UUID.randomUUID();
-    }
-
-    private boolean isValidToken(Object sessionToken, Object modelToken) {
-        return  (sessionToken != null && sessionToken.equals(modelToken));
     }
 
 }
