@@ -1,7 +1,5 @@
 package com.ecommerce.project.controller.admin;
 
-import com.ecommerce.project.entity.Order;
-import com.ecommerce.project.service.AdminDashboardService;
 import com.ecommerce.project.service.ChartService;
 import com.ecommerce.project.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,13 +7,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
-
 @Controller
 public class AdminDashboardController {
-
-    @Autowired
-    AdminDashboardService adminDashboardService;
 
     @Autowired
     ChartService chartService;
@@ -49,14 +42,12 @@ public class AdminDashboardController {
         model.addAttribute("weeklySales", orderService.getSalesMadeThisWeek());
 
         //Orders this month
-        List<Order> monthlyOrders = adminDashboardService.getMonthlyOrders();
-        model.addAttribute("monthlyOrders", monthlyOrders.size());
-        model.addAttribute("monthlySales", Math.round(monthlyOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum) * 100.0)/100.0);
+        model.addAttribute("monthlyOrders", orderService.getCountOfOrdersMadeThisMonth());
+        model.addAttribute("monthlySales", orderService.getSalesMadeThisMonth());
 
         //Orders this year
-        List<Order> yearlyOrders = adminDashboardService.getYearlyOrders();
-        model.addAttribute("yearlyOrders", yearlyOrders.size());
-        model.addAttribute("yearlySales", Math.round(yearlyOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum) * 100.0)/100.0);
+        model.addAttribute("yearlyOrders", orderService.getCountOfOrdersMadeThisYear());
+        model.addAttribute("yearlySales", orderService.getSalesMadeThisYear());
 
         //Chart Weekly (Last 7 days)
         model.addAttribute("subtitleWeeklyOrders", "Orders weekly (last 7 days)");

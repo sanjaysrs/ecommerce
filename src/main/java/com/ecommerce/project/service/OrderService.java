@@ -33,7 +33,7 @@ public class OrderService {
         return orderRepository.findByOrderStatusIdNot(6);
     }
 
-    public int getCountOfAllNonCancelledOrders() {
+    public long getCountOfAllNonCancelledOrders() {
         return orderRepository.countByOrderStatusIdNot(6);
     }
 
@@ -46,31 +46,31 @@ public class OrderService {
         return orderRepository.count();
     }
 
-    public int getCountOfAllPlacedOrders() {
+    public long getCountOfAllPlacedOrders() {
         return orderRepository.countByOrderStatusId(1);
     }
 
-    public int getCountOfAllPackedOrders() {
+    public long getCountOfAllPackedOrders() {
         return orderRepository.countByOrderStatusId(2);
     }
 
-    public int getCountOfAllShippedOrders() {
+    public long getCountOfAllShippedOrders() {
         return orderRepository.countByOrderStatusId(3);
     }
 
-    public int getCountOfAllInTransitOrders() {
+    public long getCountOfAllInTransitOrders() {
         return orderRepository.countByOrderStatusId(4);
     }
 
-    public int getCountOfAllDeliveredOrders() {
+    public long getCountOfAllDeliveredOrders() {
         return orderRepository.countByOrderStatusId(5);
     }
 
-    public int getCountOfAllCancelledOrders() {
+    public long getCountOfAllCancelledOrders() {
         return orderRepository.countByOrderStatusId(6);
     }
 
-    public int getCountOfOrdersMadeToday() {
+    public long getCountOfOrdersMadeToday() {
         return orderRepository.countByDate(LocalDate.now());
     }
 
@@ -85,6 +85,24 @@ public class OrderService {
 
     public double getSalesMadeThisWeek() {
         double sales = orderRepository.sumTotalPriceForThisWeek();
+        return Math.round(sales * 100)/100.0;
+    }
+
+    public long getCountOfOrdersMadeThisMonth() {
+        return orderRepository.countOrdersForThisMonth();
+    }
+
+    public double getSalesMadeThisMonth() {
+        double sales = orderRepository.sumTotalPriceForThisMonth();
+        return Math.round(sales * 100)/100.0;
+    }
+
+    public long getCountOfOrdersMadeThisYear() {
+        return orderRepository.countOrdersForThisYear();
+    }
+
+    public double getSalesMadeThisYear() {
+        double sales = orderRepository.sumTotalPriceForThisYear();
         return Math.round(sales * 100)/100.0;
     }
 
