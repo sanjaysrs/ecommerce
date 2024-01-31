@@ -3,6 +3,7 @@ package com.ecommerce.project.controller.admin;
 import com.ecommerce.project.entity.Order;
 import com.ecommerce.project.service.AdminDashboardService;
 import com.ecommerce.project.service.ChartService;
+import com.ecommerce.project.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +20,9 @@ public class AdminDashboardController {
     @Autowired
     ChartService chartService;
 
+    @Autowired
+    OrderService orderService;
+
     @GetMapping("/admin")
     public String adminHome(Model model) {
 
@@ -26,8 +30,8 @@ public class AdminDashboardController {
         List<Order> filteredUserOrders = adminDashboardService.getAllNonCancelledOrdersInReverseOrderToDashboard();
 
         //All Time Orders
-        model.addAttribute("allTimeOrders", filteredUserOrders.size());
-        model.addAttribute("allTimeSales", Math.round(filteredUserOrders.stream().map(Order::getTotalPrice).reduce(0.0,Double::sum) * 100.0)/100.0);
+        model.addAttribute("allTimeOrders", orderService.getCountOfAllNonCancelledOrders());
+        model.addAttribute("allTimeSales", orderService.getSalesOfAllNonCancelledOrders());
 
         //Stat Update
         model.addAttribute("totalOrdersIncl", userOrders.size());

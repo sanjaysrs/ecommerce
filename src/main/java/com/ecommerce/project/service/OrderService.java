@@ -3,9 +3,6 @@ package com.ecommerce.project.service;
 import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.OrderRepository;
 import com.ecommerce.project.repository.OrderStatusRepository;
-import com.razorpay.RazorpayClient;
-import com.razorpay.RazorpayException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +30,15 @@ public class OrderService {
 
     public List<Order> getAllNonCancelledOrders() {
         return orderRepository.findByOrderStatusIdNot(6);
+    }
+
+    public int getCountOfAllNonCancelledOrders() {
+        return orderRepository.countByOrderStatusIdNot(6);
+    }
+
+    public double getSalesOfAllNonCancelledOrders() {
+        double sales = orderRepository.sumTotalPriceByOrderStatusIdNot(6);
+        return Math.round(sales*100)/100.0;
     }
 
     public void saveOrder(Order order) {
