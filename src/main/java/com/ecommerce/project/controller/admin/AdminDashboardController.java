@@ -42,7 +42,7 @@ public class AdminDashboardController {
 
         //Orders today
         List<Order> dailyOrders = adminDashboardService.getDailyOrders();
-        model.addAttribute("dailyOrders", dailyOrders.size());
+        model.addAttribute("dailyOrders", orderService.getCountOfOrdersMadeToday());
         model.addAttribute("dailySales", Math.round(dailyOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum) * 100.0)/100.0);
 
         //Orders this week
