@@ -18,4 +18,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT SUM(o.totalPrice) FROM Order o WHERE o.orderStatus.id != :orderStatusId")
     double sumTotalPriceByOrderStatusIdNot(@Param("orderStatusId") int orderStatusId);
+
+    int countByOrderStatusId(int id);
+
+    long count();
 }

@@ -18,10 +18,6 @@ public class AdminDashboardService {
     @Autowired
     OrderService orderService;
 
-    public List<Order> getAllOrdersToDashboard() {
-        return orderService.getAllOrders();
-    }
-
     public List<Order> getAllNonCancelledOrdersInReverseOrderToDashboard() {
         List<Order> filteredUserOrders = orderService.getAllNonCancelledOrders();
         Collections.reverse(filteredUserOrders);

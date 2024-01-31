@@ -41,6 +41,34 @@ public class OrderService {
         return Math.round(sales*100)/100.0;
     }
 
+    public long getCountOfAllOrdersIncludingCancelled() {
+        return orderRepository.count();
+    }
+
+    public int getCountOfAllPlacedOrders() {
+        return orderRepository.countByOrderStatusId(1);
+    }
+
+    public int getCountOfAllPackedOrders() {
+        return orderRepository.countByOrderStatusId(2);
+    }
+
+    public int getCountOfAllShippedOrders() {
+        return orderRepository.countByOrderStatusId(3);
+    }
+
+    public int getCountOfAllInTransitOrders() {
+        return orderRepository.countByOrderStatusId(4);
+    }
+
+    public int getCountOfAllDeliveredOrders() {
+        return orderRepository.countByOrderStatusId(5);
+    }
+
+    public int getCountOfAllCancelledOrders() {
+        return orderRepository.countByOrderStatusId(6);
+    }
+
     public void saveOrder(Order order) {
         orderRepository.save(order);
     }

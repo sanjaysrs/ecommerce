@@ -26,22 +26,19 @@ public class AdminDashboardController {
     @GetMapping("/admin")
     public String adminHome(Model model) {
 
-        List<Order> userOrders = adminDashboardService.getAllOrdersToDashboard();
-        List<Order> filteredUserOrders = adminDashboardService.getAllNonCancelledOrdersInReverseOrderToDashboard();
-
         //All Time Orders
         model.addAttribute("allTimeOrders", orderService.getCountOfAllNonCancelledOrders());
         model.addAttribute("allTimeSales", orderService.getSalesOfAllNonCancelledOrders());
 
         //Stat Update
-        model.addAttribute("totalOrdersIncl", userOrders.size());
-        model.addAttribute("totalOrders", filteredUserOrders.size());
-        model.addAttribute("ordersPlaced", filteredUserOrders.stream().filter(x->x.getOrderStatus().getId()==1).toList().size());
-        model.addAttribute("ordersPacked", filteredUserOrders.stream().filter(x->x.getOrderStatus().getId()==2).toList().size());
-        model.addAttribute("ordersShipped", filteredUserOrders.stream().filter(x->x.getOrderStatus().getId()==3).toList().size());
-        model.addAttribute("ordersInTransit", filteredUserOrders.stream().filter(x->x.getOrderStatus().getId()==4).toList().size());
-        model.addAttribute("ordersDelivered", filteredUserOrders.stream().filter(x->x.getOrderStatus().getId()==5).toList().size());
-        model.addAttribute("ordersCancelled", userOrders.stream().filter(x->x.getOrderStatus().getId()==6).toList().size());
+        model.addAttribute("totalOrdersIncl", orderService.getCountOfAllOrdersIncludingCancelled());
+        model.addAttribute("totalOrders", orderService.getCountOfAllNonCancelledOrders());
+        model.addAttribute("ordersPlaced", orderService.getCountOfAllPlacedOrders());
+        model.addAttribute("ordersPacked", orderService.getCountOfAllPackedOrders());
+        model.addAttribute("ordersShipped", orderService.getCountOfAllShippedOrders());
+        model.addAttribute("ordersInTransit", orderService.getCountOfAllInTransitOrders());
+        model.addAttribute("ordersDelivered", orderService.getCountOfAllDeliveredOrders());
+        model.addAttribute("ordersCancelled", orderService.getCountOfAllCancelledOrders());
 
         //Orders today
         List<Order> dailyOrders = adminDashboardService.getDailyOrders();
