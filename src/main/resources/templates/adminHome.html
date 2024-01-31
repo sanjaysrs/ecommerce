@@ -57,8 +57,8 @@
             <div class="card" style="background-color:rgb(86, 36, 208); color:white;">
                 <div class="card-body text-center">
                     <h2 class="card-title">TODAY</h2>
-                    <h4 class="card-text">ORDER COUNT : <span th:text="${dailyOrders}" style="font-weight:900; font-size:50px;"></span></h4>
-                    <h4 class="card-text">REVENUE : ₹ <span th:text="${dailySales}" style="font-size:35px;"></span></h4>
+                    <h4 class="card-text">ORDER COUNT : <span th:text="${ordersToday}" style="font-weight:900; font-size:50px;"></span></h4>
+                    <h4 class="card-text">REVENUE : ₹ <span th:text="${salesToday}" style="font-size:35px;"></span></h4>
                 </div>
             </div>
         </div>
@@ -67,8 +67,8 @@
             <div class="card" style="background-color:rgb(86, 36, 208); color:white;">
                 <div class="card-body text-center">
                     <h2 class="card-title">THIS WEEK</h2>
-                    <h4 class="card-text">ORDER COUNT : <span th:text="${weeklyOrders}" style="font-weight:900; font-size:50px;"></span></h4>
-                    <h4 class="card-text">REVENUE : ₹ <span th:text="${weeklySales}" style="font-size:35px;"></span></h4>
+                    <h4 class="card-text">ORDER COUNT : <span th:text="${ordersThisWeek}" style="font-weight:900; font-size:50px;"></span></h4>
+                    <h4 class="card-text">REVENUE : ₹ <span th:text="${salesThisWeek}" style="font-size:35px;"></span></h4>
                 </div>
             </div>
         </div>
@@ -77,8 +77,8 @@
             <div class="card" style="background-color:rgb(86, 36, 208); color:white;">
                 <div class="card-body text-center">
                     <h2 class="card-title">THIS MONTH</h2>
-                    <h4 class="card-text">ORDER COUNT : <span th:text="${monthlyOrders}" style="font-weight:900; font-size:50px;"></span></h4>
-                    <h4 class="card-text">REVENUE : ₹ <span th:text="${monthlySales}" style="font-size:35px;"></span></h4>
+                    <h4 class="card-text">ORDER COUNT : <span th:text="${ordersThisMonth}" style="font-weight:900; font-size:50px;"></span></h4>
+                    <h4 class="card-text">REVENUE : ₹ <span th:text="${salesThisMonth}" style="font-size:35px;"></span></h4>
                 </div>
             </div>
         </div>
@@ -87,8 +87,8 @@
             <div class="card" style="background-color:rgb(86, 36, 208); color:white;">
                 <div class="card-body text-center">
                     <h2 class="card-title">THIS YEAR</h2>
-                    <h4 class="card-text">ORDER COUNT : <span th:text="${yearlyOrders}" style="font-weight:900; font-size:50px;"></span></h4>
-                    <h4 class="card-text">REVENUE : ₹ <span th:text="${yearlySales}" style="font-size:35px;"></span></h4>
+                    <h4 class="card-text">ORDER COUNT : <span th:text="${ordersThisYear}" style="font-weight:900; font-size:50px;"></span></h4>
+                    <h4 class="card-text">REVENUE : ₹ <span th:text="${salesThisYear}" style="font-size:35px;"></span></h4>
                 </div>
             </div>
         </div>
@@ -309,8 +309,8 @@
             <div class="card" style="background-color:rgb(86, 36, 208); color:white;">
                 <div class="card-body text-center">
                     <h2 class="card-title">ALL TIME</h2>
-                    <h4 class="card-text">ORDER COUNT : <span th:text="${allTimeOrders}" style="font-weight:900; font-size:50px;"></span></h4>
-                    <h4 class="card-text">REVENUE : ₹ <span th:text="${allTimeSales}" style="font-size:35px;"></span></h4>
+                    <h4 class="card-text">ORDER COUNT : <span th:text="${totalOrdersExcludingCancelled}" style="font-weight:900; font-size:50px;"></span></h4>
+                    <h4 class="card-text">REVENUE : ₹ <span th:text="${totalSales}" style="font-size:35px;"></span></h4>
                 </div>
             </div>
         </div>
@@ -321,14 +321,14 @@
             <div class="card text-center" style="background-color:rgb(86, 36, 208); color:white;">
                 <div class="card-body">
                     <!--                    <h2 class="card-title">ALL TIME</h2>-->
-                    <h4 class="card-text">TOTAL ORDERS : <span th:text="${totalOrders}" style="font-size:40px;"></span></h4>
+                    <h4 class="card-text">TOTAL ORDERS : <span th:text="${totalOrdersExcludingCancelled}" style="font-size:40px;"></span></h4>
                     <h4 class="card-text">ORDERS PLACED : <span th:text="${ordersPlaced}" style="font-size:40px;"></span></h4>
                     <h4 class="card-text">ORDERS PACKED : <span th:text="${ordersPacked}" style="font-size:40px;"></span></h4>
                     <h4 class="card-text">ORDERS SHIPPED : <span th:text="${ordersShipped}" style="font-size:40px;"></span></h4>
                     <h4 class="card-text">ORDERS IN TRANSIT : <span th:text="${ordersInTransit}" style="font-size:40px;"></span></h4>
                     <h4 class="card-text">ORDERS DELIVERED : <span th:text="${ordersDelivered}" style="font-size:40px;"></span></h4>
                     <h4 class="card-text">ORDERS CANCELLED : <span th:text="${ordersCancelled}"></span></h4>
-                    <h4 class="card-text">Total Orders (incl. cancelled) : <span th:text="${totalOrdersIncl}"></span></h4>
+                    <h4 class="card-text">Total Orders (incl. cancelled) : <span th:text="${totalOrdersIncludingCancelled}"></span></h4>
                 </div>
             </div>
         </div>
@@ -337,21 +337,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <script th:inline="javascript">
-    var xValues = [
-            /*[# th:each="row : ${chartData}"]*/
-            [[${row}]],
-            /*[/]*/
-    ];
-    var yValues = [
-    /*[# th:each="row : ${chartData2}"]*/
-            [[${row}]],
-            /*[/]*/
-    ];
-    var barColors = [
-    /*[# th:each="row : ${barColors}"]*/
-            [[${row}]],
-            /*[/]*/
-    ];
+    var xValues = /*[[${chartData}]]*/ [];
+    var yValues = /*[[${chartData2}]]*/ [];
+    var barColors = /*[[${barColors}]]*/ [];
 
     new Chart("myChart", {
       type: "bar",
@@ -373,121 +361,95 @@
     });
 </script>
 <script th:inline="javascript">
-    var xValues2 = [
-            /*[# th:each="row : ${chartData3}"]*/
-            [[${row}]],
-            /*[/]*/
-    ];
-    var yValues2 = [
-    /*[# th:each="row : ${chartData4}"]*/
-            [[${row}]],
-            /*[/]*/
-    ];
-    var barColors2 = [
-    /*[# th:each="row : ${barColors}"]*/
-            [[${row}]],
-            /*[/]*/
-    ];
+    var xValues2 = /*[[${chartData3}]]*/ [];
+    var yValues2 = /*[[${chartData4}]]*/ [];
+    var barColors2 = /*[[${barColors}]]*/ [];
 
     new Chart("myChart2", {
-      type: "bar",
-      data: {
-        labels: xValues2,
-        datasets: [{
-            label: 'Revenue (₹)',
-            type : 'bar',
-          backgroundColor: barColors2,
-          data: yValues2
-        }]
-      },
-      options: {
-        legend: {display: false},
-        title: {
-          display: true,
-          text: "Revenue Monthly (Last 30 days)"
+        type: "bar",
+        data: {
+            labels: xValues2,
+            datasets: [{
+                label: 'Revenue (₹)',
+                type: 'bar',
+                backgroundColor: barColors2,
+                data: yValues2
+            }]
+        },
+        options: {
+            legend: {display: false},
+            title: {
+                display: true,
+                text: "Revenue Monthly (Last 30 days)"
+            }
         }
-      }
     });
 </script>
 <!--Monthly chart ends here-->
 <!--Yearly (last 12 months) chart starts here-->
 <script th:inline="javascript">
+    var graphData1 = /*[[${graphData1}]]*/ [];
+    var graphData2 = /*[[${graphData2}]]*/ [];
+    var colors = ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e8c3b9","#c45850"];
+
     new Chart(document.getElementById("graph1"), {
-     type: 'horizontalBar',
-     data: {
-       labels: [
-       /*[# th:each="row : ${graphData1}"]*/
-            [[${row}]],
-            /*[/]*/
-       ],
-       datasets: [
-         {
-           label: "Orders",
-           backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e8c3b9","#c45850"],
-           data: [
-           /*[# th:each="row : ${graphData2}"]*/
-            [[${row}]],
-            /*[/]*/
-           ]
-         }
-       ]
-     },
-     options: {
-       legend: { display: false },
-       title: {
-         display: true,
-         text: 'Orders (last 12 months)'
-       }
-     }
- });
+        type: 'horizontalBar',
+        data: {
+            labels: graphData1,
+            datasets: [{
+                label: "Orders",
+                backgroundColor: colors,
+                data: graphData2
+            }]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Orders (last 12 months)'
+            }
+        }
+    });
 </script>
 <script th:inline="javascript">
+    var graphData3 = /*[[${graphData3}]]*/ [];
+    var graphData4 = /*[[${graphData4}]]*/ [];
+    var colors2 = ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e8c3b9","#c45850"];
+
     new Chart(document.getElementById("graph2"), {
-     type: 'horizontalBar',
-     data: {
-       labels: [
-       /*[# th:each="row : ${graphData3}"]*/
-            [[${row}]],
-            /*[/]*/
-       ],
-       datasets: [
-         {
-           label: "Revenue (₹)",
-           backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e8c3b9","#c45850"],
-           data: [
-           /*[# th:each="row : ${graphData4}"]*/
-            [[${row}]],
-            /*[/]*/
-           ]
-         }
-       ]
-     },
-     options: {
-       legend: { display: false },
-       title: {
-         display: true,
-         text: 'Revenue in ₹ (last 12 months)'
-       }
-     }
- });
+        type: 'horizontalBar',
+        data: {
+            labels: graphData3,
+            datasets: [{
+                label: "Revenue (₹)",
+                backgroundColor: colors2,
+                data: graphData4
+            }]
+        },
+        options: {
+            legend: { display: false },
+            title: {
+                display: true,
+                text: 'Revenue in ₹ (last 12 months)'
+            }
+        }
+    });
 </script>
 <!--Yearly (last 12 months) chart ends here-->
 <!--Other chart 1 starts here-->
 <script th:inline="javascript">
-    const ctx = document.getElementById('graph3');
+    var dailyList = /*[[${dailyList}]]*/ [];
+    var dailyTimeLabels = ["12 am", "1 am", "2 am","3 am","4 am","5 am","6 am","7 am","8 am","9 am","10 am","11 am","12 pm","1 pm","2 pm","3 pm","4 pm","5 pm","6 pm","7 pm","8 pm","9 pm","10 pm","11 pm"];
 
+    const ctx = document.getElementById('graph3');
     new Chart(ctx, {
       type: 'bar',
       data: {
-        labels: ["12 am", "1 am", "2 am","3 am","4 am","5 am","6 am","7 am","8 am","9 am","10 am","11 am","12 pm","1 pm","2 pm","3 pm","4 pm","5 pm","6 pm","7 pm","8 pm","9 pm","10 pm","11 pm"],
+        labels: dailyTimeLabels,
         datasets: [{
           label: 'Orders today',
           backgroundColor: "navy",
-          data: [
-          /*[# th:each="row : ${dailyList}"]*/
-            [[${row}]],
-            /*[/]*/
-          ],
+          data: dailyList,
           borderWidth: 1
         }]
       },
@@ -501,20 +463,19 @@
     });
 </script>
 <script th:inline="javascript">
+    var dailyList2 = /*[[${dailyList2}]]*/ [];
+    var dailyTimeLabels2 = ["12 am", "1 am", "2 am","3 am","4 am","5 am","6 am","7 am","8 am","9 am","10 am","11 am","12 pm","1 pm","2 pm","3 pm","4 pm","5 pm","6 pm","7 pm","8 pm","9 pm","10 pm","11 pm"];
+
     const ctxx = document.getElementById('graph4');
 
     new Chart(ctxx, {
       type: 'bar',
       data: {
-        labels: ["12 am", "1 am", "2 am","3 am","4 am","5 am","6 am","7 am","8 am","9 am","10 am","11 am","12 pm","1 pm","2 pm","3 pm","4 pm","5 pm","6 pm","7 pm","8 pm","9 pm","10 pm","11 pm"],
+        labels: dailyTimeLabels2,
         datasets: [{
           label: 'Revenue (₹) today',
           backgroundColor: "turquoise",
-          data: [
-          /*[# th:each="row : ${dailyList2}"]*/
-            [[${row}]],
-            /*[/]*/
-          ],
+          data: dailyList2,
           borderWidth: 1
         }]
       },
@@ -529,23 +490,19 @@
 </script>
 <!--Other chart 2 ends here-->
 <script th:inline="javascript">
+    var labelFive = /*[[${labelFive}]]*/ [];
+    var dataFive = /*[[${dataFive}]]*/ [];
+    var tomatoColors = ["tomato", "DodgerBlue","MediumSeaGreen","Violet","#c45850"];
+
     new Chart(document.getElementById("graph5"), {
      type: 'horizontalBar',
      data: {
-       labels: [
-       /*[# th:each="row : ${labelFive}"]*/
-            [[${row}]],
-            /*[/]*/
-       ],
+       labels: labelFive,
        datasets: [
          {
            label: "Orders",
-           backgroundColor: ["tomato", "DodgerBlue","MediumSeaGreen","Violet","#c45850"],
-           data: [
-           /*[# th:each="row : ${dataFive}"]*/
-            [[${row}]],
-            /*[/]*/
-           ]
+           backgroundColor: tomatoColors,
+           data: dataFive
          }
        ]
      },
@@ -559,23 +516,19 @@
  });
 </script>
 <script th:inline="javascript">
+    var labelFive2 = /*[[${labelFive2}]]*/ [];
+    var dataFive2 = /*[[${dataFive2}]]*/ [];
+    var tomatoColors2 = ["tomato", "DodgerBlue","MediumSeaGreen","Violet","#c45850"];
+
     new Chart(document.getElementById("graph6"), {
      type: 'horizontalBar',
      data: {
-       labels: [
-       /*[# th:each="row : ${labelFive2}"]*/
-            [[${row}]],
-            /*[/]*/
-       ],
+       labels: labelFive2,
        datasets: [
          {
            label: "Revenue(₹)",
-           backgroundColor: ["tomato", "DodgerBlue","MediumSeaGreen","Violet","#c45850"],
-           data: [
-           /*[# th:each="row : ${dataFive2}"]*/
-            [[${row}]],
-            /*[/]*/
-           ]
+           backgroundColor: tomatoColors2,
+           data: dataFive2
          }
        ]
      },
@@ -590,20 +543,15 @@
 </script>
 <!--Line starts here-->
 <script th:inline="javascript">
+    var lh1 = /*[[${lh1}]]*/ [];
+    var gh1 = /*[[${gh1}]]*/ [];
+
     new Chart(document.getElementById("line1"), {
       type: 'line',
       data: {
-        labels: [
-        /*[# th:each="row : ${lh1}"]*/
-            [[${row}]],
-            /*[/]*/
-        ],
+        labels: lh1,
         datasets: [{
-            data: [
-            /*[# th:each="row : ${gh1}"]*/
-            [[${row}]],
-            /*[/]*/
-            ],
+            data: gh1,
             label: "Orders",
             borderColor: "#3e95cd",
             fill: false
@@ -619,20 +567,15 @@
     });
 </script>
 <script th:inline="javascript">
+    var lh2 = /*[[${lh2}]]*/ [];
+    var gh2 = /*[[${gh2}]]*/ [];
+
     new Chart(document.getElementById("line2"), {
       type: 'line',
       data: {
-        labels: [
-        /*[# th:each="row : ${lh2}"]*/
-            [[${row}]],
-            /*[/]*/
-        ],
+        labels: lh2,
         datasets: [{
-            data: [
-            /*[# th:each="row : ${gh2}"]*/
-            [[${row}]],
-            /*[/]*/
-            ],
+            data: gh2,
             label: "Revenue(₹)",
             borderColor: "#3e95cd",
             fill: false
@@ -649,20 +592,15 @@
 </script>
 <!--Line 2 starts here-->
 <script th:inline="javascript">
+    var hal1 = /*[[${hal1}]]*/ [];
+    var hal2 = /*[[${hal2}]]*/ [];
+
     new Chart(document.getElementById("line3"), {
       type: 'line',
       data: {
-        labels: [
-        /*[# th:each="row : ${hal1}"]*/
-            [[${row}]],
-            /*[/]*/
-        ],
+        labels: hal1,
         datasets: [{
-            data: [
-            /*[# th:each="row : ${hal2}"]*/
-            [[${row}]],
-            /*[/]*/
-            ],
+            data: hal2,
             label: "Orders",
             borderColor: "#3e95cd",
             fill: false
@@ -678,20 +616,15 @@
     });
 </script>
 <script th:inline="javascript">
+    var gal1 = /*[[${gal1}]]*/ [];
+    var gal2 = /*[[${gal2}]]*/ [];
+
     new Chart(document.getElementById("line4"), {
       type: 'line',
       data: {
-        labels: [
-        /*[# th:each="row : ${gal1}"]*/
-            [[${row}]],
-            /*[/]*/
-        ],
+        labels: gal1,
         datasets: [{
-            data: [
-            /*[# th:each="row : ${gal2}"]*/
-            [[${row}]],
-            /*[/]*/
-            ],
+            data: gal2,
             label: "Revenue(₹)",
             borderColor: "#3e95cd",
             fill: false
@@ -840,7 +773,6 @@
              google.charts.setOnLoadCallback(drawChart2);
              google.charts.setOnLoadCallback(drawChartqq);
              google.charts.setOnLoadCallback(drawChartcc);
-
 
         });
     });

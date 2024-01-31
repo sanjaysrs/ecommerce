@@ -19,13 +19,10 @@ public class AdminDashboardController {
     @GetMapping("/admin")
     public String adminHome(Model model) {
 
-        //All Time Orders
-        model.addAttribute("allTimeOrders", orderService.getCountOfAllNonCancelledOrders());
-        model.addAttribute("allTimeSales", orderService.getSalesOfAllNonCancelledOrders());
-
         //Stat Update
-        model.addAttribute("totalOrdersIncl", orderService.getCountOfAllOrdersIncludingCancelled());
-        model.addAttribute("totalOrders", orderService.getCountOfAllNonCancelledOrders());
+        model.addAttribute("totalSales", orderService.getSalesOfAllNonCancelledOrders());
+        model.addAttribute("totalOrdersIncludingCancelled", orderService.getCountOfAllOrdersIncludingCancelled());
+        model.addAttribute("totalOrdersExcludingCancelled", orderService.getCountOfAllNonCancelledOrders());
         model.addAttribute("ordersPlaced", orderService.getCountOfAllPlacedOrders());
         model.addAttribute("ordersPacked", orderService.getCountOfAllPackedOrders());
         model.addAttribute("ordersShipped", orderService.getCountOfAllShippedOrders());
@@ -34,20 +31,20 @@ public class AdminDashboardController {
         model.addAttribute("ordersCancelled", orderService.getCountOfAllCancelledOrders());
 
         //Orders today
-        model.addAttribute("dailyOrders", orderService.getCountOfOrdersMadeToday());
-        model.addAttribute("dailySales", orderService.getSalesMadeToday());
+        model.addAttribute("ordersToday", orderService.getCountOfOrdersMadeToday());
+        model.addAttribute("salesToday", orderService.getSalesMadeToday());
 
         //Orders this week
-        model.addAttribute("weeklyOrders", orderService.getCountOfOrdersMadeThisWeek());
-        model.addAttribute("weeklySales", orderService.getSalesMadeThisWeek());
+        model.addAttribute("ordersThisWeek", orderService.getCountOfOrdersMadeThisWeek());
+        model.addAttribute("salesThisWeek", orderService.getSalesMadeThisWeek());
 
         //Orders this month
-        model.addAttribute("monthlyOrders", orderService.getCountOfOrdersMadeThisMonth());
-        model.addAttribute("monthlySales", orderService.getSalesMadeThisMonth());
+        model.addAttribute("ordersThisMonth", orderService.getCountOfOrdersMadeThisMonth());
+        model.addAttribute("salesThisMonth", orderService.getSalesMadeThisMonth());
 
         //Orders this year
-        model.addAttribute("yearlyOrders", orderService.getCountOfOrdersMadeThisYear());
-        model.addAttribute("yearlySales", orderService.getSalesMadeThisYear());
+        model.addAttribute("ordersThisYear", orderService.getCountOfOrdersMadeThisYear());
+        model.addAttribute("salesThisYear", orderService.getSalesMadeThisYear());
 
         //Chart Weekly (Last 7 days)
         model.addAttribute("subtitleWeeklyOrders", "Orders weekly (last 7 days)");
