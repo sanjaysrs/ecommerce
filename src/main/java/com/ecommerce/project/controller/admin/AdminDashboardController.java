@@ -1,5 +1,6 @@
 package com.ecommerce.project.controller.admin;
 
+import com.ecommerce.project.repository.OrderRepository;
 import com.ecommerce.project.service.ChartService;
 import com.ecommerce.project.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class AdminDashboardController {
 
     @Autowired
     OrderService orderService;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @GetMapping("/admin")
     public String adminHome(Model model) {
@@ -53,11 +57,11 @@ public class AdminDashboardController {
         model.addAttribute("chartDataWeeklyRevenue", chartService.getChartDataLastSevenDaysSales());
 
         //Chart Monthly
-        model.addAttribute("chartData", chartService.getChartDataMonthlyOrders().get(0));
-        model.addAttribute("chartData2", chartService.getChartDataMonthlyOrders().get(1));
+        model.addAttribute("chartData", chartService.getChartDataLastThirtyDaysOrders().get(0));
+        model.addAttribute("chartData2", chartService.getChartDataLastThirtyDaysOrders().get(1));
         model.addAttribute("barColors", chartService.getBarColors());
-        model.addAttribute("chartData3", chartService.getChartDataMonthlyRevenue().get(0));
-        model.addAttribute("chartData4", chartService.getChartDataMonthlyRevenue().get(1));
+        model.addAttribute("chartData3", chartService.getChartDataLastThirtyDaysSales().get(0));
+        model.addAttribute("chartData4", chartService.getChartDataLastThirtyDaysSales().get(1));
 
         //Chart yearly
         model.addAttribute("graphData1", chartService.getChartDataYearlyOrders().get(0));

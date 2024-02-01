@@ -74,6 +74,41 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "ORDER BY CASE WHEN order_num > DAYOFWEEK(CURDATE()) THEN 1 ELSE 2 END", nativeQuery = true)
     List<List<Object>> sumTotalPriceLastSevenDays();
 
+
+//    @Query(value = "SELECT DATE_FORMAT(o.date, '%b %D') AS day, COALESCE(COUNT(o.id), 0) " +
+//            "FROM customer_order o " +
+//            "WHERE o.date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+//            "GROUP BY day " +
+//            "ORDER BY day ASC", nativeQuery = true)
+//    List<List<Object>> countOrdersLastThirtyDays();
+
+    @Query(value = "SELECT all_days.day, COUNT(o.id) " +
+            "FROM (SELECT DATE_ADD(CURDATE(), INTERVAL -(29 - day) DAY) AS day " +
+            "FROM (SELECT 0 AS day UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
+            "UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 " +
+            "UNION SELECT 10 UNION SELECT 11 UNION SELECT 12 UNION SELECT 13 UNION SELECT 14 " +
+            "UNION SELECT 15 UNION SELECT 16 UNION SELECT 17 UNION SELECT 18 UNION SELECT 19 " +
+            "UNION SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23 UNION SELECT 24 " +
+            "UNION SELECT 25 UNION SELECT 26 UNION SELECT 27 UNION SELECT 28 UNION SELECT 29) days) all_days " +
+            "LEFT JOIN customer_order o ON DATE_FORMAT(o.date, '%Y-%m-%d') = all_days.day " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+            "GROUP BY all_days.day " +
+            "ORDER BY all_days.day ASC", nativeQuery = true)
+    List<List<Object>> countOrdersLastThirtyDays();
+
+    @Query(value = "SELECT all_days.day, COALESCE(SUM(o.total_price), 0) " +
+            "FROM (SELECT DATE_ADD(CURDATE(), INTERVAL -(29 - day) DAY) AS day " +
+            "FROM (SELECT 0 AS day UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
+            "UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 " +
+            "UNION SELECT 10 UNION SELECT 11 UNION SELECT 12 UNION SELECT 13 UNION SELECT 14 " +
+            "UNION SELECT 15 UNION SELECT 16 UNION SELECT 17 UNION SELECT 18 UNION SELECT 19 " +
+            "UNION SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23 UNION SELECT 24 " +
+            "UNION SELECT 25 UNION SELECT 26 UNION SELECT 27 UNION SELECT 28 UNION SELECT 29) days) all_days " +
+            "LEFT JOIN customer_order o ON DATE_FORMAT(o.date, '%Y-%m-%d') = all_days.day " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+            "GROUP BY all_days.day " +
+            "ORDER BY all_days.day ASC", nativeQuery = true)
+    List<List<Object>> sumTotalPriceLastThirtyDays();
 }
 
 

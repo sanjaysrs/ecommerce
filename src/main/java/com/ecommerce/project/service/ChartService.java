@@ -7,6 +7,7 @@ import com.ecommerce.project.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.time.*;
 import java.util.*;
 
@@ -30,106 +31,35 @@ public class ChartService {
         return orderRepository.sumTotalPriceLastSevenDays();
     }
 
-    public List<List<Object>> getChartDataMonthlyOrders() {
-        List<Order> allOrders = orderService.getAllOrders();
-        List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());
-        Collections.reverse(validOrders);
-
-        List<LocalDate> localDateList2 = new ArrayList<>();
-        List<Order> modelOrders = new ArrayList<>();
-
-        for (Order order : validOrders) {
-            LocalDate localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            localDateList2.add(localDate);
-        }
-
-        LocalDate today = LocalDate.now();
-        LocalDate monthAgo = today.minusDays(29);
-
-        for (int i=0; i<localDateList2.size(); i++) {
-            LocalDate localDate = localDateList2.get(i);
-            if (!localDate.isBefore(monthAgo)) {
-                modelOrders.add(validOrders.get(i));
-            }
-        }
-
-        int dayToday = today.getDayOfMonth();
-        Month monthToday = today.getMonth();
-        String label = dayToday + " " + monthToday.name().substring(0,3);
-
-        List<Object> rowsInGraph = new ArrayList<>();
-        List<Object> rowsInGraph2 = new ArrayList<>();
-
-
-        Map<String, Integer> mapOrdersMonthly = new HashMap<>();
-
-        for (int i=0;i<30;i++) {
-            mapOrdersMonthly.put(today.minusDays(i).getDayOfMonth() + " " + today.minusDays(i).getMonth().name().substring(0, 3), 0);
-        }
-
-        for (Order order : modelOrders) {
-            LocalDate localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            mapOrdersMonthly.put(localDate.getDayOfMonth() + " " + localDate.getMonth().name().substring(0, 3), mapOrdersMonthly.get(localDate.getDayOfMonth() + " " + localDate.getMonth().name().substring(0, 3)) + 1);
-        }
-
-        for (int i=29;i>=0;i--) {
-            rowsInGraph.add(today.minusDays(i).getDayOfMonth() + " " + today.minusDays(i).getMonth().name().substring(0, 3));
-            rowsInGraph2.add(mapOrdersMonthly.get(today.minusDays(i).getDayOfMonth() + " " + today.minusDays(i).getMonth().name().substring(0, 3)));
-        }
-
-        List<List<Object>> returnList = Arrays.asList(rowsInGraph, rowsInGraph2);
-        return returnList;
+    public List<List<Object>> getChartDataLastThirtyDaysOrders() {
+        List<List<Object>> lists = orderRepository.countOrdersLastThirtyDays();
+        modifyMonthLabels(lists);
+        return modifyLists(lists);
     }
 
-    public List<List<Object>> getChartDataMonthlyRevenue() {
-        List<Order> allOrders = orderService.getAllOrders();
-        List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());
-        Collections.reverse(validOrders);
+    public List<List<Object>> getChartDataLastThirtyDaysSales() {
+        List<List<Object>> lists = orderRepository.sumTotalPriceLastThirtyDays();
+        modifyMonthLabels(lists);
+        return modifyLists(lists);
+    }
 
-        List<LocalDate> localDateList2 = new ArrayList<>();
-        List<Order> modelOrders = new ArrayList<>();
-
-        for (Order order : validOrders) {
-            LocalDate localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            localDateList2.add(localDate);
+    private void modifyMonthLabels(List<List<Object>> lists) {
+        for (List<Object> list : lists) {
+            Date sqlDate = (Date) list.get(0);
+            LocalDate date = sqlDate.toLocalDate();
+            list.add(0, date.getDayOfMonth() + " " + date.getMonth().name().substring(0, 3));
+            list.remove(1);
         }
+    }
 
-        LocalDate today = LocalDate.now();
-        LocalDate monthAgo = today.minusDays(29);
-
-        for (int i=0; i<localDateList2.size(); i++) {
-            LocalDate localDate = localDateList2.get(i);
-            if (!localDate.isBefore(monthAgo)) {
-                modelOrders.add(validOrders.get(i));
-            }
+    private List<List<Object>> modifyLists(List<List<Object>> lists) {
+        List<Object> xData = new ArrayList<>();
+        List<Object> yData = new ArrayList<>();
+        for (List<Object> list : lists) {
+            xData.add(list.get(0));
+            yData.add(list.get(1));
         }
-
-        int dayToday = today.getDayOfMonth();
-        Month monthToday = today.getMonth();
-        String label = dayToday + " " + monthToday.name().substring(0,3);
-
-        List<Object> rowsInGraph = new ArrayList<>();
-        List<Object> rowsInGraph2 = new ArrayList<>();
-
-
-        Map<String, Double> mapOrdersMonthly = new HashMap<>();
-
-        for (int i=0;i<30;i++) {
-            mapOrdersMonthly.put(today.minusDays(i).getDayOfMonth() + " " + today.minusDays(i).getMonth().name().substring(0, 3), 0.0);
-        }
-
-        for (Order order : modelOrders) {
-            LocalDate localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            mapOrdersMonthly.put(localDate.getDayOfMonth() + " " + localDate.getMonth().name().substring(0, 3), mapOrdersMonthly.get(localDate.getDayOfMonth() + " " + localDate.getMonth().name().substring(0, 3)) + order.getTotalPrice());
-        }
-
-        for (int i=29;i>=0;i--) {
-            rowsInGraph.add(today.minusDays(i).getDayOfMonth() + " " + today.minusDays(i).getMonth().name().substring(0, 3));
-            rowsInGraph2.add(mapOrdersMonthly.get(today.minusDays(i).getDayOfMonth() + " " + today.minusDays(i).getMonth().name().substring(0, 3)));
-        }
-
-        List<List<Object>> returnList = Arrays.asList(rowsInGraph, rowsInGraph2);
-        return returnList;
+        return List.of(xData, yData);
     }
 
     public List<List<Object>> getChartDataYearlyOrders() {
