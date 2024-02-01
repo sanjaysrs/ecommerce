@@ -62,6 +62,33 @@ public class ChartService {
         return List.of(xData, yData);
     }
 
+    public List<List<Object>> getChartDataLastTwelveMonthsOrders() {
+        return getChartDataLastTwelveMonths(orderRepository.countOrdersLastTwelveMonths());
+    }
+
+    public List<List<Object>> getChartDataLastTwelveMonthsSales() {
+        return getChartDataLastTwelveMonths(orderRepository.sumTotalPriceLastTwelveMonths());
+    }
+
+    public List<List<Object>> getChartDataLastTwelveMonths(List<List<Object>> lists) {
+        List<List<Object>> modifiedList = modifyLists(lists);
+        Month monthToday = LocalDate.now().getMonth();
+        Map<Object, Object> map = new HashMap<>();
+        for (Month month : Month.values()) {
+            map.put(month.toString(), 0);
+        }
+        for (int i=0; i<modifiedList.get(0).size(); i++) {
+            map.put(modifiedList.get(0).get(i).toString().toUpperCase(), modifiedList.get(1).get(i));
+        }
+        List<Object> xData = new ArrayList<>();
+        List<Object> yData = new ArrayList<>();
+        for (int i=0 ; i<12; i++) {
+            xData.add(monthToday.minus(11-i).toString());
+            yData.add(map.get(monthToday.minus(11-i).toString()));
+        }
+        return List.of(xData, yData);
+    }
+
     public List<List<Object>> getChartDataYearlyOrders() {
         List<Order> allOrders = orderService.getAllOrders();
         List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());

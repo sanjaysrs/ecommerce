@@ -6,8 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
@@ -109,6 +111,43 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "GROUP BY all_days.day " +
             "ORDER BY all_days.day ASC", nativeQuery = true)
     List<List<Object>> sumTotalPriceLastThirtyDays();
+
+    @Query(value = "SELECT MONTHNAME(o.date) AS month, " +
+            "COUNT(o.id) " +
+            "FROM customer_order o " +
+            "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() " +
+            "AND o.order_status_id <> 6 " +
+            "GROUP BY MONTHNAME(O.date) ", nativeQuery = true)
+    List<List<Object>> countOrdersLastTwelveMonths();
+
+    @Query(value = "SELECT MONTHNAME(o.date) AS month, " +
+            "COALESCE(SUM(o.total_price), 0) " +
+            "FROM customer_order o " +
+            "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() " +
+            "AND o.order_status_id <> 6 " +
+            "GROUP BY MONTHNAME(O.date) ", nativeQuery = true)
+    List<List<Object>> sumTotalPriceLastTwelveMonths();
+
+//    @Query(value = "SELECT DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL -(11 - month(o.date)) MONTH), '%Y-%m') AS year_month, COALESCE(COUNT(o.id), 0) " +
+//            "FROM customer_order o " +
+//            "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() AND o.order_status_id <> 6 " +
+//            "GROUP BY year_month " +
+//            "ORDER BY year_month", nativeQuery = true)
+//    List<List<Object>> countOrdersLastTwelveMonths();
+
+//    @Query(value = "SELECT YEAR_MONTH, COALESCE(COUNT(o.id), 0) " +
+//            "FROM (SELECT DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL -(11 - MONTH(o.date)) MONTH), '%Y-%m') AS YEAR_MONTH " +
+//            "      FROM (SELECT 1 AS dummy UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 " +
+//            "            UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 " +
+//            "            UNION SELECT 11 UNION SELECT 12) months " +
+//            "      LEFT JOIN customer_order o ON MONTH(o.date) = months.dummy " +
+//            "          AND o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() AND o.order_status_id <> 6) AS result " +
+//            "GROUP BY YEAR_MONTH " +
+//            "ORDER BY YEAR_MONTH DESC", nativeQuery = true)
+//    List<List<Object>> countOrdersLastTwelveMonths();
+
+
+
 }
 
 
