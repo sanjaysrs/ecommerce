@@ -68,10 +68,6 @@ public class AdminDashboardController {
         model.addAttribute("graphData2", chartService.getChartDataLastTwelveMonthsOrders().get(1));
         model.addAttribute("graphData3", chartService.getChartDataLastTwelveMonthsSales().get(0));
         model.addAttribute("graphData4", chartService.getChartDataLastTwelveMonthsSales().get(1));
-//        model.addAttribute("graphData1", chartService.getChartDataYearlyOrders().get(0));
-//        model.addAttribute("graphData2", chartService.getChartDataYearlyOrders().get(1));
-//        model.addAttribute("graphData3", chartService.getChartDataYearlyRevenue().get(0));
-//        model.addAttribute("graphData4", chartService.getChartDataYearlyRevenue().get(1));
 
         //Chart last 24 hours
         model.addAttribute("dailyList", chartService.getChartDataDailyOrders());
