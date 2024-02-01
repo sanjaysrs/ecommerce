@@ -47,10 +47,10 @@ public class AdminDashboardController {
         model.addAttribute("salesThisYear", orderService.getSalesMadeThisYear());
 
         //Chart Weekly (Last 7 days)
-        model.addAttribute("subtitleWeeklyOrders", "Orders weekly (last 7 days)");
-        model.addAttribute("subtitleWeeklyRevenue", "Revenue weekly (last 7 days)");
-        model.addAttribute("chartDataWeeklyOrders", chartService.getChartDataWeeklyOrders());
-        model.addAttribute("chartDataWeeklyRevenue", chartService.getChartDataWeeklyRevenue());
+        model.addAttribute("subtitleWeeklyOrders", "Orders over the last 7 days");
+        model.addAttribute("subtitleWeeklyRevenue", "Revenue over the last 7 days");
+        model.addAttribute("chartDataWeeklyOrders", chartService.getChartDataLastSevenDaysOrders());
+        model.addAttribute("chartDataWeeklyRevenue", chartService.getChartDataLastSevenDaysSales());
 
         //Chart Monthly
         model.addAttribute("chartData", chartService.getChartDataMonthlyOrders().get(0));

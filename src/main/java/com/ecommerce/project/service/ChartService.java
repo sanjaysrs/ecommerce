@@ -3,6 +3,7 @@ package com.ecommerce.project.service;
 import com.ecommerce.project.entity.Category;
 import com.ecommerce.project.entity.Order;
 import com.ecommerce.project.entity.OrderItem;
+import com.ecommerce.project.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,94 +19,15 @@ public class ChartService {
     @Autowired
     CategoryService categoryService;
 
-    public List<List<Object>> getChartDataWeeklyOrders() {
-        List<Order> allOrders = orderService.getAllOrders();
-        List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());
-        Collections.reverse(validOrders);
+    @Autowired
+    OrderRepository orderRepository;
 
-        List<LocalDate> localDateList = new ArrayList<>();
-        List<Order> modelOrders = new ArrayList<>();
-
-        for (Order order : validOrders) {
-            LocalDate localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            localDateList.add(localDate);
-        }
-
-        LocalDate today = LocalDate.now();
-        LocalDate sixDaysAgo = today.minusDays(6);
-
-        for (int i=0; i<localDateList.size(); i++) {
-            LocalDate localDate = localDateList.get(i);
-            if (!localDate.isBefore(sixDaysAgo)) {
-                modelOrders.add(validOrders.get(i));
-            }
-        }
-
-        DayOfWeek dayToday = today.getDayOfWeek();
-
-        List<List<Object>> rowsInGraph = new ArrayList<>();
-
-        Map<DayOfWeek, Integer> mapOfDayOfWeekAndOrders = new HashMap<>();
-
-        for (int i=0;i<7;i++) {
-            mapOfDayOfWeekAndOrders.put(dayToday.minus(i), 0);
-        }
-
-        for (Order order : modelOrders) {
-            LocalDate localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            mapOfDayOfWeekAndOrders.put(localDate.getDayOfWeek(), mapOfDayOfWeekAndOrders.get(localDate.getDayOfWeek()) + 1);
-        }
-
-        for (int i=6;i>=0;i--) {
-            rowsInGraph.add(Arrays.asList(dayToday.minus(i).toString(),mapOfDayOfWeekAndOrders.get(dayToday.minus(i))));
-        }
-
-        return rowsInGraph;
+    public List<List<Object>> getChartDataLastSevenDaysOrders() {
+        return orderRepository.countOrdersLastSevenDays();
     }
 
-    public List<List<Object>> getChartDataWeeklyRevenue() {
-        List<Order> allOrders = orderService.getAllOrders();
-        List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());
-        Collections.reverse(validOrders);
-
-        List<LocalDate> localDateList = new ArrayList<>();
-        List<Order> modelOrders = new ArrayList<>();
-
-        for (Order order : validOrders) {
-            LocalDate localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            localDateList.add(localDate);
-        }
-
-        LocalDate today = LocalDate.now();
-        LocalDate sixDaysAgo = today.minusDays(6);
-
-        for (int i=0; i<localDateList.size(); i++) {
-            LocalDate localDate = localDateList.get(i);
-            if (!localDate.isBefore(sixDaysAgo)) {
-                modelOrders.add(validOrders.get(i));
-            }
-        }
-
-        DayOfWeek dayToday = today.getDayOfWeek();
-
-        List<List<Object>> rowsInGraph = new ArrayList<>();
-
-        Map<DayOfWeek, Double> mapOfDayOfWeekAndRevenue = new HashMap<>();
-
-        for (int i=0;i<7;i++) {
-            mapOfDayOfWeekAndRevenue.put(dayToday.minus(i), 0.0);
-        }
-
-        for (Order order : modelOrders) {
-            LocalDate localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            mapOfDayOfWeekAndRevenue.put(localDate.getDayOfWeek(), mapOfDayOfWeekAndRevenue.get(localDate.getDayOfWeek()) + order.getTotalPrice());
-        }
-
-        for (int i=6;i>=0;i--) {
-            rowsInGraph.add(Arrays.asList(dayToday.minus(i).toString(),mapOfDayOfWeekAndRevenue.get(dayToday.minus(i))));
-        }
-
-        return rowsInGraph;
+    public List<List<Object>> getChartDataLastSevenDaysSales() {
+        return orderRepository.sumTotalPriceLastSevenDays();
     }
 
     public List<List<Object>> getChartDataMonthlyOrders() {

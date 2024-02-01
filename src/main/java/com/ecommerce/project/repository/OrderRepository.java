@@ -47,6 +47,33 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE YEAR(o.date) = YEAR(CURDATE()) AND o.orderStatus.id <> 6")
     double sumTotalPriceForThisYear();
+
+//    @Query(value = "SELECT DAYNAME(o.date), COUNT(*) " +
+//            "FROM customer_order o " +
+//            "WHERE o.date BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+//            "GROUP BY DAYNAME(o.date)", nativeQuery = true)
+//    List<List<Object>> countOrdersLastSevenDays();
+
+    @Query(value = "SELECT all_days.name, COUNT(o.id) " +
+            "FROM (SELECT 'Sunday' AS name, 1 AS order_num UNION SELECT 'Monday', 2 UNION SELECT 'Tuesday', 3 " +
+            "UNION SELECT 'Wednesday', 4 UNION SELECT 'Thursday', 5 UNION SELECT 'Friday', 6 " +
+            "UNION SELECT 'Saturday', 7) all_days " +
+            "LEFT JOIN customer_order o ON DAYOFWEEK(o.date) = order_num " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+            "GROUP BY all_days.name, order_num " +
+            "ORDER BY CASE WHEN order_num > DAYOFWEEK(CURDATE()) THEN 1 ELSE 2 END", nativeQuery = true)
+    List<List<Object>> countOrdersLastSevenDays();
+
+    @Query(value = "SELECT all_days.name, COALESCE(SUM(o.total_price), 0) " +
+            "FROM (SELECT 'Sunday' AS name, 1 AS order_num UNION SELECT 'Monday', 2 UNION SELECT 'Tuesday', 3 " +
+            "UNION SELECT 'Wednesday', 4 UNION SELECT 'Thursday', 5 UNION SELECT 'Friday', 6 " +
+            "UNION SELECT 'Saturday', 7) all_days " +
+            "LEFT JOIN customer_order o ON DAYOFWEEK(o.date) = order_num " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+            "GROUP BY all_days.name, order_num " +
+            "ORDER BY CASE WHEN order_num > DAYOFWEEK(CURDATE()) THEN 1 ELSE 2 END", nativeQuery = true)
+    List<List<Object>> sumTotalPriceLastSevenDays();
+
 }
 
 
