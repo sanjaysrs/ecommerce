@@ -50,28 +50,30 @@ public class AdminDashboardController {
         model.addAttribute("ordersThisYear", orderService.getCountOfOrdersMadeThisYear());
         model.addAttribute("salesThisYear", orderService.getSalesMadeThisYear());
 
-        //Chart Weekly (Last 7 days)
+        //Chart last 7 days
         model.addAttribute("subtitleWeeklyOrders", "Orders over the last 7 days");
         model.addAttribute("subtitleWeeklyRevenue", "Revenue over the last 7 days");
         model.addAttribute("chartDataWeeklyOrders", chartService.getChartDataLastSevenDaysOrders());
         model.addAttribute("chartDataWeeklyRevenue", chartService.getChartDataLastSevenDaysSales());
 
-        //Chart Monthly
+        //Chart last 30 days
         model.addAttribute("chartData", chartService.getChartDataLastThirtyDaysOrders().get(0));
         model.addAttribute("chartData2", chartService.getChartDataLastThirtyDaysOrders().get(1));
         model.addAttribute("barColors", chartService.getBarColors());
         model.addAttribute("chartData3", chartService.getChartDataLastThirtyDaysSales().get(0));
         model.addAttribute("chartData4", chartService.getChartDataLastThirtyDaysSales().get(1));
 
-        //Chart yearly
+        //Chart last twelve months
         model.addAttribute("graphData1", chartService.getChartDataLastTwelveMonthsOrders().get(0));
         model.addAttribute("graphData2", chartService.getChartDataLastTwelveMonthsOrders().get(1));
         model.addAttribute("graphData3", chartService.getChartDataLastTwelveMonthsSales().get(0));
         model.addAttribute("graphData4", chartService.getChartDataLastTwelveMonthsSales().get(1));
 
         //Chart last 24 hours
-        model.addAttribute("dailyList", chartService.getChartDataDailyOrders());
-        model.addAttribute("dailyList2", chartService.getChartDataDailyRevenue());
+        model.addAttribute("dailyTimeLabels", chartService.getChartDataTodayByHourOrders().get(0));
+        model.addAttribute("dailyList", chartService.getChartDataTodayByHourOrders().get(1));
+        model.addAttribute("dailyTimeLabels2", chartService.getChartDataTodayByHourSales().get(0));
+        model.addAttribute("dailyList2", chartService.getChartDataTodayByHourSales().get(1));
 
         //Chart last 5 years
         model.addAttribute("labelFive", chartService.getLastFiveYears().get(0));

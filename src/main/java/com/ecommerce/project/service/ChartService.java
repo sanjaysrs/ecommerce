@@ -89,90 +89,12 @@ public class ChartService {
         return List.of(xData, yData);
     }
 
-    public List<Object> getChartDataDailyOrders() {
-        List<Order> allOrders = orderService.getAllOrders();
-        List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());
-        Collections.reverse(validOrders);
-
-        List<LocalDateTime> localDateList2 = new ArrayList<>();
-        List<Order> modelOrders = new ArrayList<>();
-
-        for (Order order : validOrders) {
-            LocalDateTime localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            localDateList2.add(localDate);
-        }
-
-        LocalDate today = LocalDate.now();
-        LocalDateTime todayTime = LocalDateTime.now();
-
-        for (int i=0; i<localDateList2.size(); i++) {
-            LocalDate localDate = localDateList2.get(i).toLocalDate();
-            if (localDate.isEqual(today)) {
-                modelOrders.add(validOrders.get(i));
-            }
-        }
-
-        List<Object> rowsInGraph = new ArrayList<>();
-
-        Map<Integer, Integer> mapOrdersDaily = new HashMap<>();
-
-        for (int i=0;i<24;i++) {
-            mapOrdersDaily.put(i, 0);
-        }
-
-        for (Order order : modelOrders) {
-            LocalDateTime localDateTime = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            mapOrdersDaily.put(localDateTime.getHour(), mapOrdersDaily.get(localDateTime.getHour()) + 1);
-        }
-
-        for (int i=0;i<24;i++) {
-            rowsInGraph.add(mapOrdersDaily.get(i));
-        }
-
-        return rowsInGraph;
+    public List<List<Object>> getChartDataTodayByHourOrders() {
+        return modifyLists(orderRepository.countOrdersTodayByHour());
     }
 
-    public List<Object> getChartDataDailyRevenue() {
-        List<Order> allOrders = orderService.getAllOrders();
-        List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());
-        Collections.reverse(validOrders);
-
-        List<LocalDateTime> localDateList2 = new ArrayList<>();
-        List<Order> modelOrders = new ArrayList<>();
-
-        for (Order order : validOrders) {
-            LocalDateTime localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            localDateList2.add(localDate);
-        }
-
-        LocalDate today = LocalDate.now();
-        LocalDateTime todayTime = LocalDateTime.now();
-
-        for (int i=0; i<localDateList2.size(); i++) {
-            LocalDate localDate = localDateList2.get(i).toLocalDate();
-            if (localDate.isEqual(today)) {
-                modelOrders.add(validOrders.get(i));
-            }
-        }
-
-        List<Object> rowsInGraph = new ArrayList<>();
-
-        Map<Integer, Double> mapOrdersDaily = new HashMap<>();
-
-        for (int i=0;i<24;i++) {
-            mapOrdersDaily.put(i, 0.0);
-        }
-
-        for (Order order : modelOrders) {
-            LocalDateTime localDateTime = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            mapOrdersDaily.put(localDateTime.getHour(), mapOrdersDaily.get(localDateTime.getHour()) + order.getTotalPrice());
-        }
-
-        for (int i=0;i<24;i++) {
-            rowsInGraph.add(mapOrdersDaily.get(i));
-        }
-
-        return rowsInGraph;
+    public List<List<Object>> getChartDataTodayByHourSales() {
+        return modifyLists(orderRepository.sumTotalPriceTodayByHour());
     }
 
     public List<List<Object>> getLastFiveYears() {

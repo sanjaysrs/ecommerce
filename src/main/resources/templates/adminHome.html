@@ -437,7 +437,7 @@
 <!--Other chart 1 starts here-->
 <script th:inline="javascript">
     var dailyList = /*[[${dailyList}]]*/ [];
-    var dailyTimeLabels = ["12 am", "1 am", "2 am","3 am","4 am","5 am","6 am","7 am","8 am","9 am","10 am","11 am","12 pm","1 pm","2 pm","3 pm","4 pm","5 pm","6 pm","7 pm","8 pm","9 pm","10 pm","11 pm"];
+    var dailyTimeLabels = /*[[${dailyTimeLabels}]]*/ [];;
 
     const ctx = document.getElementById('graph3');
     new Chart(ctx, {
@@ -462,7 +462,7 @@
 </script>
 <script th:inline="javascript">
     var dailyList2 = /*[[${dailyList2}]]*/ [];
-    var dailyTimeLabels2 = ["12 am", "1 am", "2 am","3 am","4 am","5 am","6 am","7 am","8 am","9 am","10 am","11 am","12 pm","1 pm","2 pm","3 pm","4 pm","5 pm","6 pm","7 pm","8 pm","9 pm","10 pm","11 pm"];
+    var dailyTimeLabels2 = /*[[${dailyTimeLabels2}]]*/ [];
 
     const ctxx = document.getElementById('graph4');
 

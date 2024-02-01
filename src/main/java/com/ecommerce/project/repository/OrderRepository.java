@@ -50,12 +50,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE YEAR(o.date) = YEAR(CURDATE()) AND o.orderStatus.id <> 6")
     double sumTotalPriceForThisYear();
 
-//    @Query(value = "SELECT DAYNAME(o.date), COUNT(*) " +
-//            "FROM customer_order o " +
-//            "WHERE o.date BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE() AND o.order_status_id <> 6 " +
-//            "GROUP BY DAYNAME(o.date)", nativeQuery = true)
-//    List<List<Object>> countOrdersLastSevenDays();
-
     @Query(value = "SELECT all_days.name, COUNT(o.id) " +
             "FROM (SELECT 'Sunday' AS name, 1 AS order_num UNION SELECT 'Monday', 2 UNION SELECT 'Tuesday', 3 " +
             "UNION SELECT 'Wednesday', 4 UNION SELECT 'Thursday', 5 UNION SELECT 'Friday', 6 " +
@@ -75,14 +69,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "GROUP BY all_days.name, order_num " +
             "ORDER BY CASE WHEN order_num > DAYOFWEEK(CURDATE()) THEN 1 ELSE 2 END", nativeQuery = true)
     List<List<Object>> sumTotalPriceLastSevenDays();
-
-
-//    @Query(value = "SELECT DATE_FORMAT(o.date, '%b %D') AS day, COALESCE(COUNT(o.id), 0) " +
-//            "FROM customer_order o " +
-//            "WHERE o.date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() AND o.order_status_id <> 6 " +
-//            "GROUP BY day " +
-//            "ORDER BY day ASC", nativeQuery = true)
-//    List<List<Object>> countOrdersLastThirtyDays();
 
     @Query(value = "SELECT all_days.day, COUNT(o.id) " +
             "FROM (SELECT DATE_ADD(CURDATE(), INTERVAL -(29 - day) DAY) AS day " +
@@ -128,25 +114,37 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "GROUP BY MONTHNAME(O.date) ", nativeQuery = true)
     List<List<Object>> sumTotalPriceLastTwelveMonths();
 
-//    @Query(value = "SELECT DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL -(11 - month(o.date)) MONTH), '%Y-%m') AS year_month, COALESCE(COUNT(o.id), 0) " +
-//            "FROM customer_order o " +
-//            "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() AND o.order_status_id <> 6 " +
-//            "GROUP BY year_month " +
-//            "ORDER BY year_month", nativeQuery = true)
-//    List<List<Object>> countOrdersLastTwelveMonths();
+    @Query(value = "SELECT CASE WHEN hours.hour = 0 THEN '12 AM' " +
+            "WHEN hours.hour < 12 THEN CONCAT(hours.hour, ' AM') " +
+            "WHEN hours.hour = 12 THEN '12 PM' " +
+            "ELSE CONCAT(hours.hour - 12, ' PM') END AS hour, COALESCE(COUNT(o.id), 0) " +
+            "FROM (SELECT 0 AS hour UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
+            "UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 " +
+            "UNION SELECT 10 UNION SELECT 11 UNION SELECT 12 UNION SELECT 13 UNION SELECT 14 " +
+            "UNION SELECT 15 UNION SELECT 16 UNION SELECT 17 UNION SELECT 18 UNION SELECT 19 " +
+            "UNION SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23) hours " +
+            "LEFT JOIN customer_order o ON HOUR(o.date) = hours.hour " +
+            "AND o.date BETWEEN CURDATE() AND CURDATE() + INTERVAL 1 DAY " +
+            "AND o.order_status_id <> 6 " +
+            "GROUP BY hours.hour " +
+            "ORDER BY hours.hour", nativeQuery = true)
+    List<List<Object>> countOrdersTodayByHour();
 
-//    @Query(value = "SELECT YEAR_MONTH, COALESCE(COUNT(o.id), 0) " +
-//            "FROM (SELECT DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL -(11 - MONTH(o.date)) MONTH), '%Y-%m') AS YEAR_MONTH " +
-//            "      FROM (SELECT 1 AS dummy UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 " +
-//            "            UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 UNION SELECT 10 " +
-//            "            UNION SELECT 11 UNION SELECT 12) months " +
-//            "      LEFT JOIN customer_order o ON MONTH(o.date) = months.dummy " +
-//            "          AND o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() AND o.order_status_id <> 6) AS result " +
-//            "GROUP BY YEAR_MONTH " +
-//            "ORDER BY YEAR_MONTH DESC", nativeQuery = true)
-//    List<List<Object>> countOrdersLastTwelveMonths();
-
-
+    @Query(value = "SELECT CASE WHEN hours.hour = 0 THEN '12 AM' " +
+            "WHEN hours.hour < 12 THEN CONCAT(hours.hour, ' AM') " +
+            "WHEN hours.hour = 12 THEN '12 PM' " +
+            "ELSE CONCAT(hours.hour - 12, ' PM') END AS hour, COALESCE(SUM(o.total_price), 0) " +
+            "FROM (SELECT 0 AS hour UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 " +
+            "UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9 " +
+            "UNION SELECT 10 UNION SELECT 11 UNION SELECT 12 UNION SELECT 13 UNION SELECT 14 " +
+            "UNION SELECT 15 UNION SELECT 16 UNION SELECT 17 UNION SELECT 18 UNION SELECT 19 " +
+            "UNION SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23) hours " +
+            "LEFT JOIN customer_order o ON HOUR(o.date) = hours.hour " +
+            "AND o.date BETWEEN CURDATE() AND CURDATE() + INTERVAL 1 DAY " +
+            "AND o.order_status_id <> 6 " +
+            "GROUP BY hours.hour " +
+            "ORDER BY hours.hour", nativeQuery = true)
+    List<List<Object>> sumTotalPriceTodayByHour();
 
 }
 

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -132,10 +133,8 @@ public class OrderService {
         order.setAddress(address);
         order.setPaymentMethod(paymentMethod);
 
-        Date date = new Date();
-        TimeZone istTimeZone = TimeZone.getTimeZone("Asia/Kolkata");
-        date.setTime(date.getTime() + istTimeZone.getRawOffset());
-        order.setOrderDate(date);
+        order.setOrderDate(new Date());
+        order.setDate(LocalDateTime.now());
 
         order.setTotalPrice(total);
 
