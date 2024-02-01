@@ -96,13 +96,11 @@
 
     <br>
 
-    <button class="btn btn-primary" id="btn1">Last 7 days (week)</button>
-    <button class="btn btn-primary" id="btn2">Last 30 days (month)</button>
-    <button class="btn btn-primary" id="btn3">Last 12 months (year)</button>
+    <button class="btn btn-primary" id="btn1">Last 7 days</button>
+    <button class="btn btn-primary" id="btn2">Last 30 days</button>
+    <button class="btn btn-primary" id="btn3">Last 12 months</button>
     <button class="btn btn-primary" id="btn4">Today (hourly)</button>
     <button class="btn btn-primary" id="btn5">Last 5 years</button>
-    <button class="btn btn-primary" id="btn6">All time (per month)</button>
-    <button class="btn btn-primary" id="btn7">All time (per day)</button>
     <button class="btn btn-primary" id="btn8">Categories (all time)</button>
 
     <br><br>
@@ -540,104 +538,6 @@
        }
      }
  });
-</script>
-<!--Line starts here-->
-<script th:inline="javascript">
-    var lh1 = /*[[${lh1}]]*/ [];
-    var gh1 = /*[[${gh1}]]*/ [];
-
-    new Chart(document.getElementById("line1"), {
-      type: 'line',
-      data: {
-        labels: lh1,
-        datasets: [{
-            data: gh1,
-            label: "Orders",
-            borderColor: "#3e95cd",
-            fill: false
-          }
-        ]
-      },
-      options: {
-        title: {
-          display: true,
-          text: 'Orders per month (All time)'
-        }
-      }
-    });
-</script>
-<script th:inline="javascript">
-    var lh2 = /*[[${lh2}]]*/ [];
-    var gh2 = /*[[${gh2}]]*/ [];
-
-    new Chart(document.getElementById("line2"), {
-      type: 'line',
-      data: {
-        labels: lh2,
-        datasets: [{
-            data: gh2,
-            label: "Revenue(₹)",
-            borderColor: "#3e95cd",
-            fill: false
-          }
-        ]
-      },
-      options: {
-        title: {
-          display: true,
-          text: 'Revenue(₹) per month (All time)'
-        }
-      }
-    });
-</script>
-<!--Line 2 starts here-->
-<script th:inline="javascript">
-    var hal1 = /*[[${hal1}]]*/ [];
-    var hal2 = /*[[${hal2}]]*/ [];
-
-    new Chart(document.getElementById("line3"), {
-      type: 'line',
-      data: {
-        labels: hal1,
-        datasets: [{
-            data: hal2,
-            label: "Orders",
-            borderColor: "#3e95cd",
-            fill: false
-          }
-        ]
-      },
-      options: {
-        title: {
-          display: true,
-          text: 'Orders daily (All time)'
-        }
-      }
-    });
-</script>
-<script th:inline="javascript">
-    var gal1 = /*[[${gal1}]]*/ [];
-    var gal2 = /*[[${gal2}]]*/ [];
-
-    new Chart(document.getElementById("line4"), {
-      type: 'line',
-      data: {
-        labels: gal1,
-        datasets: [{
-            data: gal2,
-            label: "Revenue(₹)",
-            borderColor: "#3e95cd",
-            fill: false
-          }
-        ]
-      },
-      options: {
-        title: {
-          display: true,
-          text: 'Revenue(₹) daily (All time)'
-        }
-      }
-    });
 </script>
 <!--google charts code-->
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

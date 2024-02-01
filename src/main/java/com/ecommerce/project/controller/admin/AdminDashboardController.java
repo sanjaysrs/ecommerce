@@ -79,18 +79,6 @@ public class AdminDashboardController {
         model.addAttribute("labelFive2", chartService.getLastFiveYears2().get(0));
         model.addAttribute("dataFive2", chartService.getLastFiveYears2().get(1));
 
-        //line chart 1
-        model.addAttribute("lh1", chartService.getLineChart().get(0));
-        model.addAttribute("gh1", chartService.getLineChart().get(1));
-        model.addAttribute("lh2", chartService.getLineChart2().get(0));
-        model.addAttribute("gh2", chartService.getLineChart2().get(1));
-
-        //line chart 2
-        model.addAttribute("hal1", chartService.getLineChartDaily1().get(0));
-        model.addAttribute("hal2", chartService.getLineChartDaily1().get(1));
-        model.addAttribute("gal1", chartService.getLineChartDaily2().get(0));
-        model.addAttribute("gal2", chartService.getLineChartDaily2().get(1));
-
         //pie chart 1
         model.addAttribute("pie1", chartService.getPieChart());
         model.addAttribute("pie2", chartService.getPieChart2());
