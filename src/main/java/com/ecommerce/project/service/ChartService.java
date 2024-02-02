@@ -24,7 +24,7 @@ public class ChartService {
     OrderRepository orderRepository;
 
     public List<List<Object>> getChartDataLastSevenDaysOrders() {
-        return orderRepository.countOrdersLastSevenDays();
+        return modifyLists(orderRepository.countOrdersLastSevenDays());
     }
 
     public List<List<Object>> getChartDataLastSevenDaysSales() {

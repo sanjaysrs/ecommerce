@@ -105,6 +105,73 @@
 
     <br><br>
 
+<!--   Hello World-->
+
+    <div id="lastSevenDays" class="row">
+        <div class="col-sm-6">
+            <div style="height:400px; background-color:white">
+                <canvas id="lastSevenDaysOrders"></canvas>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div id="lastSevenDaysSales" style="height: 400px;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script th:inline="javascript">
+        var xValues = /*[[${lastSevenDaysOrdersLabels}]]*/ [];
+        var yValues = /*[[${lastSevenDaysOrdersData}]]*/ [];
+        var barColors = /*[[${barColors}]]*/ [];
+
+        new Chart("lastSevenDaysOrders", {
+          type: "bar",
+          data: {
+            labels: xValues,
+            datasets: [{
+                label: 'Orders',
+              backgroundColor: barColors,
+              data: yValues
+            }]
+          },
+          options: {
+            legend: {display: false},
+            title: {
+              display: true,
+              text: /*[[${lastSevenDaysOrdersTitle}]]*/
+            }
+          }
+        });
+    </script>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" th:inline="javascript">
+        google.charts.load('current', {'packages':['bar']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable([
+            ['Day of Week', 'Revenue(₹)'],
+            /*[# th:each="row : ${chartDataLastSevenDaysSales}"]*/
+            [[${row}]],
+            /*[/]*/
+          ]);
+
+          var options = {
+            chart: {
+              title: 'mobiG',
+              subtitle: /*[[${lastSevenDaysSalesTitle}]]*/,
+            }
+          };
+
+          var chart = new google.charts.Bar(document.getElementById('lastSevenDaysSales'));
+
+          chart.draw(data, google.charts.Bar.convertOptions(options));
+        }
+    </script>
+
+<!--    Hello World-->
+
     <div id="div1" class="row">
         <div class="col-sm-6">
             <div id="columnchart_material" style="height: 400px;"></div>
@@ -114,7 +181,7 @@
         </div>
     </div>
 
-    <div id="div2" class="row hidden">
+    <div id="div2" class="row">
             <div class="col-sm-6">
                 <div style="height:400px; background-color:white">
                     <canvas id="myChart"></canvas>
@@ -127,7 +194,7 @@
             </div>
     </div>
 
-    <div id="div3" class="row hidden">
+    <div id="div3" class="row">
         <div class="col-sm-6">
             <div style="height:400px; background-color:white;">
                 <canvas id="graph1"></canvas>
@@ -141,7 +208,7 @@
         </div>
     </div>
 
-    <div id="div4" class="row hidden">
+    <div id="div4" class="row">
         <div class="col-sm-6">
             <div style="height:400px; background-color:white;">
                 <canvas id="graph3"></canvas>
@@ -155,7 +222,7 @@
         </div>
     </div>
 
-    <div id="div5" class="row hidden">
+    <div id="div5" class="row">
         <div class="col-sm-6">
             <div style="height:400px; background-color:white;">
                 <canvas id="graph5"></canvas>
@@ -169,35 +236,7 @@
         </div>
     </div>
 
-    <div id="div6" class="row hidden">
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="line1"></canvas>
-            </div>
-        </div>
-
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="line2"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div id="div7" class="row hidden">
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="line3"></canvas>
-            </div>
-        </div>
-
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="line4"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div id="div8" class="row hidden">
+    <div id="div8" class="row">
         <div class="col-sm-6">
             <div id="piechart" style="height:400px;">
             </div>
@@ -539,56 +578,6 @@
      }
  });
 </script>
-<!--google charts code-->
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<script type="text/javascript" th:inline="javascript">
-    google.charts.load('current', {'packages':['bar']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-      var data = google.visualization.arrayToDataTable([
-        ['Day of Week', 'Orders'],
-        /*[# th:each="row : ${chartDataWeeklyOrders}"]*/
-        [[${row}]],
-        /*[/]*/
-      ]);
-
-      var options = {
-        chart: {
-          title: 'mobiG',
-          subtitle: /*[[${subtitleWeeklyOrders}]]*/,
-        }
-      };
-
-      var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
-
-      chart.draw(data, google.charts.Bar.convertOptions(options));
-    }
-</script>
-<script type="text/javascript" th:inline="javascript">
-    google.charts.load('current', {'packages':['bar']});
-    google.charts.setOnLoadCallback(drawChart2);
-
-    function drawChart2() {
-      var data2 = google.visualization.arrayToDataTable([
-        ['Day of Week', 'Revenue(₹)'],
-        /*[# th:each="row : ${chartDataWeeklyRevenue}"]*/
-        [[${row}]],
-        /*[/]*/
-      ]);
-
-      var options2 = {
-        chart: {
-          title: 'mobiG',
-          subtitle: /*[[${subtitleWeeklyRevenue}]]*/,
-        }
-      };
-
-      var chart2 = new google.charts.Bar(document.getElementById('columnchart_material2'));
-
-      chart2.draw(data2, google.charts.Bar.convertOptions(options2));
-    }
-</script>
 <!--    Pie chart starts here-->
 <script type="text/javascript" th:inline="javascript">
     google.charts.load('current', {'packages':['corechart']});
@@ -632,52 +621,6 @@
       chartcc.draw(datacc, optionscc);
     }
 </script>
-<!--button div code-->
-<script>
-    // Get references to all buttons and divs
-    const buttons = [
-        document.getElementById("btn1"),
-        document.getElementById("btn2"),
-        document.getElementById("btn3"),
-        document.getElementById("btn4"),
-        document.getElementById("btn5"),
-        document.getElementById("btn6"),
-        document.getElementById("btn7"),
-        document.getElementById("btn8")
-    ];
-
-    const divs = [
-        document.getElementById("div1"),
-        document.getElementById("div2"),
-        document.getElementById("div3"),
-        document.getElementById("div4"),
-        document.getElementById("div5"),
-        document.getElementById("div6"),
-        document.getElementById("div7"),
-        document.getElementById("div8")
-    ];
-
-    // Add click event listeners to the buttons
-    buttons.forEach((button, index) => {
-        button.addEventListener("click", () => {
-            // Hide all divs
-            divs.forEach((div) => {
-                div.classList.add("hidden");
-            });
-
-            // Show the corresponding div
-            divs[index].classList.remove("hidden");
-
-             // Trigger Google Chart rendering when the div is displayed
-             google.charts.setOnLoadCallback(drawChart);
-             google.charts.setOnLoadCallback(drawChart2);
-             google.charts.setOnLoadCallback(drawChartqq);
-             google.charts.setOnLoadCallback(drawChartcc);
-
-        });
-    });
-</script>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
 </body>
