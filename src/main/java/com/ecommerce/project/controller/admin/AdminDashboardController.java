@@ -52,26 +52,23 @@ public class AdminDashboardController {
 
 
         // Hello World
+        model.addAttribute("barColors", chartService.getBarColors());
+
         model.addAttribute("lastSevenDaysOrdersTitle", "Orders over the last seven days");
         model.addAttribute("lastSevenDaysOrders", chartService.getChartDataLastSevenDaysOrders());
         model.addAttribute("lastSevenDaysSalesTitle", "Revenue over the last seven days");
         model.addAttribute("lastSevenDaysSales", chartService.getChartDataLastSevenDaysSales());
 
-
         model.addAttribute("lastThirtyDaysOrdersTitle", "Orders over the last thirty days");
         model.addAttribute("lastThirtyDaysOrders", chartService.getChartDataLastThirtyDaysOrders());
         model.addAttribute("lastThirtyDaysSalesTitle", "Revenue over the last thirty days");
         model.addAttribute("lastThirtyDaysSales", chartService.getChartDataLastThirtyDaysSales());
+
+        model.addAttribute("lastTwelveMonthsOrdersTitle", "Orders over the last 12 months");
+        model.addAttribute("lastTwelveMonthsOrders", chartService.getChartDataLastTwelveMonthsOrders());
+        model.addAttribute("lastTwelveMonthsSalesTitle", "Revenue over the last 12 months");
+        model.addAttribute("lastTwelveMonthsSales", chartService.getChartDataLastTwelveMonthsSales());
         // Hello World
-
-        //Chart last 7 days
-
-        //Chart last 30 days
-        model.addAttribute("chartData", chartService.getChartDataLastThirtyDaysOrders().get(0));
-        model.addAttribute("chartData2", chartService.getChartDataLastThirtyDaysOrders().get(1));
-        model.addAttribute("barColors", chartService.getBarColors());
-        model.addAttribute("chartData3", chartService.getChartDataLastThirtyDaysSales().get(0));
-        model.addAttribute("chartData4", chartService.getChartDataLastThirtyDaysSales().get(1));
 
         //Chart last twelve months
         model.addAttribute("graphData1", chartService.getChartDataLastTwelveMonthsOrders().get(0));
