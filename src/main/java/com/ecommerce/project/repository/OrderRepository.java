@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
@@ -193,6 +194,26 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "ORDER BY all_years.year ASC", nativeQuery = true)
     List<List<Object>> sumTotalPriceLastFiveYears();
 
+    @Query("SELECT o FROM Order o " +
+            "WHERE o.date BETWEEN :startDate AND :endDate " +
+            "AND o.orderStatus.id <> 6 ORDER BY o.date DESC")
+    List<Order> findByOrderDateBetween(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o " +
+            "WHERE o.date BETWEEN :startDate AND :endDate " +
+            "AND o.orderStatus.id <> 6")
+    Double getTotalPriceSumBetweenDates(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COUNT(o) FROM Order o " +
+            "WHERE o.date BETWEEN :startDate AND :endDate " +
+            "AND o.orderStatus.id <> 6")
+    Long getCountOfOrdersBetweenDates(
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate);
 }
 
 

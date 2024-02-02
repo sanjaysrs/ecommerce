@@ -1,9 +1,11 @@
 package com.ecommerce.project.service;
 
 import com.ecommerce.project.entity.*;
+import com.ecommerce.project.repository.OrderItemRepository;
 import com.ecommerce.project.repository.OrderRepository;
 import com.ecommerce.project.repository.OrderStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,6 +18,9 @@ public class OrderService {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    OrderItemRepository orderItemRepository;
 
     @Autowired
     OrderStatusRepository orderStatusRepository;
@@ -40,6 +45,26 @@ public class OrderService {
     public double getSalesOfAllNonCancelledOrders() {
         double sales = orderRepository.sumTotalPriceByOrderStatusIdNot(6);
         return Math.round(sales*100)/100.0;
+    }
+
+    public Long getTotalQuantityOfProductsSold() {
+        return orderItemRepository.totalQuantityOfProductsSold();
+    }
+
+    public Long getTotalQuantityOfProductsSoldOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate) {
+        return orderItemRepository.totalQuantityOfProductsSoldOrderDateBetween(startDate, endDate);
+    }
+
+    public List<Order> getOrdersByOrderDateBetween(LocalDateTime startDate, LocalDateTime endDate) {
+        return orderRepository.findByOrderDateBetween(startDate, endDate);
+    }
+
+    public Double getTotalPriceSumBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {
+        return orderRepository.getTotalPriceSumBetweenDates(startDate, endDate);
+    }
+
+    public Long getCountOfOrdersBetweenDates(LocalDateTime startDate, LocalDateTime endDate) {
+        return orderRepository.getCountOfOrdersBetweenDates(startDate, endDate);
     }
 
     public long getCountOfAllOrdersIncludingCancelled() {

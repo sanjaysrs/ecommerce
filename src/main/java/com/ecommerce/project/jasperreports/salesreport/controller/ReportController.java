@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,9 +22,9 @@ public class ReportController {
     ReportService reportService;
 
     @GetMapping("/generateReport/{format}")
-    public void generateReport(@PathVariable String format, HttpServletResponse response) throws JRException, FileNotFoundException {
+    public void generateReport(@PathVariable String format, HttpServletResponse response) throws JRException {
 
-        byte[] reportData = reportService.exportPdfReport(format);
+        byte[] reportData = reportService.exportReport(format);
 
         response.setHeader("Content-Disposition", "attachment; filename=salesreport." + format);
         response.setContentType("application/" + format);
@@ -41,9 +40,9 @@ public class ReportController {
     public void downloadReportDate(@ModelAttribute("startDate") LocalDate startDate,
                                    @ModelAttribute("endDate") LocalDate endDate,
                                    @ModelAttribute("format") String format,
-                                   HttpServletResponse response) throws JRException, FileNotFoundException {
+                                   HttpServletResponse response) throws JRException {
 
-        byte[] reportData = reportService.exportPdfReportForDate(startDate, endDate, format);
+        byte[] reportData = reportService.exportReportForDateRange(startDate, endDate, format);
 
         response.setHeader("Content-Disposition", "attachment; filename=salesreport." + format);
         response.setContentType("application/" + format);

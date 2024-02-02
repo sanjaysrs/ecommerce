@@ -1,5 +1,6 @@
 package com.ecommerce.project.controller.admin;
 
+import com.ecommerce.project.repository.OrderItemRepository;
 import com.ecommerce.project.service.ChartService;
 import com.ecommerce.project.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
