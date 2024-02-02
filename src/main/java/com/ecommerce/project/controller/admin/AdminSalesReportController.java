@@ -23,14 +23,14 @@ public class AdminSalesReportController {
 
         List<Order> orders = orderService.getAllNonCancelledOrders();
 
-        if (!model.containsAttribute("DAILY") && !model.containsAttribute("WEEKLY") && !model.containsAttribute("MONTHLY") && !model.containsAttribute("YEARLY"))
-            model.addAttribute("ALL", true);
         if (!model.containsAttribute("orderFilter"))
             model.addAttribute("orderFilter", "All orders");
         if (!model.containsAttribute("userOrders"))
             model.addAttribute("userOrders", orders);
         if (!model.containsAttribute("totalSales"))
             model.addAttribute("totalSales", orderService.getSalesOfAllNonCancelledOrders());
+        if (!model.containsAttribute("totalOrders"))
+            model.addAttribute("totalOrders", orderService.getCountOfAllNonCancelledOrders());
         return "salesReport";
 
     }
@@ -42,37 +42,37 @@ public class AdminSalesReportController {
             case "ALL" -> {
                 return "redirect:/admin/salesReport";
             }
-            case "DAILY" -> {
+            case "TODAY" -> {
 
-                redirectAttributes.addFlashAttribute("DAILY", true);
-                redirectAttributes.addFlashAttribute("orderFilter", "Daily orders");
+                redirectAttributes.addFlashAttribute("orderFilter", "Orders today");
                 redirectAttributes.addFlashAttribute("userOrders", orderService.getOrdersMadeToday());
                 redirectAttributes.addFlashAttribute("totalSales", orderService.getSalesMadeToday());
+                redirectAttributes.addFlashAttribute("totalOrders", orderService.getCountOfOrdersMadeToday());
                 return "redirect:/admin/salesReport";
             }
-            case "WEEKLY" -> {
+            case "THIS WEEK" -> {
 
-                redirectAttributes.addFlashAttribute("WEEKLY", true);
-                redirectAttributes.addFlashAttribute("orderFilter", "Weekly orders");
+                redirectAttributes.addFlashAttribute("orderFilter", "Orders this week");
                 redirectAttributes.addFlashAttribute("userOrders", orderService.getOrdersMadeThisWeek());
                 redirectAttributes.addFlashAttribute("totalSales", orderService.getSalesMadeThisWeek());
+                redirectAttributes.addFlashAttribute("totalOrders", orderService.getCountOfOrdersMadeThisWeek());
                 return "redirect:/admin/salesReport";
 
             }
-            case "MONTHLY" -> {
+            case "THIS MONTH" -> {
 
-                redirectAttributes.addFlashAttribute("MONTHLY", true);
-                redirectAttributes.addFlashAttribute("orderFilter", "Monthly orders");
+                redirectAttributes.addFlashAttribute("orderFilter", "Orders this month");
                 redirectAttributes.addFlashAttribute("userOrders", orderService.getOrdersMadeThisMonth());
                 redirectAttributes.addFlashAttribute("totalSales", orderService.getSalesMadeThisMonth());
+                redirectAttributes.addFlashAttribute("totalOrders", orderService.getCountOfOrdersMadeThisMonth());
                 return "redirect:/admin/salesReport";
             }
-            case "YEARLY" -> {
+            case "THIS YEAR" -> {
 
-                redirectAttributes.addFlashAttribute("YEARLY", true);
-                redirectAttributes.addFlashAttribute("orderFilter", "Yearly orders");
+                redirectAttributes.addFlashAttribute("orderFilter", "Orders this year");
                 redirectAttributes.addFlashAttribute("userOrders", orderService.getOrdersMadeThisYear());
                 redirectAttributes.addFlashAttribute("totalSales", orderService.getSalesMadeThisYear());
+                redirectAttributes.addFlashAttribute("totalOrders", orderService.getCountOfOrdersMadeThisYear());
                 return "redirect:/admin/salesReport";
 
             }

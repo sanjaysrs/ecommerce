@@ -45,10 +45,10 @@
                 <div class="form-group">
                     <select id="dateFilter" name="dateFilter" class="form-control">
                         <option>ALL</option>
-                        <option>DAILY</option>
-                        <option>WEEKLY</option>
-                        <option>MONTHLY</option>
-                        <option>YEARLY</option>
+                        <option>TODAY</option>
+                        <option>THIS WEEK</option>
+                        <option>THIS MONTH</option>
+                        <option>THIS YEAR</option>
                     </select>
                 </div>
                 <button type="submit" class="btn buntan btn-block">Filter</button>
@@ -58,7 +58,7 @@
         </div>
         <div class="text-center col-sm-4" style="margin-top:30px;">
                 <h4 th:text="${orderFilter}"></h4>
-                <h4 th:text="'Total orders : ' + ${userOrders.size()}"></h4>
+                <h4 th:text="'Total orders : ' + ${totalOrders}"></h4>
                 <h4 th:text="'Total sales : ₹' + ${totalSales}"></h4>
         </div>
         <div class="text-right col-sm-4" style="margin-top:40px;">
@@ -99,11 +99,11 @@
             <th>Payment Method</th>
             <th>Products</th>
             <th>Order Status</th>
-            <th th:if="${DAILY}">Hour</th>
-            <th th:if="${WEEKLY}">Day</th>
-            <th th:if="${MONTHLY}">Day of Month</th>
-            <th th:if="${YEARLY}">Month</th>
-            <th th:if="${ALL}">Month and Year</th>
+            <th th:if="${orderFilter=='Orders today'}">Hour</th>
+            <th th:if="${orderFilter=='Orders this week'}">Day</th>
+            <th th:if="${orderFilter=='Orders this month'}">Day of Month</th>
+            <th th:if="${orderFilter=='Orders this year'}">Month</th>
+            <th th:if="${orderFilter=='All orders'}">Month and Year</th>
         </tr>
         </thead>
         <tbody>
@@ -115,19 +115,19 @@
             <td th:text="${order.paymentMethod.method}"></td>
             <td><ul th:each="orderItem : ${order.orderItems}"><li th:text="${orderItem.product.name} + ' - ' + ${orderItem.quantity} + ' Nos.'"></li></ul></td>
             <td th:text="${order.orderStatus.status}"></td>
-            <td th:if="${DAILY}">
+            <td th:if="${orderFilter=='Orders today'}">
                 <p th:text="${#temporals.format(order.date, 'H')}"></p>
             </td>
-            <td th:if="${WEEKLY}">
+            <td th:if="${orderFilter=='Orders this week'}">
                 <p th:text="${#temporals.format(order.date, 'EEE')}"></p>
             </td>
-            <td th:if="${MONTHLY}">
+            <td th:if="${orderFilter=='Orders this month'}">
                 <p th:text="${#temporals.format(order.date, 'd')}"></p>
             </td>
-            <td th:if="${YEARLY}">
+            <td th:if="${orderFilter=='Orders this year'}">
                 <p th:text="${#temporals.format(order.date, 'MMMM')}"></p>
             </td>
-            <td th:if="${ALL}">
+            <td th:if="${orderFilter=='All orders'}">
                 <p th:text="${#temporals.format(order.date, 'MMMM yyyy')}"></p>
             </td>
         </tr>
