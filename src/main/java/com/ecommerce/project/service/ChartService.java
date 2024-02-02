@@ -28,7 +28,7 @@ public class ChartService {
     }
 
     public List<List<Object>> getChartDataLastSevenDaysSales() {
-        return orderRepository.sumTotalPriceLastSevenDays();
+        return modifyLists(orderRepository.sumTotalPriceLastSevenDays());
     }
 
     public List<List<Object>> getChartDataLastThirtyDaysOrders() {
@@ -40,7 +40,7 @@ public class ChartService {
     public List<List<Object>> getChartDataLastThirtyDaysSales() {
         List<List<Object>> lists = orderRepository.sumTotalPriceLastThirtyDays();
         modifyMonthLabels(lists);
-        return lists;
+        return modifyLists(lists);
     }
 
     private void modifyMonthLabels(List<List<Object>> lists) {

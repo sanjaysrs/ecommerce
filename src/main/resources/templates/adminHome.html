@@ -115,14 +115,23 @@
                 ordersChart.data.labels = /*[[${lastSevenDaysOrdersLabels}]]*/ [];
                 ordersChart.data.datasets[0].data = /*[[${lastSevenDaysOrdersData}]]*/ [];
                 ordersChart.options.title.text = /*[[${lastSevenDaysOrdersTitle}]]*/ ;
+
+                salesChart.data.labels = /*[[${lastSevenDaysSalesLabels}]]*/ [];
+                salesChart.data.datasets[0].data = /*[[${lastSevenDaysSalesData}]]*/ [];
+                salesChart.options.title.text = /*[[${lastSevenDaysSalesTitle}]]*/ ;
                 break;
             case 'lastThirtyDays':
                 ordersChart.data.labels = /*[[${lastThirtyDaysOrdersLabels}]]*/ [];
                 ordersChart.data.datasets[0].data = /*[[${lastThirtyDaysOrdersData}]]*/ [];
                 ordersChart.options.title.text = /*[[${lastThirtyDaysOrdersTitle}]]*/ ;
+
+                salesChart.data.labels = /*[[${lastThirtyDaysSalesLabels}]]*/ [];
+                salesChart.data.datasets[0].data = /*[[${lastThirtyDaysSalesData}]]*/ [];
+                salesChart.options.title.text = /*[[${lastThirtyDaysSalesTitle}]]*/ ;
                 break;
         }
         ordersChart.update();
+        salesChart.update();
     }
     </script>
 
@@ -133,15 +142,17 @@
             </div>
         </div>
         <div class="col-sm-6">
-            <div id="sales" style="height: 400px;"></div>
+            <div style="height:400px; background-color:white">
+                <canvas id="sales"></canvas>
+            </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script th:inline="javascript">
-        var ordersChart = initializeChart();
+        var ordersChart = initializeOrdersChart();
 
-        function initializeChart() {
+        function initializeOrdersChart() {
             return new Chart("orders", {
               type: "bar",
               data: {
@@ -163,30 +174,28 @@
         }
 
     </script>
+    <script th:inline="javascript">
+        var salesChart = initializeSalesChart();
 
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" th:inline="javascript">
-        google.charts.load('current', {'packages':['bar']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-          var data = google.visualization.arrayToDataTable([
-            ['Day of Week', 'Revenue(₹)'],
-            /*[# th:each="row : ${chartDataLastSevenDaysSales}"]*/
-            [[${row}]],
-            /*[/]*/
-          ]);
-
-          var options = {
-            chart: {
-              title: 'mobiG',
-              subtitle: /*[[${lastSevenDaysSalesTitle}]]*/,
-            }
-          };
-
-          var salesChart = new google.charts.Bar(document.getElementById('sales'));
-
-          salesChart.draw(data, google.charts.Bar.convertOptions(options));
+        function initializeSalesChart() {
+            return new Chart("sales", {
+              type: "bar",
+              data: {
+                labels: /*[[${lastSevenDaysSalesLabels}]]*/,
+                datasets: [{
+                    label: 'Revenue (₹)',
+                  backgroundColor: /*[[${barColors}]]*/,
+                  data: /*[[${lastSevenDaysSalesData}]]*/
+                }]
+              },
+              options: {
+                legend: {display: false},
+                title: {
+                  display: true,
+                  text: /*[[${lastSevenDaysSalesTitle}]]*/
+                }
+              }
+            });
         }
     </script>
 
@@ -427,7 +436,7 @@
         data: {
             labels: xValues2,
             datasets: [{
-                label: 'Revenue (₹)',
+                label: '',
                 type: 'bar',
                 backgroundColor: barColors2,
                 data: yValues2
