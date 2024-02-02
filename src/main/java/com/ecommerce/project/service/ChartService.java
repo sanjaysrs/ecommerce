@@ -40,7 +40,7 @@ public class ChartService {
     public List<List<Object>> getChartDataLastThirtyDaysSales() {
         List<List<Object>> lists = orderRepository.sumTotalPriceLastThirtyDays();
         modifyMonthLabels(lists);
-        return modifyLists(lists);
+        return lists;
     }
 
     private void modifyMonthLabels(List<List<Object>> lists) {

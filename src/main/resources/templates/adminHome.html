@@ -96,8 +96,8 @@
 
     <br>
 
-    <button class="btn btn-primary" id="btn1">Last 7 days</button>
-    <button class="btn btn-primary" id="btn2">Last 30 days</button>
+    <button class="btn btn-primary" id="btn1" onclick="updateChart('lastSevenDays')">Last 7 days</button>
+    <button class="btn btn-primary" id="btn2" onclick="updateChart('lastThirtyDays')">Last 30 days</button>
     <button class="btn btn-primary" id="btn3">Last 12 months</button>
     <button class="btn btn-primary" id="btn4">Today (hourly)</button>
     <button class="btn btn-primary" id="btn5">Last 5 years</button>
@@ -107,41 +107,61 @@
 
 <!--   Hello World-->
 
-    <div id="lastSevenDays" class="row">
+    <script th:inline="javascript">
+        function updateChart(buttonId) {
+
+        switch (buttonId) {
+            case 'lastSevenDays':
+                ordersChart.data.labels = /*[[${lastSevenDaysOrdersLabels}]]*/ [];
+                ordersChart.data.datasets[0].data = /*[[${lastSevenDaysOrdersData}]]*/ [];
+                ordersChart.options.title.text = /*[[${lastSevenDaysOrdersTitle}]]*/ ;
+                break;
+            case 'lastThirtyDays':
+                ordersChart.data.labels = /*[[${lastThirtyDaysOrdersLabels}]]*/ [];
+                ordersChart.data.datasets[0].data = /*[[${lastThirtyDaysOrdersData}]]*/ [];
+                ordersChart.options.title.text = /*[[${lastThirtyDaysOrdersTitle}]]*/ ;
+                break;
+        }
+        ordersChart.update();
+    }
+    </script>
+
+    <div id="chart" class="row">
         <div class="col-sm-6">
             <div style="height:400px; background-color:white">
-                <canvas id="lastSevenDaysOrders"></canvas>
+                <canvas id="orders"></canvas>
             </div>
         </div>
         <div class="col-sm-6">
-            <div id="lastSevenDaysSales" style="height: 400px;"></div>
+            <div id="sales" style="height: 400px;"></div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
     <script th:inline="javascript">
-        var xValues = /*[[${lastSevenDaysOrdersLabels}]]*/ [];
-        var yValues = /*[[${lastSevenDaysOrdersData}]]*/ [];
-        var barColors = /*[[${barColors}]]*/ [];
+        var ordersChart = initializeChart();
 
-        new Chart("lastSevenDaysOrders", {
-          type: "bar",
-          data: {
-            labels: xValues,
-            datasets: [{
-                label: 'Orders',
-              backgroundColor: barColors,
-              data: yValues
-            }]
-          },
-          options: {
-            legend: {display: false},
-            title: {
-              display: true,
-              text: /*[[${lastSevenDaysOrdersTitle}]]*/
-            }
-          }
-        });
+        function initializeChart() {
+            return new Chart("orders", {
+              type: "bar",
+              data: {
+                labels: /*[[${lastSevenDaysOrdersLabels}]]*/,
+                datasets: [{
+                    label: 'Orders',
+                  backgroundColor: /*[[${barColors}]]*/,
+                  data: /*[[${lastSevenDaysOrdersData}]]*/
+                }]
+              },
+              options: {
+                legend: {display: false},
+                title: {
+                  display: true,
+                  text: /*[[${lastSevenDaysOrdersTitle}]]*/
+                }
+              }
+            });
+        }
+
     </script>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -164,9 +184,9 @@
             }
           };
 
-          var chart = new google.charts.Bar(document.getElementById('lastSevenDaysSales'));
+          var salesChart = new google.charts.Bar(document.getElementById('sales'));
 
-          chart.draw(data, google.charts.Bar.convertOptions(options));
+          salesChart.draw(data, google.charts.Bar.convertOptions(options));
         }
     </script>
 
