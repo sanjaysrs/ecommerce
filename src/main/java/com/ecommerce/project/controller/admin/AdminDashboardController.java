@@ -54,33 +54,26 @@ public class AdminDashboardController {
         // Hello World
         model.addAttribute("barColors", chartService.getBarColors());
 
-        model.addAttribute("lastSevenDaysOrdersTitle", "Orders over the last seven days");
         model.addAttribute("lastSevenDaysOrders", chartService.getChartDataLastSevenDaysOrders());
-        model.addAttribute("lastSevenDaysSalesTitle", "Revenue over the last seven days");
+        model.addAttribute("lastSevenDaysOrdersTitle", "Orders over the last seven days");
         model.addAttribute("lastSevenDaysSales", chartService.getChartDataLastSevenDaysSales());
+        model.addAttribute("lastSevenDaysSalesTitle", "Revenue over the last seven days");
 
-        model.addAttribute("lastThirtyDaysOrdersTitle", "Orders over the last thirty days");
         model.addAttribute("lastThirtyDaysOrders", chartService.getChartDataLastThirtyDaysOrders());
-        model.addAttribute("lastThirtyDaysSalesTitle", "Revenue over the last thirty days");
+        model.addAttribute("lastThirtyDaysOrdersTitle", "Orders over the last thirty days");
         model.addAttribute("lastThirtyDaysSales", chartService.getChartDataLastThirtyDaysSales());
+        model.addAttribute("lastThirtyDaysSalesTitle", "Revenue over the last thirty days");
 
-        model.addAttribute("lastTwelveMonthsOrdersTitle", "Orders over the last 12 months");
         model.addAttribute("lastTwelveMonthsOrders", chartService.getChartDataLastTwelveMonthsOrders());
-        model.addAttribute("lastTwelveMonthsSalesTitle", "Revenue over the last 12 months");
+        model.addAttribute("lastTwelveMonthsOrdersTitle", "Orders over the last 12 months");
         model.addAttribute("lastTwelveMonthsSales", chartService.getChartDataLastTwelveMonthsSales());
+        model.addAttribute("lastTwelveMonthsSalesTitle", "Revenue over the last 12 months");
+
+        model.addAttribute("todayHourlyOrders", chartService.getChartDataTodayByHourOrders());
+        model.addAttribute("todayHourlyOrdersTitle", "Orders today (hourly)");
+        model.addAttribute("todayHourlySales", chartService.getChartDataTodayByHourSales());
+        model.addAttribute("todayHourlySalesTitle", "Revenue today (hourly)");
         // Hello World
-
-        //Chart last twelve months
-        model.addAttribute("graphData1", chartService.getChartDataLastTwelveMonthsOrders().get(0));
-        model.addAttribute("graphData2", chartService.getChartDataLastTwelveMonthsOrders().get(1));
-        model.addAttribute("graphData3", chartService.getChartDataLastTwelveMonthsSales().get(0));
-        model.addAttribute("graphData4", chartService.getChartDataLastTwelveMonthsSales().get(1));
-
-        //Chart last 24 hours
-        model.addAttribute("dailyTimeLabels", chartService.getChartDataTodayByHourOrders().get(0));
-        model.addAttribute("dailyList", chartService.getChartDataTodayByHourOrders().get(1));
-        model.addAttribute("dailyTimeLabels2", chartService.getChartDataTodayByHourSales().get(0));
-        model.addAttribute("dailyList2", chartService.getChartDataTodayByHourSales().get(1));
 
         //Chart last 5 years
         System.out.println(orderRepository.countOrdersLastFiveYears());

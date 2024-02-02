@@ -101,7 +101,7 @@
     <button class="btn btn-primary" id="btn1" onclick="updateChart(lastSevenDaysOrders, lastSevenDaysOrdersTitle, lastSevenDaysSales, lastSevenDaysSalesTitle)">Last 7 days</button>
     <button class="btn btn-primary" id="btn2" onclick="updateChart(lastThirtyDaysOrders, lastThirtyDaysOrdersTitle, lastThirtyDaysSales, lastThirtyDaysSalesTitle)">Last 30 days</button>
     <button class="btn btn-primary" id="btn3" onclick="updateChart(lastTwelveMonthsOrders, lastTwelveMonthsOrdersTitle, lastTwelveMonthsSales, lastTwelveMonthsSalesTitle)">Last 12 months</button>
-    <button class="btn btn-primary" id="btn4">Today (hourly)</button>
+    <button class="btn btn-primary" id="btn4" onclick="updateChart(todayHourlyOrders, todayHourlyOrdersTitle, todayHourlySales, todayHourlySalesTitle)">Today (hourly)</button>
     <button class="btn btn-primary" id="btn5">Last 5 years</button>
     <button class="btn btn-primary" id="btn8">Categories (all time)</button>
 
@@ -123,6 +123,11 @@
         var lastTwelveMonthsOrdersTitle = /*[[${lastTwelveMonthsOrdersTitle}]]*/ ;
         var lastTwelveMonthsSales = /*[[${lastTwelveMonthsSales}]]*/ [];
         var lastTwelveMonthsSalesTitle = /*[[${lastTwelveMonthsSalesTitle}]]*/ ;
+
+        var todayHourlyOrders = /*[[${todayHourlyOrders}]]*/ [];
+        var todayHourlyOrdersTitle = /*[[${todayHourlyOrdersTitle}]]*/ ;
+        var todayHourlySales = /*[[${todayHourlySales}]]*/ [];
+        var todayHourlySalesTitle = /*[[${todayHourlySalesTitle}]]*/ ;
     </script>
 
     <script th:inline="javascript">
