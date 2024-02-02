@@ -1,7 +1,5 @@
 package com.ecommerce.project.controller.admin;
 
-import com.ecommerce.project.repository.OrderItemRepository;
-import com.ecommerce.project.repository.OrderRepository;
 import com.ecommerce.project.service.ChartService;
 import com.ecommerce.project.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +15,6 @@ public class AdminDashboardController {
 
     @Autowired
     OrderService orderService;
-
-    @Autowired
-    OrderRepository orderRepository;
-
-    @Autowired
-    OrderItemRepository orderItemRepository;
 
     @GetMapping("/admin")
     public String adminHome(Model model) {
@@ -84,8 +76,6 @@ public class AdminDashboardController {
         model.addAttribute("lastFiveYearsSalesTitle", "Revenue today (hourly)");
 
         //Google charts chart data
-        System.out.println(orderItemRepository.productsSoldByCategory());
-        System.out.println(orderItemRepository.revenueByCategory());
         model.addAttribute("productsSoldByCategory", chartService.getChartDataProductsSoldByCategory());
         model.addAttribute("salesByCategory", chartService.getChartDataSalesByCategory());
 

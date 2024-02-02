@@ -101,7 +101,7 @@
     <button class="btn btn-primary" id="btn3" onclick="updateChart(lastTwelveMonthsOrders, lastTwelveMonthsOrdersTitle, lastTwelveMonthsSales, lastTwelveMonthsSalesTitle)">Last 12 months</button>
     <button class="btn btn-primary" id="btn4" onclick="updateChart(todayHourlyOrders, todayHourlyOrdersTitle, todayHourlySales, todayHourlySalesTitle)">Today (hourly)</button>
     <button class="btn btn-primary" id="btn5" onclick="updateChart(lastFiveYearsOrders, lastFiveYearsOrdersTitle, lastFiveYearsSales, lastFiveYearsSalesTitle)">Last 5 years</button>
-    <button class="btn btn-primary" id="btn8">Categories (all time)</button>
+    <button class="btn btn-primary" id="categoryButton">Categories (all time)</button>
 
     <br><br>
 
@@ -118,7 +118,7 @@
         </div>
     </div>
 
-    <div id="categoryChart" class="row">
+    <div id="categoryChart" class="row hidden">
         <div class="col-sm-6">
             <div id="ordersByCategory" style="height:400px;">
             </div>
@@ -239,7 +239,6 @@
         <div class="col-sm-12 pt-3" >
             <div class="card text-center" style="background-color:rgb(86, 36, 208); color:white;">
                 <div class="card-body">
-                    <!--                    <h2 class="card-title">ALL TIME</h2>-->
                     <h4 class="card-text">TOTAL ORDERS : <span th:text="${totalOrdersExcludingCancelled}" style="font-size:40px;"></span></h4>
                     <h4 class="card-text">ORDERS PLACED : <span th:text="${ordersPlaced}" style="font-size:40px;"></span></h4>
                     <h4 class="card-text">ORDERS PACKED : <span th:text="${ordersPacked}" style="font-size:40px;"></span></h4>
@@ -283,6 +282,10 @@
 </script>
 <script th:inline="javascript">
     function updateChart(orders, ordersTitle, sales, salesTitle) {
+
+        document.getElementById("categoryChart").classList.add("hidden");
+        document.getElementById("chart").classList.remove("hidden");
+
         ordersChart.data.labels = orders[0];
         ordersChart.data.datasets[0].data = orders[1];
         ordersChart.options.title.text = ordersTitle;
@@ -391,6 +394,15 @@
       var salesCategoryChart = new google.visualization.PieChart(document.getElementById('salesByCategory'));
       salesCategoryChart.draw(salesData, salesOptions);
     }
+</script>
+
+<script>
+    document.getElementById("categoryButton").addEventListener("click", () => {
+            document.getElementById("chart").classList.add("hidden");
+            document.getElementById("categoryChart").classList.remove("hidden");
+            google.charts.setOnLoadCallback(drawOrdersChart);
+            google.charts.setOnLoadCallback(drawSalesChart);
+        });
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
