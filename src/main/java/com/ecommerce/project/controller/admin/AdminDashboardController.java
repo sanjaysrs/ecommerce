@@ -53,19 +53,15 @@ public class AdminDashboardController {
 
         // Hello World
         model.addAttribute("lastSevenDaysOrdersTitle", "Orders over the last seven days");
-        model.addAttribute("lastSevenDaysOrdersLabels", chartService.getChartDataLastSevenDaysOrders().get(0));
-        model.addAttribute("lastSevenDaysOrdersData", chartService.getChartDataLastSevenDaysOrders().get(1));
+        model.addAttribute("lastSevenDaysOrders", chartService.getChartDataLastSevenDaysOrders());
         model.addAttribute("lastSevenDaysSalesTitle", "Revenue over the last seven days");
-        model.addAttribute("lastSevenDaysSalesLabels", chartService.getChartDataLastSevenDaysSales().get(0));
-        model.addAttribute("lastSevenDaysSalesData", chartService.getChartDataLastSevenDaysSales().get(1));
+        model.addAttribute("lastSevenDaysSales", chartService.getChartDataLastSevenDaysSales());
 
 
         model.addAttribute("lastThirtyDaysOrdersTitle", "Orders over the last thirty days");
-        model.addAttribute("lastThirtyDaysOrdersLabels", chartService.getChartDataLastThirtyDaysOrders().get(0));
-        model.addAttribute("lastThirtyDaysOrdersData", chartService.getChartDataLastThirtyDaysOrders().get(1));
+        model.addAttribute("lastThirtyDaysOrders", chartService.getChartDataLastThirtyDaysOrders());
         model.addAttribute("lastThirtyDaysSalesTitle", "Revenue over the last thirty days");
-        model.addAttribute("lastThirtyDaysSalesLabels", chartService.getChartDataLastThirtyDaysSales().get(0));
-        model.addAttribute("lastThirtyDaysSalesData", chartService.getChartDataLastThirtyDaysSales().get(1));
+        model.addAttribute("lastThirtyDaysSales", chartService.getChartDataLastThirtyDaysSales());
         // Hello World
 
         //Chart last 7 days

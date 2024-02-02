@@ -98,8 +98,8 @@
 
 <!--    <button class="btn btn-primary" id="btn1" onclick="updateChart('lastSevenDays')">Last 7 days</button>-->
 <!--    <button class="btn btn-primary" id="btn2" onclick="updateChart('lastThirtyDays')">Last 30 days</button>-->
-    <button class="btn btn-primary" id="btn1" onclick="updateChart(lastSevenDaysOrdersLabels, lastSevenDaysOrdersData, lastSevenDaysOrdersTitle, lastSevenDaysSalesLabels, lastSevenDaysSalesData, lastSevenDaysSalesTitle)">Last 7 days</button>
-    <button class="btn btn-primary" id="btn2" onclick="updateChart(lastThirtyDaysOrdersLabels, lastThirtyDaysOrdersData, lastThirtyDaysOrdersTitle, lastThirtyDaysSalesLabels, lastThirtyDaysSalesData, lastThirtyDaysSalesTitle)">Last 30 days</button>
+    <button class="btn btn-primary" id="btn1" onclick="updateChart(lastSevenDaysOrders, lastSevenDaysOrdersTitle, lastSevenDaysSales, lastSevenDaysSalesTitle)">Last 7 days</button>
+    <button class="btn btn-primary" id="btn2" onclick="updateChart(lastThirtyDaysOrders, lastThirtyDaysOrdersTitle, lastThirtyDaysSales, lastThirtyDaysSalesTitle)">Last 30 days</button>
     <button class="btn btn-primary" id="btn3">Last 12 months</button>
     <button class="btn btn-primary" id="btn4">Today (hourly)</button>
     <button class="btn btn-primary" id="btn5">Last 5 years</button>
@@ -109,31 +109,26 @@
 
 <!--   Hello World-->
     <script th:inline="javascript">
-        var lastSevenDaysOrdersLabels = /*[[${lastSevenDaysOrdersLabels}]]*/ [];
-        var lastSevenDaysOrdersData = /*[[${lastSevenDaysOrdersData}]]*/ [];
+        var lastSevenDaysOrders = /*[[${lastSevenDaysOrders}]]*/ [];
         var lastSevenDaysOrdersTitle = /*[[${lastSevenDaysOrdersTitle}]]*/ ;
-        var lastSevenDaysSalesLabels = /*[[${lastSevenDaysSalesLabels}]]*/ [];
-        var lastSevenDaysSalesData = /*[[${lastSevenDaysSalesData}]]*/ [];
+        var lastSevenDaysSales = /*[[${lastSevenDaysSales}]]*/ [];
         var lastSevenDaysSalesTitle = /*[[${lastSevenDaysSalesTitle}]]*/ ;
 
-        var lastThirtyDaysOrdersLabels = /*[[${lastThirtyDaysOrdersLabels}]]*/ [];
-        var lastThirtyDaysOrdersData = /*[[${lastThirtyDaysOrdersData}]]*/ [];
+        var lastThirtyDaysOrders = /*[[${lastThirtyDaysOrders}]]*/ [];
         var lastThirtyDaysOrdersTitle = /*[[${lastThirtyDaysOrdersTitle}]]*/ ;
-        var lastThirtyDaysSalesLabels = /*[[${lastThirtyDaysSalesLabels}]]*/ [];
-        var lastThirtyDaysSalesData = /*[[${lastThirtyDaysSalesData}]]*/ [];
+        var lastThirtyDaysSales = /*[[${lastThirtyDaysSales}]]*/ [];
         var lastThirtyDaysSalesTitle = /*[[${lastThirtyDaysSalesTitle}]]*/ ;
 
     </script>
 
-
     <script th:inline="javascript">
-        function updateChart(ordersLabels, ordersData, ordersTitle, salesLabels, salesData, salesTitle) {
-            ordersChart.data.labels = ordersLabels;
-            ordersChart.data.datasets[0].data = ordersData;
+        function updateChart(orders, ordersTitle, sales, salesTitle) {
+            ordersChart.data.labels = orders[0];
+            ordersChart.data.datasets[0].data = orders[1];
             ordersChart.options.title.text = ordersTitle;
 
-            salesChart.data.labels = salesLabels;
-            salesChart.data.datasets[0].data = salesData;
+            salesChart.data.labels = sales[0];
+            salesChart.data.datasets[0].data = sales[1];
             salesChart.options.title.text = salesTitle;
 
             ordersChart.update();
@@ -162,11 +157,11 @@
             return new Chart("orders", {
               type: "bar",
               data: {
-                labels: /*[[${lastSevenDaysOrdersLabels}]]*/,
+                labels: /*[[${lastSevenDaysOrders.get(0)}]]*/,
                 datasets: [{
                     label: 'Orders',
                   backgroundColor: /*[[${barColors}]]*/,
-                  data: /*[[${lastSevenDaysOrdersData}]]*/
+                  data: /*[[${lastSevenDaysOrders.get(1)}]]*/
                 }]
               },
               options: {
@@ -187,11 +182,11 @@
             return new Chart("sales", {
               type: "bar",
               data: {
-                labels: /*[[${lastSevenDaysSalesLabels}]]*/,
+                labels: /*[[${lastSevenDaysSales.get(0)}]]*/,
                 datasets: [{
                     label: 'Revenue (₹)',
                   backgroundColor: /*[[${barColors}]]*/,
-                  data: /*[[${lastSevenDaysSalesData}]]*/
+                  data: /*[[${lastSevenDaysSales.get(1)}]]*/
                 }]
               },
               options: {
