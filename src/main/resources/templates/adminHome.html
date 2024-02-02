@@ -96,8 +96,10 @@
 
     <br>
 
-    <button class="btn btn-primary" id="btn1" onclick="updateChart('lastSevenDays')">Last 7 days</button>
-    <button class="btn btn-primary" id="btn2" onclick="updateChart('lastThirtyDays')">Last 30 days</button>
+<!--    <button class="btn btn-primary" id="btn1" onclick="updateChart('lastSevenDays')">Last 7 days</button>-->
+<!--    <button class="btn btn-primary" id="btn2" onclick="updateChart('lastThirtyDays')">Last 30 days</button>-->
+    <button class="btn btn-primary" id="btn1" onclick="updateChart(lastSevenDaysOrdersLabels, lastSevenDaysOrdersData, lastSevenDaysOrdersTitle, lastSevenDaysSalesLabels, lastSevenDaysSalesData, lastSevenDaysSalesTitle)">Last 7 days</button>
+    <button class="btn btn-primary" id="btn2" onclick="updateChart(lastThirtyDaysOrdersLabels, lastThirtyDaysOrdersData, lastThirtyDaysOrdersTitle, lastThirtyDaysSalesLabels, lastThirtyDaysSalesData, lastThirtyDaysSalesTitle)">Last 30 days</button>
     <button class="btn btn-primary" id="btn3">Last 12 months</button>
     <button class="btn btn-primary" id="btn4">Today (hourly)</button>
     <button class="btn btn-primary" id="btn5">Last 5 years</button>
@@ -106,33 +108,37 @@
     <br><br>
 
 <!--   Hello World-->
+    <script th:inline="javascript">
+        var lastSevenDaysOrdersLabels = /*[[${lastSevenDaysOrdersLabels}]]*/ [];
+        var lastSevenDaysOrdersData = /*[[${lastSevenDaysOrdersData}]]*/ [];
+        var lastSevenDaysOrdersTitle = /*[[${lastSevenDaysOrdersTitle}]]*/ ;
+        var lastSevenDaysSalesLabels = /*[[${lastSevenDaysSalesLabels}]]*/ [];
+        var lastSevenDaysSalesData = /*[[${lastSevenDaysSalesData}]]*/ [];
+        var lastSevenDaysSalesTitle = /*[[${lastSevenDaysSalesTitle}]]*/ ;
+
+        var lastThirtyDaysOrdersLabels = /*[[${lastThirtyDaysOrdersLabels}]]*/ [];
+        var lastThirtyDaysOrdersData = /*[[${lastThirtyDaysOrdersData}]]*/ [];
+        var lastThirtyDaysOrdersTitle = /*[[${lastThirtyDaysOrdersTitle}]]*/ ;
+        var lastThirtyDaysSalesLabels = /*[[${lastThirtyDaysSalesLabels}]]*/ [];
+        var lastThirtyDaysSalesData = /*[[${lastThirtyDaysSalesData}]]*/ [];
+        var lastThirtyDaysSalesTitle = /*[[${lastThirtyDaysSalesTitle}]]*/ ;
+
+    </script>
+
 
     <script th:inline="javascript">
-        function updateChart(buttonId) {
+        function updateChart(ordersLabels, ordersData, ordersTitle, salesLabels, salesData, salesTitle) {
+            ordersChart.data.labels = ordersLabels;
+            ordersChart.data.datasets[0].data = ordersData;
+            ordersChart.options.title.text = ordersTitle;
 
-        switch (buttonId) {
-            case 'lastSevenDays':
-                ordersChart.data.labels = /*[[${lastSevenDaysOrdersLabels}]]*/ [];
-                ordersChart.data.datasets[0].data = /*[[${lastSevenDaysOrdersData}]]*/ [];
-                ordersChart.options.title.text = /*[[${lastSevenDaysOrdersTitle}]]*/ ;
+            salesChart.data.labels = salesLabels;
+            salesChart.data.datasets[0].data = salesData;
+            salesChart.options.title.text = salesTitle;
 
-                salesChart.data.labels = /*[[${lastSevenDaysSalesLabels}]]*/ [];
-                salesChart.data.datasets[0].data = /*[[${lastSevenDaysSalesData}]]*/ [];
-                salesChart.options.title.text = /*[[${lastSevenDaysSalesTitle}]]*/ ;
-                break;
-            case 'lastThirtyDays':
-                ordersChart.data.labels = /*[[${lastThirtyDaysOrdersLabels}]]*/ [];
-                ordersChart.data.datasets[0].data = /*[[${lastThirtyDaysOrdersData}]]*/ [];
-                ordersChart.options.title.text = /*[[${lastThirtyDaysOrdersTitle}]]*/ ;
-
-                salesChart.data.labels = /*[[${lastThirtyDaysSalesLabels}]]*/ [];
-                salesChart.data.datasets[0].data = /*[[${lastThirtyDaysSalesData}]]*/ [];
-                salesChart.options.title.text = /*[[${lastThirtyDaysSalesTitle}]]*/ ;
-                break;
+            ordersChart.update();
+            salesChart.update();
         }
-        ordersChart.update();
-        salesChart.update();
-    }
     </script>
 
     <div id="chart" class="row">
