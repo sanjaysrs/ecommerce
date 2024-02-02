@@ -31,7 +31,6 @@ public class AdminSalesReportController {
         model.addAttribute("ALL", true);
         model.addAttribute("orderFilter", "All orders");
         model.addAttribute("userOrders", orders);
-        model.addAttribute("totalOrders", orders.size());
         model.addAttribute("totalSales", orderService.getSalesOfAllNonCancelledOrders());
         return "salesReport";
 
