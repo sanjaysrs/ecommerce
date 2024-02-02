@@ -55,7 +55,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "UNION SELECT 'Wednesday', 4 UNION SELECT 'Thursday', 5 UNION SELECT 'Friday', 6 " +
             "UNION SELECT 'Saturday', 7) all_days " +
             "LEFT JOIN customer_order o ON DAYOFWEEK(o.date) = order_num " +
-            "AND o.date BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE() + INTERVAL 1 DAY AND o.order_status_id <> 6 " +
             "GROUP BY all_days.name, order_num " +
             "ORDER BY CASE WHEN order_num > DAYOFWEEK(CURDATE()) THEN 1 ELSE 2 END", nativeQuery = true)
     List<List<Object>> countOrdersLastSevenDays();
@@ -65,7 +65,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "UNION SELECT 'Wednesday', 4 UNION SELECT 'Thursday', 5 UNION SELECT 'Friday', 6 " +
             "UNION SELECT 'Saturday', 7) all_days " +
             "LEFT JOIN customer_order o ON DAYOFWEEK(o.date) = order_num " +
-            "AND o.date BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 6 DAY AND CURDATE() + INTERVAL 1 DAY AND o.order_status_id <> 6 " +
             "GROUP BY all_days.name, order_num " +
             "ORDER BY CASE WHEN order_num > DAYOFWEEK(CURDATE()) THEN 1 ELSE 2 END", nativeQuery = true)
     List<List<Object>> sumTotalPriceLastSevenDays();
@@ -79,7 +79,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "UNION SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23 UNION SELECT 24 " +
             "UNION SELECT 25 UNION SELECT 26 UNION SELECT 27 UNION SELECT 28 UNION SELECT 29) days) all_days " +
             "LEFT JOIN customer_order o ON DATE_FORMAT(o.date, '%Y-%m-%d') = all_days.day " +
-            "AND o.date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY AND o.order_status_id <> 6 " +
             "GROUP BY all_days.day " +
             "ORDER BY all_days.day ASC", nativeQuery = true)
     List<List<Object>> countOrdersLastThirtyDays();
@@ -93,7 +93,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "UNION SELECT 20 UNION SELECT 21 UNION SELECT 22 UNION SELECT 23 UNION SELECT 24 " +
             "UNION SELECT 25 UNION SELECT 26 UNION SELECT 27 UNION SELECT 28 UNION SELECT 29) days) all_days " +
             "LEFT JOIN customer_order o ON DATE_FORMAT(o.date, '%Y-%m-%d') = all_days.day " +
-            "AND o.date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() AND o.order_status_id <> 6 " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 30 DAY AND CURDATE() + INTERVAL 1 DAY AND o.order_status_id <> 6 " +
             "GROUP BY all_days.day " +
             "ORDER BY all_days.day ASC", nativeQuery = true)
     List<List<Object>> sumTotalPriceLastThirtyDays();
@@ -101,7 +101,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query(value = "SELECT MONTHNAME(o.date) AS month, " +
             "COUNT(o.id) " +
             "FROM customer_order o " +
-            "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() " +
+            "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() + INTERVAL 1 DAY " +
             "AND o.order_status_id <> 6 " +
             "GROUP BY MONTHNAME(O.date) ", nativeQuery = true)
     List<List<Object>> countOrdersLastTwelveMonths();
@@ -109,7 +109,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query(value = "SELECT MONTHNAME(o.date) AS month, " +
             "COALESCE(SUM(o.total_price), 0) " +
             "FROM customer_order o " +
-            "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() " +
+            "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() + INTERVAL 1 DAY " +
             "AND o.order_status_id <> 6 " +
             "GROUP BY MONTHNAME(O.date) ", nativeQuery = true)
     List<List<Object>> sumTotalPriceLastTwelveMonths();
@@ -145,6 +145,24 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "GROUP BY hours.hour " +
             "ORDER BY hours.hour", nativeQuery = true)
     List<List<Object>> sumTotalPriceTodayByHour();
+
+    @Query(value = "SELECT all_years.year, COALESCE(COUNT(o.id), 0) " +
+            "FROM (" +
+            "    SELECT (YEAR(CURDATE()) - (n.n - 1)) AS year " +
+            "    FROM (" +
+            "        SELECT 1 AS n " +
+            "        UNION SELECT 2 " +
+            "        UNION SELECT 3 " +
+            "        UNION SELECT 4 " +
+            "        UNION SELECT 5 " +
+            "    ) n" +
+            ") all_years " +
+            "LEFT JOIN customer_order o ON YEAR(o.date) = all_years.year " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 5 YEAR AND CURDATE() + INTERVAL 1 DAY " +
+            "AND o.order_status_id <> 6 " +
+            "GROUP BY all_years.year " +
+            "ORDER BY all_years.year DESC", nativeQuery = true)
+    List<List<Object>> countOrdersLastFiveYears();
 
 }
 

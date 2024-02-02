@@ -76,6 +76,7 @@ public class AdminDashboardController {
         model.addAttribute("dailyList2", chartService.getChartDataTodayByHourSales().get(1));
 
         //Chart last 5 years
+        System.out.println(orderRepository.countOrdersLastFiveYears());
         model.addAttribute("labelFive", chartService.getLastFiveYears().get(0));
         model.addAttribute("dataFive", chartService.getLastFiveYears().get(1));
         model.addAttribute("labelFive2", chartService.getLastFiveYears2().get(0));
