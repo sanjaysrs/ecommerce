@@ -96,8 +96,6 @@
 
     <br>
 
-<!--    <button class="btn btn-primary" id="btn1" onclick="updateChart('lastSevenDays')">Last 7 days</button>-->
-<!--    <button class="btn btn-primary" id="btn2" onclick="updateChart('lastThirtyDays')">Last 30 days</button>-->
     <button class="btn btn-primary" id="btn1" onclick="updateChart(lastSevenDaysOrders, lastSevenDaysOrdersTitle, lastSevenDaysSales, lastSevenDaysSalesTitle)">Last 7 days</button>
     <button class="btn btn-primary" id="btn2" onclick="updateChart(lastThirtyDaysOrders, lastThirtyDaysOrdersTitle, lastThirtyDaysSales, lastThirtyDaysSalesTitle)">Last 30 days</button>
     <button class="btn btn-primary" id="btn3" onclick="updateChart(lastTwelveMonthsOrders, lastTwelveMonthsOrdersTitle, lastTwelveMonthsSales, lastTwelveMonthsSalesTitle)">Last 12 months</button>
@@ -120,14 +118,14 @@
         </div>
     </div>
 
-    <div id="div8" class="row">
+    <div id="categoryChart" class="row">
         <div class="col-sm-6">
-            <div id="piechart" style="height:400px;">
+            <div id="ordersByCategory" style="height:400px;">
             </div>
         </div>
 
         <div class="col-sm-6">
-            <div id="piechart_3d" style="height:400px;">
+            <div id="salesByCategory" style="height:400px;">
             </div>
         </div>
     </div>
@@ -352,44 +350,46 @@
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" th:inline="javascript">
     google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChartqq);
+    google.charts.setOnLoadCallback(drawOrdersChart);
 
-    function drawChartqq() {
+    function drawOrdersChart() {
 
-      var dataqq = google.visualization.arrayToDataTable([
+      var ordersData = google.visualization.arrayToDataTable([
         ['Category', 'Orders'],
-        /*[# th:each="row : ${pie1}"]*/
+        /*[# th:each="row : ${ordersByCategory}"]*/
         [[${row}]],
         /*[/]*/
       ]);
 
-      var optionsqq = {
+      var ordersOptions = {
         title: 'Orders by Category'
       };
 
-      var chartqq = new google.visualization.PieChart(document.getElementById('piechart'));
+      var ordersCategoryChart = new google.visualization.PieChart(document.getElementById('ordersByCategory'));
 
-      chartqq.draw(dataqq, optionsqq);
+      ordersCategoryChart.draw(ordersData, ordersOptions);
     }
 </script>
 <script type="text/javascript" th:inline="javascript">
     google.charts.load("current", {packages:["corechart"]});
-    google.charts.setOnLoadCallback(drawChartcc);
-    function drawChartcc() {
-      var datacc = google.visualization.arrayToDataTable([
+    google.charts.setOnLoadCallback(drawSalesChart);
+
+    function drawSalesChart() {
+
+      var salesData = google.visualization.arrayToDataTable([
         ['Category', 'Revenue'],
-        /*[# th:each="row : ${pie2}"]*/
+        /*[# th:each="row : ${salesByCategory}"]*/
         [[${row}]],
         /*[/]*/
       ]);
 
-      var optionscc = {
+      var salesOptions = {
         title: 'Revenue by Category',
         is3D: true,
       };
 
-      var chartcc = new google.visualization.PieChart(document.getElementById('piechart_3d'));
-      chartcc.draw(datacc, optionscc);
+      var salesCategoryChart = new google.visualization.PieChart(document.getElementById('salesByCategory'));
+      salesCategoryChart.draw(salesData, salesOptions);
     }
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

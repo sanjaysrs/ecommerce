@@ -51,7 +51,7 @@ public class AdminDashboardController {
         model.addAttribute("salesThisYear", orderService.getSalesMadeThisYear());
 
 
-        // Hello World
+        // Chart.js chart data
         model.addAttribute("barColors", chartService.getBarColors());
 
         model.addAttribute("lastSevenDaysOrders", chartService.getChartDataLastSevenDaysOrders());
@@ -78,19 +78,10 @@ public class AdminDashboardController {
         model.addAttribute("lastFiveYearsOrdersTitle", "Orders today (hourly)");
         model.addAttribute("lastFiveYearsSales", chartService.getChartDataLastFiveYearsSales());
         model.addAttribute("lastFiveYearsSalesTitle", "Revenue today (hourly)");
-        // Hello World
 
-        //Chart last 5 years
-        System.out.println(orderRepository.countOrdersLastFiveYears());
-        System.out.println(orderRepository.sumTotalPriceLastFiveYears());
-        model.addAttribute("labelFive", chartService.getLastFiveYears().get(0));
-        model.addAttribute("dataFive", chartService.getLastFiveYears().get(1));
-        model.addAttribute("labelFive2", chartService.getLastFiveYears2().get(0));
-        model.addAttribute("dataFive2", chartService.getLastFiveYears2().get(1));
-
-        //pie chart 1
-        model.addAttribute("pie1", chartService.getPieChart());
-        model.addAttribute("pie2", chartService.getPieChart2());
+        //Google charts chart data
+        model.addAttribute("ordersByCategory", chartService.getPieChart());
+        model.addAttribute("salesByCategory", chartService.getPieChart2());
 
         return "adminHome";
     }
