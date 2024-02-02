@@ -1,5 +1,6 @@
 package com.ecommerce.project.controller.admin;
 
+import com.ecommerce.project.repository.OrderItemRepository;
 import com.ecommerce.project.repository.OrderRepository;
 import com.ecommerce.project.service.ChartService;
 import com.ecommerce.project.service.OrderService;
@@ -19,6 +20,9 @@ public class AdminDashboardController {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    OrderItemRepository orderItemRepository;
 
     @GetMapping("/admin")
     public String adminHome(Model model) {
@@ -80,8 +84,10 @@ public class AdminDashboardController {
         model.addAttribute("lastFiveYearsSalesTitle", "Revenue today (hourly)");
 
         //Google charts chart data
-        model.addAttribute("ordersByCategory", chartService.getPieChart());
-        model.addAttribute("salesByCategory", chartService.getPieChart2());
+        System.out.println(orderItemRepository.productsSoldByCategory());
+        System.out.println(orderItemRepository.revenueByCategory());
+        model.addAttribute("productsSoldByCategory", chartService.getChartDataProductsSoldByCategory());
+        model.addAttribute("salesByCategory", chartService.getChartDataSalesByCategory());
 
         return "adminHome";
     }

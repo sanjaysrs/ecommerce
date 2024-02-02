@@ -1,8 +1,6 @@
 package com.ecommerce.project.service;
 
-import com.ecommerce.project.entity.Category;
-import com.ecommerce.project.entity.Order;
-import com.ecommerce.project.entity.OrderItem;
+import com.ecommerce.project.repository.OrderItemRepository;
 import com.ecommerce.project.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +20,9 @@ public class ChartService {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    OrderItemRepository orderItemRepository;
 
     public List<List<Object>> getChartDataLastSevenDaysOrders() {
         return modifyLists(orderRepository.countOrdersLastSevenDays());
@@ -105,65 +106,12 @@ public class ChartService {
         return modifyLists(orderRepository.sumTotalPriceLastFiveYears());
     }
 
-
-    public List<List<Object>> getPieChart() {
-        List<Order> allOrders = orderService.getAllOrders();
-        List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());
-        Collections.reverse(validOrders);
-
-        List<Category> categoryList = categoryService.getAllCategories();
-
-        Map<Category, Integer> categoryIntegerMap = new HashMap<>();
-
-        for (Category category : categoryList) {
-            categoryIntegerMap.put(category, 0);
-        }
-
-        for (Order order : validOrders) {
-            List<OrderItem> orderItemList = order.getOrderItems();
-            for (OrderItem orderItem : orderItemList) {
-                Category category = orderItem.getProduct().getCategory();
-                categoryIntegerMap.put(category, categoryIntegerMap.get(category) + orderItem.getQuantity());
-            }
-        }
-
-        List<List<Object>> rowsInGraph = new ArrayList<>();
-
-        for (Category category : categoryList) {
-            rowsInGraph.add(Arrays.asList(category.getName(),categoryIntegerMap.get(category)));
-        }
-
-        return rowsInGraph;
+    public List<List<Object>> getChartDataProductsSoldByCategory() {
+        return orderItemRepository.productsSoldByCategory();
     }
 
-    public List<List<Object>> getPieChart2() {
-        List<Order> allOrders = orderService.getAllOrders();
-        List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());
-        Collections.reverse(validOrders);
-
-        List<Category> categoryList = categoryService.getAllCategories();
-
-        Map<Category, Double> categoryDoubleMap = new HashMap<>();
-
-        for (Category category : categoryList) {
-            categoryDoubleMap.put(category, 0.0);
-        }
-
-        for (Order order : validOrders) {
-            List<OrderItem> orderItemList = order.getOrderItems();
-            for (OrderItem orderItem : orderItemList) {
-                Category category = orderItem.getProduct().getCategory();
-                categoryDoubleMap.put(category, categoryDoubleMap.get(category) + orderItem.getSubtotal());
-            }
-        }
-
-        List<List<Object>> rowsInGraph = new ArrayList<>();
-
-        for (Category category : categoryList) {
-            rowsInGraph.add(Arrays.asList(category.getName(),categoryDoubleMap.get(category)));
-        }
-
-        return rowsInGraph;
+    public List<List<Object>> getChartDataSalesByCategory() {
+        return orderItemRepository.revenueByCategory();
     }
 
     public List<String> getBarColors() {
