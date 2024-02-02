@@ -8,13 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Controller
@@ -28,112 +23,57 @@ public class AdminSalesReportController {
 
         List<Order> orders = orderService.getAllNonCancelledOrders();
 
-        model.addAttribute("ALL", true);
-        model.addAttribute("orderFilter", "All orders");
-        model.addAttribute("userOrders", orders);
-        model.addAttribute("totalSales", orderService.getSalesOfAllNonCancelledOrders());
+        if (!model.containsAttribute("DAILY") && !model.containsAttribute("WEEKLY") && !model.containsAttribute("MONTHLY") && !model.containsAttribute("YEARLY"))
+            model.addAttribute("ALL", true);
+        if (!model.containsAttribute("orderFilter"))
+            model.addAttribute("orderFilter", "All orders");
+        if (!model.containsAttribute("userOrders"))
+            model.addAttribute("userOrders", orders);
+        if (!model.containsAttribute("totalSales"))
+            model.addAttribute("totalSales", orderService.getSalesOfAllNonCancelledOrders());
         return "salesReport";
 
     }
 
     @PostMapping("/admin/salesReport")
-    public String filterSalesReport(@ModelAttribute("dateFilter") String dateFilter, Model model) {
-
-        List<Order> userOrders = orderService.getAllOrders();
-        List<Order> filteredUserOrders = new ArrayList<>(userOrders.stream().filter(order -> order.getOrderStatus().getId() != 6).toList());
-        Collections.reverse(filteredUserOrders);
-
-        List<LocalDate> localDateList = new ArrayList<>();
-        List<Order> modelOrders = new ArrayList<>();
-
-        for (Order order : filteredUserOrders) {
-            LocalDate localDate = order.getOrderDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            localDateList.add(localDate);
-        }
-
-        LocalDate today = LocalDate.now();
+    public String filterSalesReport(@ModelAttribute("dateFilter") String dateFilter, RedirectAttributes redirectAttributes) {
 
         switch (dateFilter) {
             case "ALL" -> {
                 return "redirect:/admin/salesReport";
             }
             case "DAILY" -> {
-                for (int i=0; i<localDateList.size(); i++) {
-                    LocalDate localDate = localDateList.get(i);
-                    if (localDate.isEqual(today)) {
-                        modelOrders.add(filteredUserOrders.get(i));
-                    }
-                }
 
-                model.addAttribute("DAILY", "DAILY");
-
-                model.addAttribute("userOrders", modelOrders);
-                model.addAttribute("orderFilter", "Daily orders");
-                model.addAttribute("totalOrders", modelOrders.size());
-                model.addAttribute("totalSales", modelOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum));
-                return "salesReport";
+                redirectAttributes.addFlashAttribute("DAILY", true);
+                redirectAttributes.addFlashAttribute("orderFilter", "Daily orders");
+                redirectAttributes.addFlashAttribute("userOrders", orderService.getOrdersMadeToday());
+                redirectAttributes.addFlashAttribute("totalSales", orderService.getSalesMadeToday());
+                return "redirect:/admin/salesReport";
             }
             case "WEEKLY" -> {
 
-                LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
-                LocalDate endOfWeek = today.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
-
-                for (int i=0; i<localDateList.size(); i++) {
-                    LocalDate localDate = localDateList.get(i);
-                    if (localDate.isAfter(startOfWeek.minusDays(1)) && localDate.isBefore(endOfWeek.plusDays(1))) {
-                        modelOrders.add(filteredUserOrders.get(i));
-                    }
-                }
-
-                model.addAttribute("WEEKLY", "WEEKLY");
-
-
-                model.addAttribute("userOrders", modelOrders);
-                model.addAttribute("orderFilter", "Weekly orders");
-                model.addAttribute("totalOrders", modelOrders.size());
-                model.addAttribute("totalSales", modelOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum));
-                return "salesReport";
+                redirectAttributes.addFlashAttribute("WEEKLY", true);
+                redirectAttributes.addFlashAttribute("orderFilter", "Weekly orders");
+                redirectAttributes.addFlashAttribute("userOrders", orderService.getOrdersMadeThisWeek());
+                redirectAttributes.addFlashAttribute("totalSales", orderService.getSalesMadeThisWeek());
+                return "redirect:/admin/salesReport";
 
             }
             case "MONTHLY" -> {
 
-                LocalDate startOfMonth = today.withDayOfMonth(1);
-                LocalDate endOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-
-                for (int i=0; i<localDateList.size(); i++) {
-                    LocalDate localDate = localDateList.get(i);
-                    if (localDate.isAfter(startOfMonth.minusDays(1)) && localDate.isBefore(endOfMonth.plusDays(1))) {
-                        modelOrders.add(filteredUserOrders.get(i));
-                    }
-                }
-
-                model.addAttribute("MONTHLY", "MONTHLY");
-
-                model.addAttribute("userOrders", modelOrders);
-                model.addAttribute("orderFilter", "Monthly orders");
-                model.addAttribute("totalOrders", modelOrders.size());
-                model.addAttribute("totalSales", modelOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum));
-                return "salesReport";
+                redirectAttributes.addFlashAttribute("MONTHLY", true);
+                redirectAttributes.addFlashAttribute("orderFilter", "Monthly orders");
+                redirectAttributes.addFlashAttribute("userOrders", orderService.getOrdersMadeThisMonth());
+                redirectAttributes.addFlashAttribute("totalSales", orderService.getSalesMadeThisMonth());
+                return "redirect:/admin/salesReport";
             }
             case "YEARLY" -> {
 
-                LocalDate startOfYear = today.withDayOfYear(1);
-                LocalDate endOfYear = today.withDayOfYear(today.lengthOfYear());
-
-                for (int i=0; i<localDateList.size(); i++) {
-                    LocalDate localDate = localDateList.get(i);
-                    if (localDate.isAfter(startOfYear.minusDays(1)) && localDate.isBefore(endOfYear.plusDays(1))) {
-                        modelOrders.add(filteredUserOrders.get(i));
-                    }
-                }
-
-                model.addAttribute("YEARLY", "YEARLY");
-
-                model.addAttribute("userOrders", modelOrders);
-                model.addAttribute("orderFilter", "Yearly orders");
-                model.addAttribute("totalOrders", modelOrders.size());
-                model.addAttribute("totalSales", modelOrders.stream().map(Order::getTotalPrice).reduce(0.0, Double::sum));
-                return "salesReport";
+                redirectAttributes.addFlashAttribute("YEARLY", true);
+                redirectAttributes.addFlashAttribute("orderFilter", "Yearly orders");
+                redirectAttributes.addFlashAttribute("userOrders", orderService.getOrdersMadeThisYear());
+                redirectAttributes.addFlashAttribute("totalSales", orderService.getSalesMadeThisYear());
+                return "redirect:/admin/salesReport";
 
             }
         }

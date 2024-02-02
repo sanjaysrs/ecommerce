@@ -74,6 +74,10 @@ public class OrderService {
         return orderRepository.countByDate(LocalDate.now());
     }
 
+    public List<Order> getOrdersMadeToday() {
+        return orderRepository.findOrdersMadeToday();
+    }
+
     public double getSalesMadeToday() {
         double sales = orderRepository.sumTotalPriceByDate(LocalDate.now());
         return Math.round(sales * 100)/100.0;
@@ -88,6 +92,10 @@ public class OrderService {
         return Math.round(sales * 100)/100.0;
     }
 
+    public List<Order> getOrdersMadeThisWeek() {
+        return orderRepository.findOrdersMadeThisWeek();
+    }
+
     public long getCountOfOrdersMadeThisMonth() {
         return orderRepository.countOrdersForThisMonth();
     }
@@ -97,6 +105,10 @@ public class OrderService {
         return Math.round(sales * 100)/100.0;
     }
 
+    public List<Order> getOrdersMadeThisMonth() {
+        return orderRepository.findOrdersMadeThisMonth();
+    }
+
     public long getCountOfOrdersMadeThisYear() {
         return orderRepository.countOrdersForThisYear();
     }
@@ -104,6 +116,10 @@ public class OrderService {
     public double getSalesMadeThisYear() {
         double sales = orderRepository.sumTotalPriceForThisYear();
         return Math.round(sales * 100)/100.0;
+    }
+
+    public List<Order> getOrdersMadeThisYear() {
+        return orderRepository.findOrdersMadeThisYear();
     }
 
     public void saveOrder(Order order) {

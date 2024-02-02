@@ -27,6 +27,10 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COUNT(o) FROM Order o WHERE DATE(o.date) = :date AND o.orderStatus.id <> 6")
     long countByDate(@Param("date") LocalDate date);
 
+    @Query("SELECT o FROM Order o WHERE o.orderStatus.id <> 6 AND " +
+            "o.date BETWEEN CURRENT_DATE AND FUNCTION('DATEADD', DAY, 1, CURRENT_DATE) ORDER BY o.date DESC")
+    List<Order> findOrdersMadeToday();
+
     @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE DATE(o.date) = :date AND o.orderStatus.id <> 6")
     double sumTotalPriceByDate(@Param("date") LocalDate date);
 
@@ -36,17 +40,26 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE YEARWEEK(o.date) = YEARWEEK(CURRENT_DATE) AND o.orderStatus.id != 6")
     double sumTotalPriceForThisWeek();
 
+    @Query("SELECT o FROM Order o WHERE YEARWEEK(o.date) = YEARWEEK(CURDATE()) AND o.orderStatus.id <> 6 ORDER BY o.date DESC")
+    List<Order> findOrdersMadeThisWeek();
+
     @Query("SELECT COUNT(o) FROM Order o WHERE MONTH(o.date) = MONTH(CURDATE()) AND YEAR(o.date) = YEAR(CURDATE()) AND o.orderStatus.id != 6")
     long countOrdersForThisMonth();
 
     @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE MONTH(o.date) = MONTH(CURDATE()) AND YEAR(o.date) = YEAR(CURDATE()) AND o.orderStatus.id <> 6")
     double sumTotalPriceForThisMonth();
 
+    @Query("SELECT o FROM Order o WHERE YEAR(o.date) = YEAR(CURRENT_DATE) AND MONTH(o.date) = MONTH(CURRENT_DATE) AND o.orderStatus.id != 6 ORDER BY o.date DESC")
+    List<Order> findOrdersMadeThisMonth();
+
     @Query("SELECT COUNT(o) FROM Order o WHERE YEAR(o.date) = YEAR(CURRENT_DATE) AND o.orderStatus.id <> 6")
     long countOrdersForThisYear();
 
     @Query("SELECT COALESCE(SUM(o.totalPrice), 0) FROM Order o WHERE YEAR(o.date) = YEAR(CURDATE()) AND o.orderStatus.id <> 6")
     double sumTotalPriceForThisYear();
+
+    @Query("SELECT o FROM Order o WHERE YEAR(o.date) = YEAR(CURRENT_DATE) AND o.orderStatus.id <> 6 ORDER BY o.date DESC")
+    List<Order> findOrdersMadeThisYear();
 
     @Query(value = "SELECT all_days.name, COUNT(o.id) " +
             "FROM (SELECT 'Sunday' AS name, 1 AS order_num UNION SELECT 'Monday', 2 UNION SELECT 'Tuesday', 3 " +
