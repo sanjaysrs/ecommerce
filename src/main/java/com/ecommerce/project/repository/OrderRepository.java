@@ -161,8 +161,26 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "AND o.date BETWEEN CURDATE() - INTERVAL 5 YEAR AND CURDATE() + INTERVAL 1 DAY " +
             "AND o.order_status_id <> 6 " +
             "GROUP BY all_years.year " +
-            "ORDER BY all_years.year DESC", nativeQuery = true)
+            "ORDER BY all_years.year ASC", nativeQuery = true)
     List<List<Object>> countOrdersLastFiveYears();
+
+    @Query(value = "SELECT all_years.year, COALESCE(SUM(o.total_price), 0) " +
+            "FROM (" +
+            "    SELECT (YEAR(CURDATE()) - (n.n - 1)) AS year " +
+            "    FROM (" +
+            "        SELECT 1 AS n " +
+            "        UNION SELECT 2 " +
+            "        UNION SELECT 3 " +
+            "        UNION SELECT 4 " +
+            "        UNION SELECT 5 " +
+            "    ) n" +
+            ") all_years " +
+            "LEFT JOIN customer_order o ON YEAR(o.date) = all_years.year " +
+            "AND o.date BETWEEN CURDATE() - INTERVAL 5 YEAR AND CURDATE() + INTERVAL 1 DAY " +
+            "AND o.order_status_id <> 6 " +
+            "GROUP BY all_years.year " +
+            "ORDER BY all_years.year ASC", nativeQuery = true)
+    List<List<Object>> sumTotalPriceLastFiveYears();
 
 }
 

@@ -97,6 +97,14 @@ public class ChartService {
         return modifyLists(orderRepository.sumTotalPriceTodayByHour());
     }
 
+    public List<List<Object>> getChartDataLastFiveYearsOrders() {
+        return modifyLists(orderRepository.countOrdersLastFiveYears());
+    }
+
+    public List<List<Object>> getChartDataLastFiveYearsSales() {
+        return modifyLists(orderRepository.sumTotalPriceLastFiveYears());
+    }
+
     public List<List<Object>> getLastFiveYears() {
         List<Order> allOrders = orderService.getAllOrders();
         List<Order> validOrders = new ArrayList<>(allOrders.stream().filter(order->order.getOrderStatus().getId()!=6).toList());

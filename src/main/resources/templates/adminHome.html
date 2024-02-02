@@ -102,48 +102,10 @@
     <button class="btn btn-primary" id="btn2" onclick="updateChart(lastThirtyDaysOrders, lastThirtyDaysOrdersTitle, lastThirtyDaysSales, lastThirtyDaysSalesTitle)">Last 30 days</button>
     <button class="btn btn-primary" id="btn3" onclick="updateChart(lastTwelveMonthsOrders, lastTwelveMonthsOrdersTitle, lastTwelveMonthsSales, lastTwelveMonthsSalesTitle)">Last 12 months</button>
     <button class="btn btn-primary" id="btn4" onclick="updateChart(todayHourlyOrders, todayHourlyOrdersTitle, todayHourlySales, todayHourlySalesTitle)">Today (hourly)</button>
-    <button class="btn btn-primary" id="btn5">Last 5 years</button>
+    <button class="btn btn-primary" id="btn5" onclick="updateChart(lastFiveYearsOrders, lastFiveYearsOrdersTitle, lastFiveYearsSales, lastFiveYearsSalesTitle)">Last 5 years</button>
     <button class="btn btn-primary" id="btn8">Categories (all time)</button>
 
     <br><br>
-
-<!--   Hello World-->
-    <script th:inline="javascript">
-        var lastSevenDaysOrders = /*[[${lastSevenDaysOrders}]]*/ [];
-        var lastSevenDaysOrdersTitle = /*[[${lastSevenDaysOrdersTitle}]]*/ ;
-        var lastSevenDaysSales = /*[[${lastSevenDaysSales}]]*/ [];
-        var lastSevenDaysSalesTitle = /*[[${lastSevenDaysSalesTitle}]]*/ ;
-
-        var lastThirtyDaysOrders = /*[[${lastThirtyDaysOrders}]]*/ [];
-        var lastThirtyDaysOrdersTitle = /*[[${lastThirtyDaysOrdersTitle}]]*/ ;
-        var lastThirtyDaysSales = /*[[${lastThirtyDaysSales}]]*/ [];
-        var lastThirtyDaysSalesTitle = /*[[${lastThirtyDaysSalesTitle}]]*/ ;
-
-        var lastTwelveMonthsOrders = /*[[${lastTwelveMonthsOrders}]]*/ [];
-        var lastTwelveMonthsOrdersTitle = /*[[${lastTwelveMonthsOrdersTitle}]]*/ ;
-        var lastTwelveMonthsSales = /*[[${lastTwelveMonthsSales}]]*/ [];
-        var lastTwelveMonthsSalesTitle = /*[[${lastTwelveMonthsSalesTitle}]]*/ ;
-
-        var todayHourlyOrders = /*[[${todayHourlyOrders}]]*/ [];
-        var todayHourlyOrdersTitle = /*[[${todayHourlyOrdersTitle}]]*/ ;
-        var todayHourlySales = /*[[${todayHourlySales}]]*/ [];
-        var todayHourlySalesTitle = /*[[${todayHourlySalesTitle}]]*/ ;
-    </script>
-
-    <script th:inline="javascript">
-        function updateChart(orders, ordersTitle, sales, salesTitle) {
-            ordersChart.data.labels = orders[0];
-            ordersChart.data.datasets[0].data = orders[1];
-            ordersChart.options.title.text = ordersTitle;
-
-            salesChart.data.labels = sales[0];
-            salesChart.data.datasets[0].data = sales[1];
-            salesChart.options.title.text = salesTitle;
-
-            ordersChart.update();
-            salesChart.update();
-        }
-    </script>
 
     <div id="chart" class="row">
         <div class="col-sm-6">
@@ -154,123 +116,6 @@
         <div class="col-sm-6">
             <div style="height:400px; background-color:white">
                 <canvas id="sales"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-    <script th:inline="javascript">
-        var ordersChart = initializeOrdersChart();
-
-        function initializeOrdersChart() {
-            return new Chart("orders", {
-              type: "bar",
-              data: {
-                labels: /*[[${lastSevenDaysOrders.get(0)}]]*/,
-                datasets: [{
-                    label: 'Orders',
-                  backgroundColor: /*[[${barColors}]]*/,
-                  data: /*[[${lastSevenDaysOrders.get(1)}]]*/
-                }]
-              },
-              options: {
-                legend: {display: false},
-                title: {
-                  display: true,
-                  text: /*[[${lastSevenDaysOrdersTitle}]]*/
-                }
-              }
-            });
-        }
-
-    </script>
-    <script th:inline="javascript">
-        var salesChart = initializeSalesChart();
-
-        function initializeSalesChart() {
-            return new Chart("sales", {
-              type: "bar",
-              data: {
-                labels: /*[[${lastSevenDaysSales.get(0)}]]*/,
-                datasets: [{
-                    label: 'Revenue (₹)',
-                  backgroundColor: /*[[${barColors}]]*/,
-                  data: /*[[${lastSevenDaysSales.get(1)}]]*/
-                }]
-              },
-              options: {
-                legend: {display: false},
-                title: {
-                  display: true,
-                  text: /*[[${lastSevenDaysSalesTitle}]]*/
-                }
-              }
-            });
-        }
-    </script>
-
-<!--    Hello World-->
-
-    <div id="div1" class="row">
-        <div class="col-sm-6">
-            <div id="columnchart_material" style="height: 400px;"></div>
-        </div>
-        <div class="col-sm-6">
-            <div id="columnchart_material2" style="height: 400px;"></div>
-        </div>
-    </div>
-
-    <div id="div2" class="row">
-            <div class="col-sm-6">
-                <div style="height:400px; background-color:white">
-                    <canvas id="myChart"></canvas>
-                </div>
-            </div>
-            <div class="col-sm-6">
-                <div style="height:400px; background-color:white">
-                    <canvas id="myChart2"></canvas>
-                </div>
-            </div>
-    </div>
-
-    <div id="div3" class="row">
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="graph1"></canvas>
-            </div>
-        </div>
-
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="graph2"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div id="div4" class="row">
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="graph3"></canvas>
-            </div>
-        </div>
-
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="graph4"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div id="div5" class="row">
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="graph5"></canvas>
-            </div>
-        </div>
-
-        <div class="col-sm-6">
-            <div style="height:400px; background-color:white;">
-                <canvas id="graph6"></canvas>
             </div>
         </div>
     </div>
@@ -411,213 +256,100 @@
     </div>
 </div>
 
+<!--Chartjs-->
+<script th:inline="javascript">
+    var lastSevenDaysOrders = /*[[${lastSevenDaysOrders}]]*/ [];
+    var lastSevenDaysOrdersTitle = /*[[${lastSevenDaysOrdersTitle}]]*/ ;
+    var lastSevenDaysSales = /*[[${lastSevenDaysSales}]]*/ [];
+    var lastSevenDaysSalesTitle = /*[[${lastSevenDaysSalesTitle}]]*/ ;
+
+    var lastThirtyDaysOrders = /*[[${lastThirtyDaysOrders}]]*/ [];
+    var lastThirtyDaysOrdersTitle = /*[[${lastThirtyDaysOrdersTitle}]]*/ ;
+    var lastThirtyDaysSales = /*[[${lastThirtyDaysSales}]]*/ [];
+    var lastThirtyDaysSalesTitle = /*[[${lastThirtyDaysSalesTitle}]]*/ ;
+
+    var lastTwelveMonthsOrders = /*[[${lastTwelveMonthsOrders}]]*/ [];
+    var lastTwelveMonthsOrdersTitle = /*[[${lastTwelveMonthsOrdersTitle}]]*/ ;
+    var lastTwelveMonthsSales = /*[[${lastTwelveMonthsSales}]]*/ [];
+    var lastTwelveMonthsSalesTitle = /*[[${lastTwelveMonthsSalesTitle}]]*/ ;
+
+    var todayHourlyOrders = /*[[${todayHourlyOrders}]]*/ [];
+    var todayHourlyOrdersTitle = /*[[${todayHourlyOrdersTitle}]]*/ ;
+    var todayHourlySales = /*[[${todayHourlySales}]]*/ [];
+    var todayHourlySalesTitle = /*[[${todayHourlySalesTitle}]]*/ ;
+
+    var lastFiveYearsOrders = /*[[${lastFiveYearsOrders}]]*/ [];
+    var lastFiveYearsOrdersTitle = /*[[${lastFiveYearsOrdersTitle}]]*/ ;
+    var lastFiveYearsSales = /*[[${lastFiveYearsSales}]]*/ [];
+    var lastFiveYearsSalesTitle = /*[[${lastFiveYearsSalesTitle}]]*/ ;
+</script>
+<script th:inline="javascript">
+    function updateChart(orders, ordersTitle, sales, salesTitle) {
+        ordersChart.data.labels = orders[0];
+        ordersChart.data.datasets[0].data = orders[1];
+        ordersChart.options.title.text = ordersTitle;
+
+        salesChart.data.labels = sales[0];
+        salesChart.data.datasets[0].data = sales[1];
+        salesChart.options.title.text = salesTitle;
+
+        ordersChart.update();
+        salesChart.update();
+    }
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <script th:inline="javascript">
-    var xValues = /*[[${chartData}]]*/ [];
-    var yValues = /*[[${chartData2}]]*/ [];
-    var barColors = /*[[${barColors}]]*/ [];
+    var ordersChart = initializeOrdersChart();
 
-    new Chart("myChart", {
-      type: "bar",
-      data: {
-        labels: xValues,
-        datasets: [{
-            label: 'Orders',
-          backgroundColor: barColors,
-          data: yValues
-        }]
-      },
-      options: {
-        legend: {display: false},
-        title: {
-          display: true,
-          text: "Orders Monthly (Last 30 days)"
-        }
-      }
-    });
-</script>
-<script th:inline="javascript">
-    var xValues2 = /*[[${chartData3}]]*/ [];
-    var yValues2 = /*[[${chartData4}]]*/ [];
-    var barColors2 = /*[[${barColors}]]*/ [];
-
-    new Chart("myChart2", {
-        type: "bar",
-        data: {
-            labels: xValues2,
+    function initializeOrdersChart() {
+        return new Chart("orders", {
+          type: "bar",
+          data: {
+            labels: /*[[${lastSevenDaysOrders.get(0)}]]*/,
             datasets: [{
-                label: '',
-                type: 'bar',
-                backgroundColor: barColors2,
-                data: yValues2
+                label: 'Orders',
+              backgroundColor: /*[[${barColors}]]*/,
+              data: /*[[${lastSevenDaysOrders.get(1)}]]*/
             }]
-        },
-        options: {
+          },
+          options: {
             legend: {display: false},
             title: {
-                display: true,
-                text: "Revenue Monthly (Last 30 days)"
+              display: true,
+              text: /*[[${lastSevenDaysOrdersTitle}]]*/
             }
-        }
-    });
-</script>
-<!--Monthly chart ends here-->
-<!--Yearly (last 12 months) chart starts here-->
-<script th:inline="javascript">
-    var graphData1 = /*[[${graphData1}]]*/ [];
-    var graphData2 = /*[[${graphData2}]]*/ [];
-    var colors = ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e8c3b9","#c45850"];
-
-    new Chart(document.getElementById("graph1"), {
-        type: 'horizontalBar',
-        data: {
-            labels: graphData1,
-            datasets: [{
-                label: "Orders",
-                backgroundColor: colors,
-                data: graphData2
-            }]
-        },
-        options: {
-            legend: { display: false },
-            title: {
-                display: true,
-                text: 'Orders (last 12 months)'
-            }
-        }
-    });
-</script>
-<script th:inline="javascript">
-    var graphData3 = /*[[${graphData3}]]*/ [];
-    var graphData4 = /*[[${graphData4}]]*/ [];
-    var colors2 = ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#e8c3b9","#c45850"];
-
-    new Chart(document.getElementById("graph2"), {
-        type: 'horizontalBar',
-        data: {
-            labels: graphData3,
-            datasets: [{
-                label: "Revenue (₹)",
-                backgroundColor: colors2,
-                data: graphData4
-            }]
-        },
-        options: {
-            legend: { display: false },
-            title: {
-                display: true,
-                text: 'Revenue in ₹ (last 12 months)'
-            }
-        }
-    });
-</script>
-<!--Yearly (last 12 months) chart ends here-->
-<!--Other chart 1 starts here-->
-<script th:inline="javascript">
-    var dailyList = /*[[${dailyList}]]*/ [];
-    var dailyTimeLabels = /*[[${dailyTimeLabels}]]*/ [];;
-
-    const ctx = document.getElementById('graph3');
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: dailyTimeLabels,
-        datasets: [{
-          label: 'Orders today',
-          backgroundColor: "navy",
-          data: dailyList,
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
           }
-        }
-      }
-    });
+        });
+    }
+
 </script>
 <script th:inline="javascript">
-    var dailyList2 = /*[[${dailyList2}]]*/ [];
-    var dailyTimeLabels2 = /*[[${dailyTimeLabels2}]]*/ [];
+    var salesChart = initializeSalesChart();
 
-    const ctxx = document.getElementById('graph4');
-
-    new Chart(ctxx, {
-      type: 'bar',
-      data: {
-        labels: dailyTimeLabels2,
-        datasets: [{
-          label: 'Revenue (₹) today',
-          backgroundColor: "turquoise",
-          data: dailyList2,
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true
+    function initializeSalesChart() {
+        return new Chart("sales", {
+          type: "bar",
+          data: {
+            labels: /*[[${lastSevenDaysSales.get(0)}]]*/,
+            datasets: [{
+                label: 'Revenue (₹)',
+              backgroundColor: /*[[${barColors}]]*/,
+              data: /*[[${lastSevenDaysSales.get(1)}]]*/
+            }]
+          },
+          options: {
+            legend: {display: false},
+            title: {
+              display: true,
+              text: /*[[${lastSevenDaysSalesTitle}]]*/
+            }
           }
-        }
-      }
-    });
+        });
+    }
 </script>
-<!--Other chart 2 ends here-->
-<script th:inline="javascript">
-    var labelFive = /*[[${labelFive}]]*/ [];
-    var dataFive = /*[[${dataFive}]]*/ [];
-    var tomatoColors = ["tomato", "DodgerBlue","MediumSeaGreen","Violet","#c45850"];
 
-    new Chart(document.getElementById("graph5"), {
-     type: 'horizontalBar',
-     data: {
-       labels: labelFive,
-       datasets: [
-         {
-           label: "Orders",
-           backgroundColor: tomatoColors,
-           data: dataFive
-         }
-       ]
-     },
-     options: {
-       legend: { display: false },
-       title: {
-         display: true,
-         text: 'Orders (last 5 years)'
-       }
-     }
- });
-</script>
-<script th:inline="javascript">
-    var labelFive2 = /*[[${labelFive2}]]*/ [];
-    var dataFive2 = /*[[${dataFive2}]]*/ [];
-    var tomatoColors2 = ["tomato", "DodgerBlue","MediumSeaGreen","Violet","#c45850"];
-
-    new Chart(document.getElementById("graph6"), {
-     type: 'horizontalBar',
-     data: {
-       labels: labelFive2,
-       datasets: [
-         {
-           label: "Revenue(₹)",
-           backgroundColor: tomatoColors2,
-           data: dataFive2
-         }
-       ]
-     },
-     options: {
-       legend: { display: false },
-       title: {
-         display: true,
-         text: 'Revenue(₹) (last 5 years)'
-       }
-     }
- });
-</script>
-<!--    Pie chart starts here-->
+<!--Google Charts-->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript" th:inline="javascript">
     google.charts.load('current', {'packages':['corechart']});
     google.charts.setOnLoadCallback(drawChartqq);
