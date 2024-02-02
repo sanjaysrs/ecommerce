@@ -6,16 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findAllByUser(User user);
 
-    List<Order> findByOrderStatusIdNot(int id);
+    List<Order> findByOrderStatusIdNotOrderByDateDesc(int id);
 
     long countByOrderStatusIdNot(int id);
 
