@@ -1,10 +1,13 @@
 package com.ecommerce.project.repository;
 
 import com.ecommerce.project.entity.Order;
+import com.ecommerce.project.entity.OrderStatus;
 import com.ecommerce.project.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -216,6 +219,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Long getCountOfOrdersBetweenDates(
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Order o SET o.orderStatus = :orderStatus WHERE o.id = :orderId")
+    void updateOrderStatus(@Param("orderId") Long orderId, @Param("orderStatus") OrderStatus orderStatus);
 }
 
 

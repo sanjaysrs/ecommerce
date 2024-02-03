@@ -156,7 +156,7 @@ public class OrderService {
     }
 
     public Order getOrderById(Long orderId) {
-        return orderRepository.findById(orderId).get();
+        return orderRepository.findById(orderId).orElse(null);
     }
 
     public List<Order> getAllOrders() {
@@ -216,6 +216,11 @@ public class OrderService {
         walletService.save(wallet);
         return refundAmount;
 
+    }
+
+    public void updateOrderStatus(Long orderId, int orderStatusId) {
+        OrderStatus orderStatus = orderStatusRepository.findById(orderStatusId).get();
+        orderRepository.updateOrderStatus(orderId, orderStatus);
     }
 }
 

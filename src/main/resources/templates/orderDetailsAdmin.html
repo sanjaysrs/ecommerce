@@ -65,7 +65,6 @@
             <div class="form-group">
                 <label for="status">Change Status</label>
                 <select id="status" name="status" class="form-control">
-                    <!-- Use Thymeleaf to iterate over user's addresses and display them -->
                     <option th:each="st : ${statuses}"
                             th:value="${st.id}"
                             th:text="${st.status}"></option>

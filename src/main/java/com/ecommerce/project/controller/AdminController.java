@@ -25,12 +25,6 @@ public class AdminController {
     UserService userService;
 
     @Autowired
-    OrderService orderService;
-
-    @Autowired
-    OrderStatusService orderStatusService;
-
-    @Autowired
     StorageService storageService;
 
     @InitBinder
@@ -39,65 +33,6 @@ public class AdminController {
         StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
 
         dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
-    }
-
-    @GetMapping("/admin/orders")
-    public String adminOrders(Model model) {
-        List<Order> userOrders = orderService.getAllOrders();
-        model.addAttribute("userOrders", userOrders);
-        return "ordersAdmin";
-    }
-
-    @GetMapping("/admin/orders/{orderId}")
-    public String viewOrderDetails(@PathVariable Long orderId, Model model) {
-        Order order = orderService.getOrderById(orderId);
-        if (order == null) {
-            return "redirect:/admin/orders";
-        }
-
-        model.addAttribute("statuses", orderStatusService.findAll());
-        model.addAttribute("order", order);
-
-        //13-10-2023 coupon check
-        List<OrderItem> orderItems = order.getOrderItems();
-        double actualTotal=0.0;
-        for (OrderItem orderItem : orderItems) {
-            actualTotal += orderItem.getProduct().getPrice() * orderItem.getQuantity();
-        }
-        if (order.getTotalPrice()!=actualTotal)
-            model.addAttribute("couponApplied", "Coupon Applied!");
-
-        model.addAttribute("urlList", storageService.getUrlListForOrder(order));
-
-        return "orderDetailsAdmin";
-    }
-
-    @PostMapping("/admin/orders/{orderId}")
-    public String orderStatus(
-            @PathVariable("orderId") Long orderId,
-            @ModelAttribute("status") int status,
-            Model model) {
-
-        OrderStatus orderStatus = orderStatusService.findById(status);
-
-        Order order = orderService.getOrderById(orderId);
-        order.setOrderStatus(orderStatus);
-        orderService.saveOrder(order);
-
-        model.addAttribute("statuses", orderStatusService.findAll());
-        model.addAttribute("order", order);
-
-        //13-10-2023 coupon check
-        List<OrderItem> orderItems = order.getOrderItems();
-        double actualTotal=0.0;
-        for (OrderItem orderItem : orderItems) {
-            actualTotal += orderItem.getProduct().getPrice() * orderItem.getQuantity();
-        }
-        if (order.getTotalPrice()!=actualTotal)
-            model.addAttribute("couponApplied", "Coupon Applied!");
-
-        model.addAttribute("urlList", storageService.getUrlListForOrder(order));
-        return "orderDetailsAdmin";
     }
 
     @GetMapping("/admin/inventory")
