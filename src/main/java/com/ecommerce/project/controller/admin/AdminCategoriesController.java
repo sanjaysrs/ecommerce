@@ -1,5 +1,6 @@
 package com.ecommerce.project.controller.admin;
 
+import com.ecommerce.project.dto.CategoryDTO;
 import com.ecommerce.project.entity.Category;
 import com.ecommerce.project.service.CategoryService;
 import jakarta.validation.Valid;
@@ -10,7 +11,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,14 +21,7 @@ public class AdminCategoriesController {
     CategoryService categoryService;
 
     @GetMapping("/admin/categories")
-    public String getCategories(@ModelAttribute("exception") String exception,
-                                @ModelAttribute("deleted") String deleted,
-                                Model model) {
-
-        if (!exception.isEmpty())
-            model.addAttribute("exceptionCheck", "Exception Check");
-        if (!deleted.isEmpty())
-            model.addAttribute("deletedCheck", "Deleted Check");
+    public String getCategories(Model model) {
 
         if (!model.containsAttribute("categories"))
             model.addAttribute("categories", categoryService.getAllCategories());
@@ -52,30 +45,32 @@ public class AdminCategoriesController {
 
     @GetMapping("/admin/categories/add")
     public String addCategories(Model model) {
-        model.addAttribute("category", new Category());
+        if (!model.containsAttribute("category"))
+            model.addAttribute("category", new CategoryDTO());
         return "categoriesAdd";
     }
 
     @PostMapping("/admin/categories/add")
     public String postAddCategories(
-            @Valid @ModelAttribute("category") Category category,
+            @Valid @ModelAttribute("category") CategoryDTO categoryDTO,
             BindingResult bindingResult,
-            Model model
-    ) {
+            RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()){
-            return "categoriesAdd";
+            redirectAttributes.addFlashAttribute("category", categoryDTO);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.category", bindingResult);
+            return "redirect:/admin/categories/add";
         }
 
-        Optional<Category> existing = categoryService.getCategoryByName(category.getName());
+        Optional<Category> existing = categoryService.getCategoryByName(categoryDTO.getName());
 
-        if (existing.isPresent()) {
-            model.addAttribute("category", new Category());
-            model.addAttribute("categoryError", "Category already exists.");
-            return "categoriesAdd";
+        if (existing.isPresent() && categoryDTO.getId()!=existing.get().getId()) {
+            redirectAttributes.addFlashAttribute("category", categoryDTO);
+            redirectAttributes.addFlashAttribute("categoryError", "Category already exists.");
+            return "redirect:/admin/categories/add";
         }
 
-        categoryService.addCategory(category);
+        categoryService.saveCategory(categoryDTO);
         return "redirect:/admin/categories";
     }
 
@@ -92,14 +87,13 @@ public class AdminCategoriesController {
     }
 
     @GetMapping("/admin/categories/update/{id}")
-    public String updateCategory(@PathVariable int id, Model model) {
+    public String updateCategory(@PathVariable int id, RedirectAttributes redirectAttributes) {
         Optional<Category> category = categoryService.getCategoryById(id);
         if (category.isPresent()) {
-            model.addAttribute("category", category.get());
-            return "categoriesAdd";
+            redirectAttributes.addFlashAttribute("category", categoryService.getCategoryDto(category.get()));
+            return "redirect:/admin/categories/add";
         }
         return "404";
     }
-
 
 }

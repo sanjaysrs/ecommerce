@@ -51,7 +51,7 @@
                 <div th:if="${#fields.hasErrors('name')}"
                      style="margin-bottom: 25px" class="text-danger">
                     <ul>
-                        <li th:each="err : ${#fields.errors('name')}" th:text="'Category name ' + ${err}" />
+                        <li th:each="err : ${#fields.errors('name')}" th:text="${err}" />
                     </ul>
                 </div>
 
