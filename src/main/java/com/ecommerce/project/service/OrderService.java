@@ -160,7 +160,7 @@ public class OrderService {
     }
 
     public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+        return orderRepository.findAllByOrderByDateDesc();
     }
 
     public void createOrderAndSave(User user, Long selectedAddressId, int paymentMethodId, double total) {

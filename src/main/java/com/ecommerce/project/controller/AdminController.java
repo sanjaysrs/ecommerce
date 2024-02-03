@@ -44,7 +44,6 @@ public class AdminController {
     @GetMapping("/admin/orders")
     public String adminOrders(Model model) {
         List<Order> userOrders = orderService.getAllOrders();
-        Collections.reverse(userOrders);
         model.addAttribute("userOrders", userOrders);
         return "ordersAdmin";
     }
