@@ -34,52 +34,7 @@ public class AdminController {
     OrderStatusService orderStatusService;
 
     @Autowired
-    CouponService couponService;
-
-    @Autowired
     StorageService storageService;
-
-    @GetMapping("/admin/coupons")
-    public String getCoupons(Model model) {
-        model.addAttribute("allCoupons", couponService.getAllCoupons());
-        return "coupons";
-    }
-
-    @GetMapping("/admin/createCoupon")
-    public String createCoupon(Model model) {
-
-        model.addAttribute("coupon", new Coupon());
-        return "createCoupon";
-    }
-
-    @PostMapping("/admin/createCoupon")
-    public String postCoupon(@ModelAttribute("coupon") Coupon coupon, @ModelAttribute("status") int status,  Model model) {
-
-        couponService.saveCoupon(coupon);
-        if (status==1)
-            model.addAttribute("couponCreated", "Coupon was created successfully");
-        if (status==2)
-            model.addAttribute("couponCreated", "Coupon was edited successfully");
-        model.addAttribute("allCoupons", couponService.getAllCoupons());
-        return "coupons";
-    }
-
-    @GetMapping("/admin/coupons/delete/{couponId}")
-    public String deleteCoupon(@PathVariable("couponId") int couponId, Model model) {
-        couponService.deleteCouponById(couponId);
-        model.addAttribute("couponDeleted", "Coupon was deleted successfully");
-        model.addAttribute("allCoupons", couponService.getAllCoupons());
-        return "coupons";
-    }
-
-    @GetMapping("/admin/coupons/edit/{couponId}")
-    public String editCoupon(@PathVariable("couponId") int couponId, Model model) {
-
-        Coupon coupon = couponService.getCouponById(couponId).get();
-        model.addAttribute("coupon", coupon);
-        model.addAttribute("edit", "edit");
-        return "createCoupon";
-    }
 
     @GetMapping("/admin/categories")
     public String getCategories(@ModelAttribute("exception") String exception,

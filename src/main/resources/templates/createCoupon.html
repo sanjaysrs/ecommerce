@@ -44,11 +44,13 @@
     <div class="col-md-6">
       <form th:action="@{/admin/createCoupon}" method="post" th:object="${coupon}">
         <input type="hidden" th:field="*{couponId}">
-        <input th:if="!${edit}" type="hidden" name="status" value="1">
+        <input th:unless="${edit}" type="hidden" name="status" value="1">
         <input th:if="${edit}" type="hidden" name="status" value="2">
         <div class="form-group">
           <label for="couponCode">Coupon Code:</label>
-          <input type="text" id="couponCode" th:field="*{couponCode}" class="form-control" required>
+          <input type="text" id="couponCode" th:field="*{couponCode}" class="form-control">
+          <div th:if="${error}" class="text-danger" th:text="${error}"></div>
+          <div th:if="${#fields.hasErrors('couponCode')}" class="text-danger" th:errors="*{couponCode}"></div>
         </div>
         <div class="form-group">
           <label for="discountType">Discount Type:</label>
@@ -56,17 +58,20 @@
             <option value="PERCENTAGE">PERCENTAGE</option>
             <option value="ABSOLUTE">ABSOLUTE</option>
           </select>
+          <div th:if="${#fields.hasErrors('discountType')}" class="text-danger" th:errors="*{discountType}"></div>
         </div>
         <div class="form-group">
           <label for="discountValue">Discount Value:</label>
-          <input type="number" min="1" step="any" id="discountValue" th:field="*{discountValue}" class="form-control" required>
+          <input type="number" id="discountValue" th:field="*{discountValue}" class="form-control">
+          <div th:if="${#fields.hasErrors('discountValue')}" class="text-danger" th:errors="*{discountValue}"></div>
         </div>
         <div class="form-group">
           <label for="minimumPurchase">Minimum Purchase Value:</label>
-          <input type="number" min="0" step="any" id="minimumPurchase" th:field="*{minimumPurchase}" class="form-control" required>
+          <input type="number" id="minimumPurchase" th:field="*{minimumPurchase}" class="form-control">
+          <div th:if="${#fields.hasErrors('minimumPurchase')}" class="text-danger" th:errors="*{minimumPurchase}"></div>
         </div>
         <div class="form-group text-center">
-          <button th:if="!${edit}" type="submit" class="btn buntan">Create coupon</button>
+          <button th:unless="${edit}" type="submit" class="btn buntan">Create coupon</button>
           <button th:if="${edit}" type="submit" class="btn buntan">Edit coupon</button>
         </div>
       </form>

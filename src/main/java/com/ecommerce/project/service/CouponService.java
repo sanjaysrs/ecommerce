@@ -1,8 +1,10 @@
 package com.ecommerce.project.service;
 
+import com.ecommerce.project.dto.CouponDTO;
 import com.ecommerce.project.entity.Cart;
 import com.ecommerce.project.entity.Coupon;
 import com.ecommerce.project.repository.CouponRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,13 @@ public class CouponService {
         return couponRepository.findAll();
     }
 
-    public void saveCoupon(Coupon coupon) {
+    public void saveCoupon(CouponDTO couponDTO) {
+        Coupon coupon = new Coupon();
+        coupon.setCouponId(couponDTO.getCouponId());
+        coupon.setCouponCode(couponDTO.getCouponCode());
+        coupon.setDiscountType(couponDTO.getDiscountType());
+        coupon.setDiscountValue(couponDTO.getDiscountValue());
+        coupon.setMinimumPurchase(couponDTO.getMinimumPurchase());
         couponRepository.save(coupon);
     }
 
