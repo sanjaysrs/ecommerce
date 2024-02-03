@@ -3,15 +3,12 @@ package com.ecommerce.project.controller;
 import com.ecommerce.project.aws.service.StorageService;
 import com.ecommerce.project.entity.*;
 import com.ecommerce.project.service.*;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 
@@ -46,7 +43,7 @@ public class AdminController {
 
     @GetMapping("/admin/users")
     public String getUsers(Model model) {
-        model.addAttribute("users", userService.findAll().stream().filter(User::isVerified).toList());
+        model.addAttribute("users", userService.findAllVerifiedUsers());
         return "users";
     }
 

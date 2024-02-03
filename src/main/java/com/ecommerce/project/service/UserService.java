@@ -46,6 +46,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public List<User> findAllVerifiedUsers() {
+        return userRepository.findVerifiedUsersWithRoleUser();
+    }
+
     public void deleteById(Integer id) {
         userRepository.deleteById(id);
     }
