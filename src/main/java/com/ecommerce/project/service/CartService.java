@@ -158,6 +158,7 @@ public class CartService {
 
     }
 
+    @Transactional
     public void removeCouponFromCart(int couponId) {
         cartRepository.removeCouponFromCart(couponId);
     }

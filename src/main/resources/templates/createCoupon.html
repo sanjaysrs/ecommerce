@@ -63,6 +63,7 @@
         <div class="form-group">
           <label for="discountValue">Discount Value:</label>
           <input type="number" id="discountValue" th:field="*{discountValue}" class="form-control">
+          <div th:if="${percentageError}" class="text-danger" th:text="${percentageError}"></div>
           <div th:if="${#fields.hasErrors('discountValue')}" class="text-danger" th:errors="*{discountValue}"></div>
         </div>
         <div class="form-group">

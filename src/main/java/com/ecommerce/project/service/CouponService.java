@@ -62,4 +62,12 @@ public class CouponService {
         Optional<Coupon> couponOptional = couponRepository.findCouponByCouponCode(couponCode);
         return couponOptional.isPresent();
     }
+
+    public boolean validatePercentage(CouponDTO couponDTO) {
+        if (couponDTO.getDiscountType().equals("ABSOLUTE"))
+            return true;
+
+        double percentage = couponDTO.getDiscountValue();
+        return !(percentage < 1) && !(percentage > 100);
+    }
 }

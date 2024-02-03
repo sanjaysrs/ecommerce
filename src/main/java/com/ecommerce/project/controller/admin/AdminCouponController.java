@@ -54,6 +54,15 @@ public class AdminCouponController {
             return "redirect:/admin/createCoupon";
         }
 
+        if (!couponService.validatePercentage(couponDTO)) {
+            if (status == 2)
+                redirectAttributes.addFlashAttribute("edit", true);
+            redirectAttributes.addFlashAttribute("coupon", couponDTO);
+            redirectAttributes.addFlashAttribute("percentageError", "Enter a valid percentage");
+            return "redirect:/admin/createCoupon";
+
+        }
+
         if (status==1) {
             Optional<Coupon> couponOptional = couponService.getCouponByCouponCode(couponDTO.getCouponCode());
             if (couponOptional.isPresent()) {
