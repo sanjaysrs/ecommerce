@@ -55,60 +55,34 @@
 
     <br>
 
-    <!-- Place for messages: error, alert etc ... -->
     <div class="form-group" th:if="${searchError}">
         <div class="col-xs-15">
-            <div>
-
-                <!-- Check for login error -->
-
-                <div th:if="${searchError}">
-
-                    <div class="alert alert-danger col-xs-offset-1 col-xs-10">
-                        <span th:text="${searchError}"></span>
-                    </div>
-
-                </div>
-
+            <div class="alert alert-danger col-xs-offset-1 col-xs-10">
+                <span th:text="${searchError}"></span>
             </div>
         </div>
     </div>
 
-<!--   Exception Check-->
-    <div class="form-group" th:if="${exceptionCheck}">
+    <div class="form-group" th:if="${exception}">
         <div class="col-xs-15">
-            <div>
-                <div th:if="${exceptionCheck}">
-                    <div class="alert alert-danger col-xs-offset-1 col-xs-10">
-                        <span th:text="${exception}"></span>
-                    </div>
-                </div>
+            <div class="alert alert-danger col-xs-offset-1 col-xs-10">
+                <span th:text="${exception}"></span>
             </div>
         </div>
     </div>
 
-    <!--   Deleted Check-->
-    <div class="form-group" th:if="${deletedCheck}">
+    <div class="form-group" th:if="${deleted}">
         <div class="col-xs-15">
-            <div>
-                <div th:if="${deletedCheck}">
-                    <div class="alert alert-warning col-xs-offset-1 col-xs-10">
-                        <span th:text="${deleted}"></span>
-                    </div>
-                </div>
+            <div class="alert alert-warning col-xs-offset-1 col-xs-10">
+                <span th:text="${deleted}"></span>
             </div>
         </div>
     </div>
 
-    <!--   addOrUpdate Check-->
-    <div class="form-group" th:if="${addOrUpdateCheck}">
+    <div class="form-group" th:if="${addOrUpdate}">
         <div class="col-xs-15">
-            <div>
-                <div th:if="${addOrUpdateCheck}">
-                    <div class="alert alert-success col-xs-offset-1 col-xs-10">
-                        <span th:text="${addOrUpdate}"></span>
-                    </div>
-                </div>
+            <div class="alert alert-success col-xs-offset-1 col-xs-10">
+                <span th:text="${addOrUpdate}"></span>
             </div>
         </div>
     </div>
