@@ -48,7 +48,7 @@
         </div>
         <div class="card-body">
             <p><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>
-            <p><strong>Order Date:</strong> <span th:text="${#dates.format(order.orderDate, 'dd-MM-yyyy, hh:mm a')}"></span></p>
+            <p><strong>Order Date:</strong> <span th:text="${#temporals.format(order.date, 'dd-MM-yyyy, hh:mm a')}"></span></p>
             <p><strong>Total Amount:</strong> ₹<span th:text="${order.totalPrice}"></span> <strong class="text-info" th:text="${couponApplied}"></strong></p>
             <p><strong>User:</strong> <span th:text="${order.user.getEmail()}"></span></p>
             <p><strong>Order Status: </strong> <span th:text="${order.orderStatus.status}"></span></p>
