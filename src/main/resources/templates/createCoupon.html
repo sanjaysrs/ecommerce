@@ -37,7 +37,7 @@
 </nav>
 
 <div class="container mt-5">
-  <h2 th:if="!${edit}" class="text-center">Create a new coupon</h2>
+  <h2 th:unless="${edit}" class="text-center">Create a new coupon</h2>
   <h2 th:if="${edit}" class="text-center">Edit coupon</h2>
 
   <div class="row justify-content-center">

@@ -45,12 +45,15 @@ public class AdminCouponController {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("coupon", couponDTO);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.coupon", bindingResult);
+            if (status == 2)
+                redirectAttributes.addFlashAttribute("edit", true);
             return "redirect:/admin/createCoupon";
         }
 
         if (status==1) {
             Optional<Coupon> couponOptional = couponService.getCouponByCouponCode(couponDTO.getCouponCode());
             if (couponOptional.isPresent()) {
+                redirectAttributes.addFlashAttribute("coupon", couponDTO);
                 redirectAttributes.addFlashAttribute("error", "Coupon with same coupon code already present");
                 return "redirect:/admin/createCoupon";
             }
