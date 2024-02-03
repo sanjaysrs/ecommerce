@@ -158,7 +158,12 @@ public class CartService {
 
     }
 
+    public void removeCouponFromCart(int couponId) {
+        cartRepository.removeCouponFromCart(couponId);
+    }
+
     public boolean hasMinimumPurchase(Coupon coupon, User user) {
         return getCartTotalWithoutCouponDiscount(user) >= coupon.getMinimumPurchase();
     }
+
 }

@@ -2,6 +2,7 @@ package com.ecommerce.project.controller.admin;
 
 import com.ecommerce.project.dto.CouponDTO;
 import com.ecommerce.project.entity.Coupon;
+import com.ecommerce.project.service.CartService;
 import com.ecommerce.project.service.CouponService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class AdminCouponController {
 
     @Autowired
     CouponService couponService;
+
+    @Autowired
+    CartService cartService;
 
     @GetMapping("/admin/coupons")
     public String getCoupons(Model model) {
@@ -66,13 +70,6 @@ public class AdminCouponController {
         return "redirect:/admin/coupons";
     }
 
-    @GetMapping("/admin/coupons/delete/{couponId}")
-    public String deleteCoupon(@PathVariable("couponId") int couponId, RedirectAttributes redirectAttributes) {
-        couponService.deleteCouponById(couponId);
-        redirectAttributes.addFlashAttribute("couponDeleted", "Coupon was deleted successfully");
-        return "redirect:/admin/coupons";
-    }
-
     @GetMapping("/admin/coupons/edit/{couponId}")
     public String editCoupon(@PathVariable("couponId") int couponId, Model model) {
 
@@ -83,6 +80,14 @@ public class AdminCouponController {
         model.addAttribute("coupon", couponOptional.get());
         model.addAttribute("edit", true);
         return "createCoupon";
+    }
+
+    @GetMapping("/admin/coupons/delete/{couponId}")
+    public String deleteCoupon(@PathVariable("couponId") int couponId, RedirectAttributes redirectAttributes) {
+        cartService.removeCouponFromCart(couponId);
+        couponService.deleteCouponById(couponId);
+        redirectAttributes.addFlashAttribute("couponDeleted", "Coupon was deleted successfully");
+        return "redirect:/admin/coupons";
     }
 
 }
