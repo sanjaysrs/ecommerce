@@ -55,17 +55,13 @@ public class AdminController {
 
     @GetMapping("/admin/users/enable/{id}")
     public String enableUser(@PathVariable("id") Integer id) {
-        User user = userService.findById(id);
-        user.setEnabled(true);
-        userService.save(user);
+        userService.enableUser(id);
         return "redirect:/admin/users";
     }
 
     @GetMapping("/admin/users/disable/{id}")
     public String disableUser(@PathVariable("id") Integer id) {
-        User user = userService.findById(id);
-        user.setEnabled(false);
-        userService.save(user);
+        userService.disableUser(id);
         return "redirect:/admin/users";
     }
 

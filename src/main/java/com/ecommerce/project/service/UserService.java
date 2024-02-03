@@ -59,6 +59,16 @@ public class UserService {
         return user;
     }
 
+    @Transactional
+    public void enableUser(Integer userId) {
+        userRepository.enableUser(userId);
+    }
+
+    @Transactional
+    public void disableUser(Integer userId) {
+        userRepository.disableUser(userId);
+    }
+
     public void save(User user) {
         userRepository.save(user);
     }
