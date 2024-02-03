@@ -4,7 +4,6 @@ import com.ecommerce.project.aws.service.StorageService;
 import com.ecommerce.project.dto.ProductDTO;
 import com.ecommerce.project.entity.Product;
 import com.ecommerce.project.entity.ProductImage;
-import com.ecommerce.project.repository.ProductImageRepository;
 import com.ecommerce.project.service.CategoryService;
 import com.ecommerce.project.service.ProductImageService;
 import com.ecommerce.project.service.ProductService;
@@ -18,9 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,15 +67,12 @@ public class AdminProductAddController {
         product.setQuantity(productDTO.getQuantity());
         product.setDescription(productDTO.getDescription());
 
-        String fileName = storageService.uploadFile(files.get(0));
-        product.setImageName(fileName);
-
         List<ProductImage> productImageList = new ArrayList<>();
 
-        for (int i=1; i<files.size();i++) {
+        for (int i=0; i<files.size();i++) {
             ProductImage productImage = new ProductImage();
             productImage.setProduct(product);
-            fileName = storageService.uploadFile(files.get(i));
+            String fileName = storageService.uploadFile(files.get(i));
             productImage.setImageName(fileName);
             productImageList.add(productImage);
         }
@@ -102,7 +95,7 @@ public class AdminProductAddController {
             model.addAttribute("categories", categoryService.getAllCategories());
             Product product = productService.getProductById(productDTO.getId()).get();
             model.addAttribute("product",product);
-            model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
+            model.addAttribute("urlList", storageService.getUrlListForProduct(product));
             return "productsUpdate";
         }
 
@@ -124,15 +117,13 @@ public class AdminProductAddController {
 
         if (!files.get(0).isEmpty()) {
             productImageService.deleteAllByProductId(productDTO.getId());
-            String fileName = storageService.uploadFile(files.get(0));
-            product.setImageName(fileName);
 
             List<ProductImage> productImageList = new ArrayList<>();
 
-            for (int i=1; i<files.size();i++) {
+            for (int i=0; i<files.size();i++) {
                 ProductImage productImage = new ProductImage();
                 productImage.setProduct(product);
-                fileName = storageService.uploadFile(files.get(i));
+                String fileName = storageService.uploadFile(files.get(i));
                 productImage.setImageName(fileName);
                 productImageList.add(productImage);
             }
@@ -162,7 +153,7 @@ public class AdminProductAddController {
             productDTO.setQuantity(product.getQuantity());
             productDTO.setDescription(product.getDescription());
 
-            model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
+            model.addAttribute("urlList", storageService.getUrlListForProduct(product));
             model.addAttribute("product", product);
             model.addAttribute("productDTO", productDTO);
             model.addAttribute("categories", categoryService.getAllCategories());
@@ -170,7 +161,7 @@ public class AdminProductAddController {
             return "productsUpdate";
         }
 
-        model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
+        model.addAttribute("urlList", storageService.getUrlListForProduct(product));
         model.addAttribute("duplicateNameCheck", "duplicateNameCheck");
         model.addAttribute("product", product);
         model.addAttribute("productDTO", productDTOattr);

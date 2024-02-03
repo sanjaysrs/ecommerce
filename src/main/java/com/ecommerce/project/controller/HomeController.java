@@ -1,11 +1,8 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.aws.service.StorageService;
-import com.ecommerce.project.entity.Order;
-import com.ecommerce.project.entity.OrderItem;
 import com.ecommerce.project.entity.Product;
 import com.ecommerce.project.entity.User;
-import com.ecommerce.project.repository.OrderRepository;
 import com.ecommerce.project.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +122,7 @@ public class HomeController {
 
         model.addAttribute("product", product);
         model.addAttribute("inStock", productService.isProductInStock(product));
-        model.addAttribute("urlList", storageService.getUrlListForSingleProduct(product));
+        model.addAttribute("urlList", storageService.getUrlListForProduct(product));
         model.addAttribute("equalStock", false);
         
         if (getCurrentUserRole().equals("[ROLE_USER]")) {

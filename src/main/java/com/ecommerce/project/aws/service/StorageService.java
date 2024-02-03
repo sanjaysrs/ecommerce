@@ -67,8 +67,8 @@ public class StorageService {
         return convertedFile;
     }
 
-    public String generateS3ObjectUrl(String imageKey) {
-        GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, imageKey);
+    public String generateS3ObjectUrl(String fileName) {
+        GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, fileName);
         URL s3ImageUrl = s3Client.generatePresignedUrl(request);
         return s3ImageUrl.toString();
     }
@@ -76,41 +76,40 @@ public class StorageService {
     public List<String> getUrlList(List<Product> products) {
         List<String> urlList = new ArrayList<>();
         for (Product product : products) {
-            String url = generateS3ObjectUrl(product.getImageName());
+            String url = generateS3ObjectUrl(product.getProductImages().get(0).getImageName());
             urlList.add(url);
         }
         return urlList;
     }
 
-    public List<String> getUrlListForSingleProduct(Product product) {
+    public List<String> getUrlListForProduct(Product product) {
         List<String> urlList = new ArrayList<>();
-        urlList.add(generateS3ObjectUrl(product.getImageName()));
         for (ProductImage productImage : product.getProductImages()) {
             urlList.add(generateS3ObjectUrl(productImage.getImageName()));
         }
         return urlList;
     }
 
-    public List<String> getUrlListForSingleOrder(Order order) {
+    public List<String> getUrlListForOrder(Order order) {
         List<String> urlList = new ArrayList<>();
         for (OrderItem orderItem : order.getOrderItems()) {
-            urlList.add(generateS3ObjectUrl(orderItem.getProduct().getImageName()));
+            urlList.add(generateS3ObjectUrl(orderItem.getProduct().getProductImages().get(0).getImageName()));
         }
         return urlList;
     }
 
-    public List<String> getUrlListForSingleCart(Cart cart) {
+    public List<String> getUrlListForCart(Cart cart) {
         List<String> urlList = new ArrayList<>();
         for (CartItem cartItem : cart.getCartItems()) {
-            urlList.add(generateS3ObjectUrl(cartItem.getProduct().getImageName()));
+            urlList.add(generateS3ObjectUrl(cartItem.getProduct().getProductImages().get(0).getImageName()));
         }
         return urlList;
     }
 
-    public List<String> getUrlListForSingleWishlist(Wishlist wishlist) {
+    public List<String> getUrlListForWishlist(Wishlist wishlist) {
         List<String> urlList = new ArrayList<>();
         for (WishlistItem wishlistItem : wishlist.getWishlistItems()) {
-            urlList.add(generateS3ObjectUrl(wishlistItem.getProduct().getImageName()));
+            urlList.add(generateS3ObjectUrl(wishlistItem.getProduct().getProductImages().get(0).getImageName()));
         }
         return urlList;
     }

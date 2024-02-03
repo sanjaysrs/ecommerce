@@ -2,10 +2,7 @@ package com.ecommerce.project.controller;
 
 import com.ecommerce.project.aws.service.StorageService;
 import com.ecommerce.project.entity.*;
-import com.ecommerce.project.repository.CartItemRepository;
-import com.ecommerce.project.repository.WishlistItemRepository;
 import com.ecommerce.project.service.CartService;
-import com.ecommerce.project.service.ProductService;
 import com.ecommerce.project.service.UserService;
 import com.ecommerce.project.service.WishlistService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,10 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class WishlistController {
@@ -48,7 +41,7 @@ public class WishlistController {
         Wishlist wishlist = getCurrentUser().getWishlist();
         model.addAttribute("wishlist", wishlist);
         model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
-        model.addAttribute("urlList", storageService.getUrlListForSingleWishlist(wishlist));
+        model.addAttribute("urlList", storageService.getUrlListForWishlist(wishlist));
 
         return "wishlist";
     }

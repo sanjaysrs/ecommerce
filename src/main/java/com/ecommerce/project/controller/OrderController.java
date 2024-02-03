@@ -2,8 +2,6 @@ package com.ecommerce.project.controller;
 
 import com.ecommerce.project.aws.service.StorageService;
 import com.ecommerce.project.entity.Order;
-import com.ecommerce.project.entity.OrderItem;
-import com.ecommerce.project.entity.OrderStatus;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.service.CartService;
 import com.ecommerce.project.service.OrderService;
@@ -11,16 +9,13 @@ import com.ecommerce.project.service.OrderStatusService;
 import com.ecommerce.project.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
 
@@ -68,7 +63,7 @@ public class OrderController {
 
         model.addAttribute("order", order);
         model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
-        model.addAttribute("urlList", storageService.getUrlListForSingleOrder(order));
+        model.addAttribute("urlList", storageService.getUrlListForOrder(order));
 
         return "orderDetails";
     }

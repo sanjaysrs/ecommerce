@@ -1,36 +1,19 @@
 package com.ecommerce.project.controller;
 
 import com.ecommerce.project.aws.service.StorageService;
-import com.ecommerce.project.dto.ProductDTO;
 import com.ecommerce.project.entity.*;
 import com.ecommerce.project.service.*;
 import jakarta.validation.Valid;
-import okhttp3.internal.http.RetryAndFollowUpInterceptor;
-import org.aspectj.weaver.IClassFileProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
-import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.thymeleaf.model.IModel;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 public class AdminController {
@@ -319,7 +302,7 @@ public class AdminController {
         if (order.getTotalPrice()!=actualTotal)
             model.addAttribute("couponApplied", "Coupon Applied!");
 
-        model.addAttribute("urlList", storageService.getUrlListForSingleOrder(order));
+        model.addAttribute("urlList", storageService.getUrlListForOrder(order));
 
         return "orderDetailsAdmin";
     }
@@ -348,7 +331,7 @@ public class AdminController {
         if (order.getTotalPrice()!=actualTotal)
             model.addAttribute("couponApplied", "Coupon Applied!");
 
-        model.addAttribute("urlList", storageService.getUrlListForSingleOrder(order));
+        model.addAttribute("urlList", storageService.getUrlListForOrder(order));
         return "orderDetailsAdmin";
     }
 

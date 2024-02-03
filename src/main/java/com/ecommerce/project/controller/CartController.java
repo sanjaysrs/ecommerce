@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -92,7 +91,7 @@ public class CartController {
         model.addAttribute("total", cartService.getCartTotalWithCouponDiscount(user));
         model.addAttribute("totalWithoutCoupon", cartService.getCartTotalWithoutCouponDiscount(user));
         model.addAttribute("cart", cart);
-        model.addAttribute("urlList", storageService.getUrlListForSingleCart(cart));
+        model.addAttribute("urlList", storageService.getUrlListForCart(cart));
 
         return "cart";
     }
