@@ -10,10 +10,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -32,48 +30,37 @@ public class AdminProductController {
     public String getProducts(Model model) {
 
         List<Product> products = productService.getAllProducts();
-        model.addAttribute("urlList", storageService.getUrlList(products));
-        model.addAttribute("products", products);
+        if (!model.containsAttribute("urlList"))
+            model.addAttribute("urlList", storageService.getUrlList(products));
+        if (!model.containsAttribute("products"))
+            model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.getAllCategories());
         return "products";
     }
 
     @GetMapping("/admin/products/filter/{id}")
-    public String filterProductByCategory(@PathVariable("id") int id, Model model) {
+    public String filterProductByCategory(@PathVariable("id") int id, RedirectAttributes redirectAttributes) {
 
         List<Product> products = productService.getAllProductsByCategoryId(id);
-        model.addAttribute("urlList", storageService.getUrlList(products));
-        model.addAttribute("products", products);
-        model.addAttribute("categories", categoryService.getAllCategories());
-        return "products";
+        redirectAttributes.addFlashAttribute("urlList", storageService.getUrlList(products));
+        redirectAttributes.addFlashAttribute("products", products);
+        return "redirect:/admin/products";
     }
 
-    @PostMapping("/admin/products")
-    public String searchProducts(@ModelAttribute("name") String name, Model model) {
+    @GetMapping("/admin/products/search")
+    public String searchProducts(@ModelAttribute("name") String keyword, RedirectAttributes redirectAttributes) {
 
-        List<Product> productList = productService.getAllProducts();
-
-        List<Product> searchResult = new ArrayList<>();
-
-        for (Product product : productList) {
-            if (product.getName().toLowerCase().contains(name.toLowerCase())) {
-                searchResult.add(product);
-            }
-        }
+        List<Product> searchResult = productService.getProductsByNameContaining(keyword);
 
         if (searchResult.isEmpty()) {
-            model.addAttribute("products", productService.getAllProducts());
-            model.addAttribute("searchError", "Your search did not match any products.");
-            model.addAttribute("categories", categoryService.getAllCategories());
-            model.addAttribute("urlList", storageService.getUrlList(productService.getAllProducts()));
-            return "products";
+            redirectAttributes.addFlashAttribute("searchError", "Your search did not match any products.");
+            return "redirect:/admin/products";
         }
 
-        model.addAttribute("urlList", storageService.getUrlList(searchResult));
-        model.addAttribute("products", searchResult);
-        model.addAttribute("categories", categoryService.getAllCategories());
+        redirectAttributes.addFlashAttribute("urlList", storageService.getUrlList(searchResult));
+        redirectAttributes.addFlashAttribute("products", searchResult);
 
-        return "products";
+        return "redirect:/admin/products";
 
     }
 

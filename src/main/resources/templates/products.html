@@ -45,7 +45,7 @@
 
     <a th:href="@{/admin/products}" style="margin: 20px 0" class="btn buntan">All Products</a>
 
-    <form th:action="@{/admin/products}" method="post">
+    <form th:action="@{/admin/products/search}" method="get">
         <div class="form-group">
             <label for="name">Search</label>
             <input type="text" class="form-control" name="name" id="name"  placeholder="Search for products" required>
