@@ -45,7 +45,7 @@
 
     <a th:href="@{/admin/categories}" style="margin: 20px 0" class="btn buntan">All Categories</a>
 
-    <form th:action="@{/admin/categories}" method="post">
+    <form th:action="@{/admin/categories/search}" method="get">
         <div class="form-group">
             <label for="name">Search</label>
             <input type="text" class="form-control" name="name" id="name"  placeholder="Enter category" required>

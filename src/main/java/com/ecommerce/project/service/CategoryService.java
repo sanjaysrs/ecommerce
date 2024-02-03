@@ -34,5 +34,8 @@ public class CategoryService {
         return categoryRepository.findCategoryByName(name);
     }
 
+    public List<Category> searchCategory(String keyword) {
+        return categoryRepository.findByNameContaining(keyword);
+    }
 
 }
