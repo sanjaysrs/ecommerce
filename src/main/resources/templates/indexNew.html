@@ -10,7 +10,6 @@
 
 <body>
 
-<!-- Start Header/Navigation -->
 <nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
 
     <div class="container">
@@ -39,9 +38,7 @@
     </div>
 
 </nav>
-<!-- End Header/Navigation -->
 
-<!-- Start Hero Section -->
 <div class="hero">
     <div class="container">
         <div class="row justify-content-between">
@@ -61,22 +58,17 @@
         </div>
     </div>
 </div>
-<!-- End Hero Section -->
 
-<!-- Start Product Section -->
 <div class="product-section">
     <div class="container">
         <div class="row">
 
-            <!-- Start Column 1 -->
             <div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
                 <h2 class="mb-4 section-title">Hot new releases</h2>
                 <p class="mb-4">Best Sellers, Featured Deals and more </p>
                 <p><a th:href="@{/shop}" class="btn">Explore</a></p>
             </div>
-            <!-- End Column 1 -->
 
-            <!-- Start Column 2 -->
             <div th:each="product, iStat : ${products}" class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
                 <a class="product-item" th:href="@{/shop/category/{id}(id=${product.getCategory().getId()})}">
                     <img th:src="${urlList.get(iStat.index)}" class="img-fluid product-thumbnail" style="width: 306px; height: 306px; object-fit: contain;">
@@ -89,14 +81,11 @@
 							</span>
                 </a>
             </div>
-            <!-- End Column 2 -->
 
         </div>
     </div>
 </div>
-<!-- End Product Section -->
 
-<!-- Start Why Choose Us Section -->
 <div class="why-choose-section">
     <div class="container">
         <div class="row justify-content-between">
@@ -157,15 +146,13 @@
         </div>
     </div>
 </div>
-<!-- End Why Choose Us Section -->
 
-<!-- Start Footer Section -->
 <footer class="footer-section">
     <div class="container relative">
 
         <div class="row g-5 mb-5">
             <div class="col-lg-4">
-                <div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">mobiG<span>.</span></a></div>
+                <div class="mb-4 footer-logo-wrap"><a href="/" class="footer-logo">mobiG<span>.</span></a></div>
                 <p class="mb-4">No. 1 Smartphone Destination. We bring you the best and latest smartphones.</p>
             </div>
 
@@ -199,11 +186,11 @@
 
                     <div class="col-6 col-sm-6 col-md-3">
                         <ul class="list-unstyled">
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">Shop</a></li>
-                            <li><a href="#">Profile</a></li>
-                            <li><a href="#">Cart</a></li>
+                            <li><a href="/">About Us</a></li>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/shop">Shop</a></li>
+                            <li><a href="/profile">Profile</a></li>
+                            <li><a href="/cart">Cart</a></li>
                         </ul>
                     </div>
                 </div>
@@ -220,8 +207,8 @@
 
                 <div class="col-lg-6 text-center text-lg-end">
                     <ul class="list-unstyled d-inline-flex ms-auto">
-                        <li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
+                        <li class="me-4"><a href="/">Terms &amp; Conditions</a></li>
+                        <li><a href="/">Privacy Policy</a></li>
                     </ul>
                 </div>
 
@@ -230,7 +217,6 @@
 
     </div>
 </footer>
-<!-- End Footer Section -->
 
 </body>
 
