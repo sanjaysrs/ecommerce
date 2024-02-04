@@ -40,4 +40,8 @@ public class WalletService {
         wallet.setAmount(wallet.getAmount() + amount);
         walletRepository.save(wallet);
     }
+
+    public List<List<Object>> getAmountAndUserEmail() {
+        return walletRepository.findAmountAndUserEmail();
+    }
 }
