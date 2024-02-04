@@ -162,17 +162,17 @@ public class LoginController {
         return "access-denied";
     }
 
+    private boolean isAnonymous() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return (authentication==null || authentication instanceof AnonymousAuthenticationToken);
+    }
+
     @InitBinder
     public void initBinder(WebDataBinder dataBinder) {
 
         StringTrimmerEditor stringTrimmerEditor = new StringTrimmerEditor(true);
 
         dataBinder.registerCustomEditor(String.class, stringTrimmerEditor);
-    }
-
-    private boolean isAnonymous() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return (authentication==null || authentication instanceof AnonymousAuthenticationToken);
     }
 
 }

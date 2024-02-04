@@ -1,4 +1,4 @@
-package com.ecommerce.project.controller;
+package com.ecommerce.project.controller.admin;
 
 import com.ecommerce.project.aws.service.StorageService;
 import com.ecommerce.project.dto.ProductDTO;
