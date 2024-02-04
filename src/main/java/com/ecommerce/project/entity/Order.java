@@ -25,9 +25,6 @@ public class Order implements Comparable<Order>{
     @JoinColumn(name = "address_id")
     private Address address;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date orderDate;
-
     private LocalDateTime date;
 
     private double totalPrice;
@@ -45,15 +42,12 @@ public class Order implements Comparable<Order>{
 
     private boolean couponApplied;
 
-    public Order() {
-    }
-
     @Override
     public int compareTo(Order o) {
-        if (getOrderDate() == null || o.getOrderDate() == null) {
+        if (getDate() == null || o.getDate() == null) {
             return 0;
         }
-        return getOrderDate().compareTo(o.getOrderDate());
+        return getDate().compareTo(o.getDate());
     }
 
     public int getTotalQuantity() {
