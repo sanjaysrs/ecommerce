@@ -56,4 +56,15 @@ public class ProductService {
         return product.getQuantity()>0;
     }
 
+    public void addStock(Long id, long quantity) {
+        productRepository.increaseProductQuantity(id, quantity);
+    }
+
+    public int removeStock(Long id, long quantity) {
+        return productRepository.decreaseProductQuantity(id, quantity);
+    }
+
+    public boolean existsById(Long id) {
+        return productRepository.existsById(id);
+    }
 }

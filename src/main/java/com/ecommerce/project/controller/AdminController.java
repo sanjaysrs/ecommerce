@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.*;
 
@@ -37,59 +38,58 @@ public class AdminController {
 
     @GetMapping("/admin/inventory")
     public String getInventory(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+
+        if (!model.containsAttribute("products"))
+            model.addAttribute("products", productService.getAllProducts());
+        if (!model.containsAttribute("urlList"))
+            model.addAttribute("urlList", storageService.getUrlList(productService.getAllProducts()));
         model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("urlList", storageService.getUrlList(productService.getAllProducts()));
         return "inventory";
     }
 
     @GetMapping("/admin/inventory/update/{id}")
     public String updateStock(@PathVariable Long id, Model model) {
-        Product product = productService.getProductById(id).get();
-        model.addAttribute("product", product);
+        model.addAttribute("productId", id);
         return "updateStock";
     }
 
     @PostMapping("/admin/inventory/addStock/{id}")
-    public String addStock(@PathVariable Long id, @ModelAttribute("addStock") long add, Model model) {
-        Product product = productService.getProductById(id).get();
-        product.setQuantity(product.getQuantity() + add);
-        productService.addProduct(product);
+    public String addStock(@PathVariable Long id, @ModelAttribute("addStock") long add, RedirectAttributes redirectAttributes) {
 
-        List<Product> products = new ArrayList<>();
-        products.add(product);
-        model.addAttribute("urlList", storageService.getUrlList(products));
-        model.addAttribute("products", products);
-        model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("stockStatus", "Stock added successfully");
-        return "inventory";
+        if (!productService.existsById(id))
+            return "redirect:/admin/inventory/update/" + id;
+
+        productService.addStock(id, add);
+
+        Product product = productService.getProductById(id).get();
+        List<Product> products = List.of(product);
+
+        redirectAttributes.addFlashAttribute("products", products);
+        redirectAttributes.addFlashAttribute("urlList", storageService.getUrlList(products));
+        redirectAttributes.addFlashAttribute("stockStatus", "Stock added successfully");
+        return "redirect:/admin/inventory";
     }
 
     @PostMapping("/admin/inventory/removeStock/{id}")
-    public String removeStock(@PathVariable Long id, @ModelAttribute("removeStock") long subtract, Model model) {
+    public String removeStock(@PathVariable Long id, @ModelAttribute("removeStock") long subtract, RedirectAttributes redirectAttributes) {
+
+        if (!productService.existsById(id))
+            return "redirect:/admin/inventory/update/" + id;
+
+        int removed = productService.removeStock(id, subtract);
 
         Product product = productService.getProductById(id).get();
+        List<Product> products = List.of(product);
 
-        if (product.getQuantity()<subtract) {
-            List<Product> products = new ArrayList<>();
-            products.add(product);
-            model.addAttribute("products", products);
-            model.addAttribute("urlList", storageService.getUrlList(products));
-            model.addAttribute("categories", categoryService.getAllCategories());
-            model.addAttribute("stockStatus", "Could not remove required stock due to insufficient stock in inventory");
-            return "inventory";
-        }
+        redirectAttributes.addFlashAttribute("products", products);
+        redirectAttributes.addFlashAttribute("urlList", storageService.getUrlList(products));
 
-        product.setQuantity(product.getQuantity() - subtract);
-        productService.addProduct(product);
+        if (removed==0)
+            redirectAttributes.addFlashAttribute("stockStatus", "Could not remove required stock due to insufficient stock in inventory");
+        else
+            redirectAttributes.addFlashAttribute("stockStatus", "Stock removed successfully");
 
-        List<Product> products = new ArrayList<>();
-        products.add(product);
-        model.addAttribute("products", products);
-        model.addAttribute("urlList", storageService.getUrlList(products));
-        model.addAttribute("categories", categoryService.getAllCategories());
-        model.addAttribute("stockStatus", "Stock removed successfully");
-        return "inventory";
+        return "redirect:/admin/inventory";
     }
 
     @PostMapping("/admin/inventory")

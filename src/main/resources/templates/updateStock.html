@@ -46,7 +46,7 @@
             <a id="toggleButton1" class="btn btn-dark"><h2>Add Stock</h2></a>
             <br> <br>
             <div id="hide1" style="display : none;">
-                <form th:action="@{/admin/inventory/addStock/{id}(id=${product.id})}" method="post">
+                <form th:action="@{/admin/inventory/addStock/{id}(id=${productId})}" method="post">
                     <div class="form-group">
                         <label for="addStock">Add Stock</label>
                         <input id="addStock" name="addStock" type="number" class="form-control" placeholder="Enter quantity" required>
@@ -64,7 +64,7 @@
             <br> <br>
 
             <div id="hide2" style="display : none;">
-                <form th:action="@{/admin/inventory/removeStock/{id}(id=${product.id})}" method="post">
+                <form th:action="@{/admin/inventory/removeStock/{id}(id=${productId})}" method="post">
                     <div class="form-group">
                         <label for="removeStock">Remove Stock</label>
                         <input id="removeStock" name="removeStock" type="number" class="form-control" placeholder="Enter quantity" required>
