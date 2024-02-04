@@ -56,7 +56,7 @@
 
             <a th:href="@{/admin/inventory}" style="margin: 20px 0" class="btn buntan">Show Whole Inventory</a>
 
-            <form th:action="@{/admin/inventory}" method="post">
+            <form th:action="@{/admin/inventory/search}" method="get">
                 <div class="form-group">
                     <label for="name">Search inventory</label>
                     <input type="text" class="form-control" name="name" id="name"  placeholder="Search inventory" required>
