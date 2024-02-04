@@ -67,7 +67,7 @@ public class InvoiceService {
         parameters.put("invoiceDataset", dataSource);
 
         //Load jrxml file and compile it
-        S3Object s3Object = s3Client.getObject(bucketName, "invoice.jrxml");
+        S3Object s3Object = s3Client.getObject(bucketName, "jasperReports/invoice.jrxml");
         InputStream jrxmlInputStream = s3Object.getObjectContent();
         JasperReport jasperReport = JasperCompileManager.compileReport(jrxmlInputStream);
 

@@ -57,7 +57,7 @@ public class ReportService {
         }
 
         //Load jrxml file and compile it
-        S3Object s3Object = s3Client.getObject(bucketName, "salesreport1.jrxml");
+        S3Object s3Object = s3Client.getObject(bucketName, "jasperReports/salesreport1.jrxml");
         InputStream jrxmlInputStream = s3Object.getObjectContent();
         JasperReport jasperReport = JasperCompileManager.compileReport(jrxmlInputStream);
 
