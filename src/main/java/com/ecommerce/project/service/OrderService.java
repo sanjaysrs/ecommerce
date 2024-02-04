@@ -173,7 +173,6 @@ public class OrderService {
         order.setAddress(address);
         order.setPaymentMethod(paymentMethod);
 
-        order.setOrderDate(new Date());
         order.setDate(LocalDateTime.now());
 
         order.setTotalPrice(total);
