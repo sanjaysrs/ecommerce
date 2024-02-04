@@ -67,14 +67,10 @@
                     </ul>
                 </div>
                 <!-- Duplicate Name Check -->
-                <div class="form-group mt-2" th:if="${duplicateNameCheck}">
+                <div class="form-group mt-2" th:if="${duplicateName}">
                     <div class="col-xs-15">
-                        <div>
-                            <div th:if="${duplicateNameCheck}">
-                                <div class="alert alert-danger col-xs-offset-1 col-xs-10">
-                                    <span th:text="${duplicateName}"></span>
-                                </div>
-                            </div>
+                        <div class="alert alert-danger col-xs-offset-1 col-xs-10">
+                            <span th:text="${duplicateName}"></span>
                         </div>
                     </div>
                 </div>

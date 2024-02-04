@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AdminProductAddController {
@@ -28,9 +28,6 @@ public class AdminProductAddController {
 
     @Autowired
     ProductService productService;
-
-    @Autowired
-    ProductImageService productImageService;
 
     @Autowired
     StorageService storageService;
@@ -74,36 +71,19 @@ public class AdminProductAddController {
     }
 
     @GetMapping("/admin/product/update/{id}")
-    public String updateProduct(@PathVariable long id,
-                                @ModelAttribute("duplicateName") String duplicateName,
-                                @ModelAttribute("productDTO") ProductDTO productDTOattr,
-                                Model model) {
+    public String updateProduct(@PathVariable long id, Model model) {
 
-        Product product = productService.getProductById(id).get();
+        Optional<Product> productOptional = productService.getProductById(id);
 
-        if (duplicateName.isEmpty()) {
-            ProductDTO productDTO = new ProductDTO();
-            productDTO.setId(product.getId());
-            productDTO.setName(product.getName());
-            productDTO.setCategoryId(product.getCategory().getId());
-            productDTO.setPrice(product.getPrice());
-            productDTO.setQuantity(product.getQuantity());
-            productDTO.setDescription(product.getDescription());
+        if (productOptional.isEmpty())
+            return "redirect:/admin/products";
 
-            model.addAttribute("urlList", storageService.getUrlListForProduct(product));
-            model.addAttribute("product", product);
-            model.addAttribute("productDTO", productDTO);
-            model.addAttribute("categories", categoryService.getAllCategories());
+        Product product = productOptional.get();
 
-            return "productsUpdate";
-        }
-
-        model.addAttribute("urlList", storageService.getUrlListForProduct(product));
-        model.addAttribute("duplicateNameCheck", "duplicateNameCheck");
-        model.addAttribute("product", product);
-        model.addAttribute("productDTO", productDTOattr);
+        if (!model.containsAttribute("productDTO"))
+            model.addAttribute("productDTO", productService.getProductDTO(product));
         model.addAttribute("categories", categoryService.getAllCategories());
-
+        model.addAttribute("urlList", storageService.getUrlListForProduct(product));
         return "productsUpdate";
 
     }
@@ -112,50 +92,28 @@ public class AdminProductAddController {
     public String productUpdatePost(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
                                  BindingResult bindingResult,
                                  @RequestParam("productImage") List<MultipartFile> files,
-                                 RedirectAttributes redirectAttributes,
-                                 Model model) throws IOException {
+                                 RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("productDTO", productDTO);
-            model.addAttribute("categories", categoryService.getAllCategories());
-            Product product = productService.getProductById(productDTO.getId()).get();
-            model.addAttribute("product",product);
-            model.addAttribute("urlList", storageService.getUrlListForProduct(product));
-            return "productsUpdate";
+            redirectAttributes.addFlashAttribute("productDTO", productDTO);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productDTO", bindingResult);
+            return "redirect:/admin/product/update/" + productDTO.getId();
         }
 
-        Product product = productService.getProductById(productDTO.getId()).get();
+        Optional<Product> productOptional = productService.getProductById(productDTO.getId());
 
-        if (!product.getName().equals(productDTO.getName())) {
-            if (productService.existsByName(productDTO.getName())) {
-                redirectAttributes.addFlashAttribute("duplicateName", "Duplicate product name");
-                redirectAttributes.addFlashAttribute("productDTO", productDTO);
-                return "redirect:/admin/product/update/" + productDTO.getId();
-            }
+        if (productOptional.isEmpty())
+            return "redirect:/admin/products";
+
+        Product product = productOptional.get();
+
+        if (productService.isNameChanged(product, productDTO) && productService.existsByName(productDTO.getName())) {
+            redirectAttributes.addFlashAttribute("duplicateName", "Duplicate product name");
+            redirectAttributes.addFlashAttribute("productDTO", productDTO);
+            return "redirect:/admin/product/update/" + productDTO.getId();
         }
 
-        product.setName(productDTO.getName());
-        product.setCategory(categoryService.getCategoryById(productDTO.getCategoryId()).get());
-        product.setPrice(productDTO.getPrice());
-        product.setQuantity(productDTO.getQuantity());
-        product.setDescription(productDTO.getDescription());
-
-        if (!files.get(0).isEmpty()) {
-            productImageService.deleteAllByProductId(productDTO.getId());
-
-            List<ProductImage> productImageList = new ArrayList<>();
-
-            for (int i=0; i<files.size();i++) {
-                ProductImage productImage = new ProductImage();
-                productImage.setProduct(product);
-                String fileName = storageService.uploadFile(files.get(i));
-                productImage.setImageName(fileName);
-                productImageList.add(productImage);
-            }
-            product.setProductImages(productImageList);
-        }
-
-        productService.saveProduct(product);
+        productService.updateProduct(product, productDTO, files);
         redirectAttributes.addFlashAttribute("addOrUpdate", "Product was updated successfully");
         return "redirect:/admin/products";
     }

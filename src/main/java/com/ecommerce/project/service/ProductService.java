@@ -25,6 +25,49 @@ public class ProductService {
     @Autowired
     CategoryService categoryService;
 
+    @Autowired
+    ProductImageService productImageService;
+
+    public void updateProduct(Product product, ProductDTO productDTO, List<MultipartFile> files) {
+        product.setName(productDTO.getName());
+        product.setCategory(categoryService.getCategoryById(productDTO.getCategoryId()).get());
+        product.setPrice(productDTO.getPrice());
+        product.setQuantity(productDTO.getQuantity());
+        product.setDescription(productDTO.getDescription());
+
+        if (!files.get(0).isEmpty()) {
+            productImageService.deleteAllByProductId(productDTO.getId());
+
+            List<ProductImage> productImageList = new ArrayList<>();
+
+            for (int i=0; i<files.size();i++) {
+                ProductImage productImage = new ProductImage();
+                productImage.setProduct(product);
+                String fileName = storageService.uploadFile(files.get(i));
+                productImage.setImageName(fileName);
+                productImageList.add(productImage);
+            }
+            product.setProductImages(productImageList);
+        }
+
+        productRepository.save(product);
+    }
+
+    public boolean isNameChanged(Product product, ProductDTO productDTO) {
+        return !product.getName().equals(productDTO.getName());
+    }
+
+    public ProductDTO getProductDTO(Product product) {
+        ProductDTO productDTO = new ProductDTO();
+        productDTO.setId(product.getId());
+        productDTO.setName(product.getName());
+        productDTO.setCategoryId(product.getCategory().getId());
+        productDTO.setPrice(product.getPrice());
+        productDTO.setQuantity(product.getQuantity());
+        productDTO.setDescription(product.getDescription());
+        return productDTO;
+    }
+
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
