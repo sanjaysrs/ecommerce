@@ -52,11 +52,16 @@ public class HomeController {
     public String home(Model model) {
 
         if (getCurrentUserRole().equals("[ROLE_ANONYMOUS]")) {
+            List<Product> products = productService.getThreeProductsWithDistinctCategory();
+            model.addAttribute("products", products);
+            model.addAttribute("urlList", storageService.getUrlList(products));
             return "indexNew";
         }
 
         if (getCurrentUserRole().equals("[ROLE_USER]")) {
-
+            List<Product> products = productService.getThreeProductsWithDistinctCategory();
+            model.addAttribute("products", products);
+            model.addAttribute("urlList", storageService.getUrlList(products));
             model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
             return "indexNew";
         }

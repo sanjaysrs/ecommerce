@@ -77,11 +77,11 @@
             <!-- End Column 1 -->
 
             <!-- Start Column 2 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                <a class="product-item" th:href="@{/shop/category/1}">
-                    <img src="mobi/apple.webp" class="img-fluid product-thumbnail">
+            <div th:each="product, iStat : ${products}" class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+                <a class="product-item" th:href="@{/shop/category/{id}(id=${product.getCategory().getId()})}">
+                    <img th:src="${urlList.get(iStat.index)}" class="img-fluid product-thumbnail" style="width: 306px; height: 306px; object-fit: contain;">
 
-                    <strong class="product-price">Apple</strong>
+                    <strong class="product-price" th:text="${product.getCategory().getName()}"></strong>
 
 
                     <span class="icon-cross">
@@ -90,33 +90,6 @@
                 </a>
             </div>
             <!-- End Column 2 -->
-
-            <!-- Start Column 3 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                <a class="product-item" th:href="@{/shop/category/2}">
-                    <img src="mobi/oneplus.jpg" class="img-fluid product-thumbnail">
-                    <strong class="product-price">OnePlus</strong>
-
-                    <span class="icon-cross">
-								<img src="mobi/cross.svg" class="img-fluid">
-							</span>
-                </a>
-            </div>
-            <!-- End Column 3 -->
-
-            <!-- Start Column 4 -->
-            <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                <a class="product-item" th:href="@{/shop/category/3}">
-                    <img src="mobi/samsung.jpg" class="img-fluid product-thumbnail">
-
-                    <strong class="product-price">Samsung</strong>
-
-                    <span class="icon-cross">
-								<img src="mobi/cross.svg" class="img-fluid">
-							</span>
-                </a>
-            </div>
-            <!-- End Column 4 -->
 
         </div>
     </div>

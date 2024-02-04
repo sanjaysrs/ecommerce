@@ -148,4 +148,8 @@ public class ProductService {
     public boolean isFilesEmpty(List<MultipartFile> files) {
         return files.size()==1 && files.get(0).isEmpty();
     }
+
+    public List<Product> getThreeProductsWithDistinctCategory() {
+        return productRepository.findDistinctProductsByCategory();
+    }
 }
