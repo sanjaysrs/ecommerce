@@ -38,7 +38,8 @@ public class AdminProductAddController {
     @GetMapping("/admin/products/add")
     public String addProduct(Model model) {
 
-        model.addAttribute("productDTO", new ProductDTO());
+        if (!model.containsAttribute("productDTO"))
+            model.addAttribute("productDTO", new ProductDTO());
         model.addAttribute("categories", categoryService.getAllCategories());
         return "productsAdd";
     }
@@ -51,7 +52,7 @@ public class AdminProductAddController {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("productDTO", productDTO);
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productDTO");
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productDTO", bindingResult);
             return "redirect:/admin/products/add";
         }
 

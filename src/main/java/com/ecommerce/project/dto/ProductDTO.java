@@ -1,11 +1,11 @@
 package com.ecommerce.project.dto;
 
-import com.ecommerce.project.entity.Category;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 public class ProductDTO {
 
     private Long id;
@@ -15,12 +15,10 @@ public class ProductDTO {
 
     private int categoryId;
 
-    @NotBlank(message = "Price is required")
-    @Min(value = 0, message = "Price cannot be negative")
+    @Min(value = 0, message = "Price must be greater than or equal to 0")
     private double price;
 
-    @NotBlank(message = "Quantity is required")
-    @PositiveOrZero(message = "Quantity cannot be negative")
+    @PositiveOrZero(message = "Quantity must be greater than or equal to 0")
     private long quantity;
 
     @NotBlank(message = "Description cannot be empty")

@@ -93,7 +93,8 @@
                 <div th:if="${#fields.hasErrors('price')}"
                      style="margin-bottom: 25px" class="text-danger">
                     <ul>
-                        <li th:each="err : ${#fields.errors('price')}" th:text="${err}" />
+                        <li th:if="${err}=='Price cannot be negative'" th:each="err : ${#fields.errors('price')}" th:text="${err}"></li>
+                        <li th:if="${err}!='Price cannot be negative'" th:each="err : ${#fields.errors('price')}" th:text="'Price is required'"></li>
                     </ul>
                 </div>
 
@@ -105,7 +106,8 @@
                 <div th:if="${#fields.hasErrors('quantity')}"
                      style="margin-bottom: 25px" class="text-danger">
                     <ul>
-                        <li th:each="err : ${#fields.errors('quantity')}" th:text="${err}" />
+                        <li th:if="${err}=='Quantity cannot be negative'" th:each="err : ${#fields.errors('quantity')}" th:text="${err}"></li>
+                        <li th:if="${err}!='Quantity cannot be negative'" th:each="err : ${#fields.errors('quantity')}" th:text="'Quantity is required'"></li>
                     </ul>
                 </div>
 
