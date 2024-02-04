@@ -38,8 +38,7 @@ public class User {
     )
     private List<Role> roles;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cart_id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cart cart;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
