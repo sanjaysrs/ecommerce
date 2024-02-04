@@ -15,9 +15,11 @@ public class ProductDTO {
 
     private int categoryId;
 
+    @NotBlank(message = "Price is required")
     @Min(value = 0, message = "Price cannot be negative")
     private double price;
 
+    @NotBlank(message = "Quantity is required")
     @PositiveOrZero(message = "Quantity cannot be negative")
     private long quantity;
 

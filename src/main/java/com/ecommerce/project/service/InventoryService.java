@@ -21,7 +21,7 @@ public class InventoryService {
         for (CartItem cartItem : cartItems) {
             Product product = cartItem.getProduct();
             product.setQuantity(product.getQuantity() - cartItem.getQuantity());
-            productService.addProduct(product);
+            productService.saveProduct(product);
         }
 
     }

@@ -67,14 +67,10 @@
                     </ul>
                 </div>
                 <!-- Duplicate Name Check -->
-                <div class="form-group mt-2" th:if="${duplicateNameCheck}">
+                <div class="form-group mt-2" th:if="${duplicateName}">
                     <div class="col-xs-15">
-                        <div>
-                            <div th:if="${duplicateNameCheck}">
-                                <div class="alert alert-danger col-xs-offset-1 col-xs-10">
-                                    <span th:text="${duplicateName}"></span>
-                                </div>
-                            </div>
+                        <div class="alert alert-danger col-xs-offset-1 col-xs-10">
+                            <span th:text="${duplicateName}"></span>
                         </div>
                     </div>
                 </div>
@@ -97,8 +93,7 @@
                 <div th:if="${#fields.hasErrors('price')}"
                      style="margin-bottom: 25px" class="text-danger">
                     <ul>
-                        <li th:if="${err}=='Price cannot be negative'" th:each="err : ${#fields.errors('price')}" th:text="${err}"></li>
-                        <li th:if="${err}!='Price cannot be negative'" th:each="err : ${#fields.errors('price')}" th:text="'Price is required'"></li>
+                        <li th:each="err : ${#fields.errors('price')}" th:text="${err}" />
                     </ul>
                 </div>
 
@@ -110,9 +105,7 @@
                 <div th:if="${#fields.hasErrors('quantity')}"
                      style="margin-bottom: 25px" class="text-danger">
                     <ul>
-                        <li th:if="${err}=='Quantity cannot be negative'" th:each="err : ${#fields.errors('quantity')}" th:text="${err}"></li>
-                        <li th:if="${err}!='Quantity cannot be negative'" th:each="err : ${#fields.errors('quantity')}" th:text="'Quantity is required'"></li>
-
+                        <li th:each="err : ${#fields.errors('quantity')}" th:text="${err}" />
                     </ul>
                 </div>
 
@@ -140,14 +133,10 @@
                 </div>
 
                 <!-- Image Required Check -->
-                <div class="form-group mt-2" th:if="${imageRequiredCheck}">
+                <div class="form-group mt-2" th:if="${imageRequired}">
                     <div class="col-xs-15">
-                        <div>
-                            <div th:if="${imageRequiredCheck}">
-                                <div class="alert alert-danger col-xs-offset-1 col-xs-10">
-                                    <span th:text="${imageRequired}"></span>
-                                </div>
-                            </div>
+                        <div class="alert alert-danger col-xs-offset-1 col-xs-10">
+                            <span th:text="${imageRequired}"></span>
                         </div>
                     </div>
                 </div>

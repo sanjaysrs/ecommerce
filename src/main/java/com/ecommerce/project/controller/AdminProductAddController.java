@@ -35,20 +35,27 @@ public class AdminProductAddController {
     @Autowired
     StorageService storageService;
 
+    @GetMapping("/admin/products/add")
+    public String addProduct(Model model) {
+
+        model.addAttribute("productDTO", new ProductDTO());
+        model.addAttribute("categories", categoryService.getAllCategories());
+        return "productsAdd";
+    }
+
     @PostMapping("/admin/products/add")
     public String productAddPost(@Valid @ModelAttribute("productDTO") ProductDTO productDTO,
                                  BindingResult bindingResult,
                                  @RequestParam("productImage") List<MultipartFile> files,
-                                 RedirectAttributes redirectAttributes,
-                                 Model model) throws IOException {
+                                 RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("productDTO", productDTO);
-            model.addAttribute("categories", categoryService.getAllCategories());
-            return "productsAdd";
+            redirectAttributes.addFlashAttribute("productDTO", productDTO);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productDTO");
+            return "redirect:/admin/products/add";
         }
 
-        if (files.size()==1 && files.get(0).isEmpty()) {
+        if (productService.isFilesEmpty(files)) {
             redirectAttributes.addFlashAttribute("imageRequired", "Select at least 1 image");
             redirectAttributes.addFlashAttribute("productDTO", productDTO);
             return "redirect:/admin/products/add";
@@ -60,27 +67,44 @@ public class AdminProductAddController {
             return "redirect:/admin/products/add";
         }
 
-        Product product = new Product();
-        product.setName(productDTO.getName());
-        product.setCategory(categoryService.getCategoryById(productDTO.getCategoryId()).get());
-        product.setPrice(productDTO.getPrice());
-        product.setQuantity(productDTO.getQuantity());
-        product.setDescription(productDTO.getDescription());
-
-        List<ProductImage> productImageList = new ArrayList<>();
-
-        for (int i=0; i<files.size();i++) {
-            ProductImage productImage = new ProductImage();
-            productImage.setProduct(product);
-            String fileName = storageService.uploadFile(files.get(i));
-            productImage.setImageName(fileName);
-            productImageList.add(productImage);
-        }
-
-        product.setProductImages(productImageList);
-        productService.addProduct(product);
+        productService.saveProduct(productDTO, files);
         redirectAttributes.addFlashAttribute("addOrUpdate", "Product was added successfully");
         return "redirect:/admin/products";
+    }
+
+    @GetMapping("/admin/product/update/{id}")
+    public String updateProduct(@PathVariable long id,
+                                @ModelAttribute("duplicateName") String duplicateName,
+                                @ModelAttribute("productDTO") ProductDTO productDTOattr,
+                                Model model) {
+
+        Product product = productService.getProductById(id).get();
+
+        if (duplicateName.isEmpty()) {
+            ProductDTO productDTO = new ProductDTO();
+            productDTO.setId(product.getId());
+            productDTO.setName(product.getName());
+            productDTO.setCategoryId(product.getCategory().getId());
+            productDTO.setPrice(product.getPrice());
+            productDTO.setQuantity(product.getQuantity());
+            productDTO.setDescription(product.getDescription());
+
+            model.addAttribute("urlList", storageService.getUrlListForProduct(product));
+            model.addAttribute("product", product);
+            model.addAttribute("productDTO", productDTO);
+            model.addAttribute("categories", categoryService.getAllCategories());
+
+            return "productsUpdate";
+        }
+
+        model.addAttribute("urlList", storageService.getUrlListForProduct(product));
+        model.addAttribute("duplicateNameCheck", "duplicateNameCheck");
+        model.addAttribute("product", product);
+        model.addAttribute("productDTO", productDTOattr);
+        model.addAttribute("categories", categoryService.getAllCategories());
+
+        return "productsUpdate";
+
     }
 
     @PostMapping("/admin/products/update")
@@ -130,61 +154,9 @@ public class AdminProductAddController {
             product.setProductImages(productImageList);
         }
 
-        productService.addProduct(product);
+        productService.saveProduct(product);
         redirectAttributes.addFlashAttribute("addOrUpdate", "Product was updated successfully");
         return "redirect:/admin/products";
-    }
-
-
-    @GetMapping("/admin/product/update/{id}")
-    public String updateProduct(@PathVariable long id,
-                                @ModelAttribute("duplicateName") String duplicateName,
-                                @ModelAttribute("productDTO") ProductDTO productDTOattr,
-                                Model model) {
-
-        Product product = productService.getProductById(id).get();
-
-        if (duplicateName.isEmpty()) {
-            ProductDTO productDTO = new ProductDTO();
-            productDTO.setId(product.getId());
-            productDTO.setName(product.getName());
-            productDTO.setCategoryId(product.getCategory().getId());
-            productDTO.setPrice(product.getPrice());
-            productDTO.setQuantity(product.getQuantity());
-            productDTO.setDescription(product.getDescription());
-
-            model.addAttribute("urlList", storageService.getUrlListForProduct(product));
-            model.addAttribute("product", product);
-            model.addAttribute("productDTO", productDTO);
-            model.addAttribute("categories", categoryService.getAllCategories());
-
-            return "productsUpdate";
-        }
-
-        model.addAttribute("urlList", storageService.getUrlListForProduct(product));
-        model.addAttribute("duplicateNameCheck", "duplicateNameCheck");
-        model.addAttribute("product", product);
-        model.addAttribute("productDTO", productDTOattr);
-        model.addAttribute("categories", categoryService.getAllCategories());
-
-        return "productsUpdate";
-
-    }
-
-    @GetMapping("/admin/products/add")
-    public String addProduct(@ModelAttribute("imageRequired") String imageRequired,
-                             @ModelAttribute("duplicateName") String duplicateName,
-                             @ModelAttribute("productDTO") ProductDTO productDTO,
-                             Model model) {
-
-        if (!imageRequired.isEmpty())
-            model.addAttribute("imageRequiredCheck", "imageRequiredCheck");
-
-        if (!duplicateName.isEmpty())
-            model.addAttribute("duplicateNameCheck", "duplicateNameCheck");
-
-        model.addAttribute("categories", categoryService.getAllCategories());
-        return "productsAdd";
     }
 
 }
