@@ -24,6 +24,4 @@ public class ProductDTO {
     @NotBlank(message = "Description cannot be empty")
     private String description;
 
-    private String imageName;
-
 }
