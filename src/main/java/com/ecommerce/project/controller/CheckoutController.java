@@ -85,6 +85,9 @@ public class CheckoutController {
                                 @ModelAttribute("paymentMethod") int paymentMethodId,
                                 RedirectAttributes redirectAttributes) {
 
+        if (!inventoryService.checkInventory(getCurrentUser().getCart()))
+            return "redirect:/cart";
+
         redirectAttributes.addFlashAttribute("addressId", addressId);
 
         if (paymentMethodId == 1)

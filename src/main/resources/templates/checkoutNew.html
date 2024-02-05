@@ -77,8 +77,8 @@
                     <td th:text="${ct.product.price}"></td>
                     <td th:text="${ct.quantity}"></td>
                     <td th:text="${ct.getTotalPrice()}"></td>
-                    <td th:if="${ct.product.quantity}>0 AND ${ct.product.quantity}>=${ct.quantity}" class="text-success">IN STOCK</td>
-                    <td th:if="${ct.product.quantity}==0 OR ${ct.product.quantity}<${ct.quantity}" class="text-danger">OUT OF STOCK</td>
+                    <td th:if="${ct.product.quantity}>=${ct.quantity}" class="text-success">IN STOCK</td>
+                    <td th:if="${ct.product.quantity}<${ct.quantity}" class="text-danger">OUT OF STOCK</td>
                 </tr>
                 </tbody>
             </table>

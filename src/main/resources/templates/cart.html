@@ -96,9 +96,9 @@
                                         <div class="d-flex justify-content-between">
                                             <div>
                                                 <p class="mb-2 text-uppercase small">Quantity: <strong><span th:text="${item.quantity}"></span></strong></p>
-                                                <p th:if="${item.product.quantity}>0 AND ${item.product.quantity}>${item.quantity}" class="mb-2 text-uppercase small text-success"><strong><span>IN STOCK</span></strong></p>
+                                                <p th:if="${item.product.quantity}>${item.quantity}" class="mb-2 text-uppercase small text-success"><strong><span>IN STOCK</span></strong></p>
                                                 <p th:if="${item.product.quantity}==${item.quantity}" class="mb-2 text-uppercase small text-warning"><strong><span>QUANTITY IN CART ALREADY EQUALS STOCK IN INVENTORY</span></strong></p>
-                                                <p th:if="${item.product.quantity}==0 OR ${item.product.quantity}<${item.quantity}" class="mb-2 text-uppercase small text-danger"><strong><span>OUT OF STOCK</span></strong></p>
+                                                <p th:if="${item.product.quantity}<${item.quantity}" class="mb-2 text-uppercase small text-danger"><strong><span>OUT OF STOCK</span></strong></p>
                                                 <a href="" th:href="@{/removeFromCart/{id}(id = ${item.product.id})}" class="btn btn-info btn-sm"><strong>-</strong></a>
                                                 <a href="" th:href="@{/addToCart/{id}(id = ${item.product.id})}" class="btn btn-info btn-sm"><strong>+</strong></a>
                                             </div>

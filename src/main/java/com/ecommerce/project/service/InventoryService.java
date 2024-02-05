@@ -26,4 +26,13 @@ public class InventoryService {
 
     }
 
+    public boolean checkInventory(Cart cart) {
+
+        List<CartItem> cartItems = cart.getCartItems();
+        for (CartItem cartItem : cartItems) {
+            if (cartItem.getProduct().getQuantity()<cartItem.getQuantity())
+                return false;
+        }
+        return true;
+    }
 }
