@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome to [Your Project Name]</title>
+    <title>Welcome to mobiG</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -12,6 +12,23 @@
             padding: 0;
             background-color: #f4f4f4;
             color: #333;
+        }
+
+        .styled-button {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(45deg, #00bfa5, #00838f);
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .styled-button:hover {
+            background: linear-gradient(45deg, #00838f, #00bfa5);
         }
 
         header {
@@ -28,11 +45,15 @@
 
         section {
             max-width: 800px;
-            margin: 20px auto;
+            margin: 20px auto; /* Added margin at the bottom */
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        section:last-of-type {
+            margin-bottom: 80px; /* Larger bottom margin for the last section */
         }
 
         section h2 {
@@ -73,18 +94,62 @@
 <body>
 
 <header>
-    <h1>Welcome to [Your Project Name]</h1>
-    <p>Hello! My name is [Your Name], and I am an aspiring Java Spring Boot web developer.</p>
+    <h1>Hello, I'm John Doe</h1>
+    <p>Welcome to my Java Spring Boot e-commerce project.</p>
+    <p>Explore the features showcasing my skills in Java and Spring Boot development.</p>
+    <a href="/" class="styled-button">Check out the main site</a>
 </header>
+
+<section>
+    <h2>Project Showcase</h2>
+    <p>This website is a project created by me, John Doe, to demonstrate my skills in Java and Spring Boot web development. It is not a real e-commerce site, but a showcase of various features and functionalities that I've implemented to highlight my capabilities.</p>
+    <p>Feel free to explore and navigate through the different sections to see the variety of features included in this project.</p>
+</section>
+
+<section>
+    <h2>Explore the Features</h2>
+
+    <div>
+        <h3>Admin Access:</h3>
+        <p>Unlock powerful features with admin credentials:</p>
+        <ul>
+            <li><strong>Username:</strong> admin</li>
+            <li><strong>Password:</strong> adminpassword</li>
+        </ul>
+    </div>
+
+    <div>
+        <h3>User Access:</h3>
+        <p>Quickly access user features with these credentials:</p>
+        <ul>
+            <li><strong>Username:</strong> user</li>
+            <li><strong>Password:</strong> userpassword</li>
+        </ul>
+    </div>
+
+    <p>If you prefer, you can also <a href="/register">register for an account</a> and experience the seamless registration workflow.</p>
+    <p>Alternatively, you can browse as a guest to explore the platform without logging in.</p>
+</section>
 
 <section>
     <h2>Project Overview</h2>
     <p>This eCommerce platform showcases various functionalities that are essential for a fully functional online
         store.</p>
     <ul>
-        <li><strong>Product Management:</strong> Manage a wide range of products...</li>
-        <li><strong>Category Management:</strong> Organize products into categories...</li>
-        <!-- Add more features as needed -->
+        <li><strong>Product Management:</strong> Manage a wide range of products with details like name, description, price, and images stored on Amazon S3. </li>
+        <li><strong>Category Management:</strong> Organize products into categories for better navigation and user experience. </li>
+        <li><strong>User Authentication:</strong> Secure user authentication and authorization mechanisms using Spring Security. </li>
+        <li><strong>User Registration:</strong> Seamless user registration process, including OTP authentication for enhanced security and account verification.</li>
+        <li><strong>Shopping Cart and Wishlist:</strong> Users can add products to their cart or wishlist, providing a seamless shopping experience. </li>
+        <li><strong>Order Management:</strong> Streamlined order processing, allowing users to place, track, and manage their orders effortlessly. Real-time updates on order status and quick access to order history contribute to an efficient and user-friendly experience.</li>
+        <li><strong>Sales Analytics:</strong> Visual representation of sales data through graphs using Chart.js and Google Charts. </li>
+        <li><strong>Form Validation:</strong> Robust form validation to ensure data integrity. </li>
+        <li><strong>Wallet System:</strong> Implementation of a wallet system for user transactions. </li>
+        <li><strong>Invoice and Sales Report Generation:</strong> Downloadable invoices and Sales Report using Jasper Reports. </li>
+        <li><strong>Coupon Management:</strong> Apply and manage discount coupons for special promotions. </li>
+        <li><strong>Payment Integration:</strong> Seamlessly integrated Razorpay for secure and efficient payment processing. </li>
+        <li><strong>User Management (Admin Side):</strong> Admin interface for efficient management of user accounts and permissions. </li>
+        <li><strong>Inventory Management:</strong> Keep track of product availability and manage stock levels. </li>
     </ul>
 </section>
 
@@ -92,34 +157,36 @@
     <h2>Technologies Used</h2>
     <p>The project makes use of the following technologies:</p>
     <ul>
+        <li><strong>Java:</strong> Core programming language for the backend.</li>
         <li><strong>Spring Boot:</strong> Main framework for building the application.</li>
         <li><strong>Spring Data JPA:</strong> Simplifies data access with the ORM.</li>
-        <!-- Add more technologies as needed -->
+        <li><strong>Hibernate:</strong> ORM (Object-Relational Mapping) framework for data persistence.</li>
+        <li><strong>Spring Security:</strong> Ensures secure user authentication and authorization.</li>
+        <li><strong>Spring Web MVC:</strong> Facilitates the development of web applications.</li>
+        <li><strong>Thymeleaf:</strong> Server-side Java template engine for web development.</li>
+        <li><strong>MySQL:</strong> Database management system for data storage.</li>
+        <li><strong>Maven:</strong> Build automation tool and project management.</li>
+        <li><strong>HTML, CSS, JavaScript:</strong> Frontend technologies for building user interfaces.</li>
+        <li><strong>Chart.js:</strong> JavaScript library for interactive charts on the frontend.</li>
+        <li><strong>Google Charts:</strong> Visualization library for creating interactive charts.</li>
+        <li><strong>Jasper Reports:</strong> Reporting engine for generating downloadable invoices and reports.</li>
+        <li><strong>Razorpay:</strong> Payment gateway integration for handling online transactions.</li>
+        <li><strong>Java Mail Sender:</strong> Integration for sending emails and notifications.</li>
+        <li><strong>Development Tools:</strong> IntelliJ IDEA for coding and Git for version control.</li>
     </ul>
-</section>
-
-<section>
-    <h2>Getting Started</h2>
-    <p>To run this project locally, follow these steps:</p>
-    <ol>
-        <li>Clone the repository: <code>git clone [your_repository_url]</code></li>
-        <li>Navigate to the project directory: <code>cd [your_project_directory]</code></li>
-        <li>Run the application: <code>./mvnw spring-boot:run</code></li>
-        <li>Open your web browser and go to <a href="http://localhost:8080" target="_blank">http://localhost:8080</a>
-        </li>
-    </ol>
 </section>
 
 <section>
     <h2>Contact Information</h2>
     <p>Connect with me on <a href="[your_linkedin_profile]" target="_blank">LinkedIn</a> and check out my <a
             href="[your_github_profile]" target="_blank">GitHub</a> for more of my projects.</p>
-    <p>Feel free to reach out if you have any questions or feedback.</p>
-    <p>Thank you for visiting my project!</p>
+    <p>Feel free to reach out. I'd love to hear from you. </p>
+    <p>You can email me at <a href="mailto:your_email@example.com">your_email@example.com</a>.</p>
+    <p>Thank you for visiting my project.</p>
 </section>
 
 <footer>
-    <p>&copy; 2022 [Your Project Name]. All rights reserved. | Designed by <a href="[your_website]" target="_blank">[Your Name]</a></p>
+    <p>Developed by John Doe</p>
 </footer>
 
 </body>
