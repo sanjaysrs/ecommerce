@@ -1,8 +1,8 @@
 cloud:
   aws:
     credentials:
-      access-key: AKIA47CRXNC4PDCIAEOI
-      secret-key: 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
+      access-key: ${cloud.aws.credentials.access-key}
+      secret-key: ${cloud.aws.credentials.secret-key}
     region:
       static: ap-south-1
     stack:
@@ -10,4 +10,4 @@ cloud:
 
 application:
   bucket:
-    name: imagebucketmobig
+    name: ${application.bucket.name}
