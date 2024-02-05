@@ -60,13 +60,9 @@ public class CartService {
                 .sum();
     }
 
-    private boolean isProductInStock(Product product) {
-        return product.getQuantity()>0;
-    }
-
     public boolean addProductToCart(User user, Product product) {
 
-        if (!isProductInStock(product) || isQuantityInCartEqualToOrGreaterThanStock(product, user.getCart()))
+        if (isProductEqualStock(user.getCart(), product) || isProductOutOfStock(user.getCart(), product))
             return false;
 
         Cart cart = user.getCart();
@@ -128,11 +124,26 @@ public class CartService {
 
     }
 
-    public boolean isQuantityInCartEqualToOrGreaterThanStock(Product product, Cart cart) {
+    public boolean isProductInStock(Cart cart, Product product) {
+        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(product, cart);
+        if (cartItemOptional.isEmpty()) {
+            return product.getQuantity()>0;
+        }
+        return cartItemOptional.get().getQuantity() < product.getQuantity();
+    }
+
+    public boolean isProductEqualStock(Cart cart, Product product) {
         Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(product, cart);
         if (cartItemOptional.isEmpty())
             return false;
-        return product.getQuantity()<=cartItemOptional.get().getQuantity();
+        return cartItemOptional.get().getQuantity() == product.getQuantity();
+    }
+
+    public boolean isProductOutOfStock(Cart cart, Product product) {
+        Optional<CartItem> cartItemOptional = cartItemRepository.findCartItemByProductAndCart(product, cart);
+        if (cartItemOptional.isEmpty())
+            return product.getQuantity() == 0;
+        return cartItemOptional.get().getQuantity() > product.getQuantity();
     }
 
     public boolean isCartEmpty(Cart cart) {

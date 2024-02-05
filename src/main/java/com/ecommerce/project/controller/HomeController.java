@@ -128,16 +128,22 @@ public class HomeController {
         Product product = productOptional.get();
 
         model.addAttribute("product", product);
-        model.addAttribute("inStock", productService.isProductInStock(product));
         model.addAttribute("urlList", storageService.getUrlListForProduct(product));
-        model.addAttribute("equalStock", false);
-        
+
+        if (getCurrentUserRole().equals("[ROLE_ANONYMOUS]")) {
+            model.addAttribute("inStock", productService.isProductInStock(product));
+            model.addAttribute("outOfStock", !productService.isProductInStock(product));
+        }
+
         if (getCurrentUserRole().equals("[ROLE_USER]")) {
 
             model.addAttribute("cartCount", cartService.getCartCount(getCurrentUser()));
             model.addAttribute("quantityInCart", cartService.getQuantityOfProductInCart(product, getCurrentUser().getCart()));
             model.addAttribute("existsInWishlist", wishlistService.productExistsInWishlist(product, getCurrentUser()));
-            model.addAttribute("equalStock", cartService.isQuantityInCartEqualToOrGreaterThanStock(product, getCurrentUser().getCart()));
+
+            model.addAttribute("inStock", cartService.isProductInStock(getCurrentUser().getCart(), product));
+            model.addAttribute("equalStock", cartService.isProductEqualStock(getCurrentUser().getCart(), product));
+            model.addAttribute("outOfStock", cartService.isProductOutOfStock(getCurrentUser().getCart(), product));
 
         }
 

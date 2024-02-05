@@ -86,8 +86,8 @@
         <div class="col-sm-7 mt-5">
             <h2 th:text="${product.name}"></h2>
             <p th:text="${product.category.name}"></p>
-            <h6 class="text-success" th:if="${inStock and !equalStock}">IN STOCK</h6>
-            <h6 class="text-danger" th:unless="${inStock}">OUT OF STOCK</h6>
+            <h6 class="text-success" th:if="${inStock}">IN STOCK</h6>
+            <h6 class="text-danger" th:if="${outOfStock}">OUT OF STOCK</h6>
             <h6 class="text-warning" th:if="${equalStock}">QUANTITY IN CART ALREADY EQUALS STOCK IN INVENTORY</h6>
             <h2>₹ <span th:text="${product.price}"></span></h2>
             <p th:text="${product.description}"></p>
