@@ -29,6 +29,8 @@ public class CartService {
             if (cartItem.getCart().getUser().equals(user))
                 cartItemRepository.delete(cartItem);
         }
+
+        removeCouponFromCartIfMinimumPriceLess(user);
     }
 
     public double getCartTotalWithCouponDiscount(User user) {
@@ -100,7 +102,22 @@ public class CartService {
             cartItemRepository.delete(cartItem);
         }
 
+        removeCouponFromCartIfMinimumPriceLess(user);
+
         return true;
+    }
+
+    public void removeCouponFromCartIfMinimumPriceLess(User user) {
+        Optional<Cart> cartOptional = cartRepository.findByUser(user);
+        if (cartOptional.isEmpty())
+            return;
+        Cart cart = cartOptional.get();
+        double minimumPurchase = cart.getCoupon().getMinimumPurchase();
+        double cartTotal = cart.getCartItems().stream().mapToDouble(CartItem::getTotalPrice).sum();
+        if (cartTotal < minimumPurchase) {
+            cart.setCoupon(null);
+            cartRepository.save(cart);
+        }
     }
 
     public void save(Cart cart) {
