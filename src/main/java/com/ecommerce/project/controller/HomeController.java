@@ -5,6 +5,7 @@ import com.ecommerce.project.entity.Product;
 import com.ecommerce.project.entity.User;
 import com.ecommerce.project.service.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.security.core.Authentication;
@@ -49,12 +50,16 @@ public class HomeController {
     }
 
     @GetMapping("/readme")
-    public String readme() {
+    public String readme(HttpSession session) {
+        session.setAttribute("readme", true);
         return "readme";
     }
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
+
+        if (session.getAttribute("readme")==null)
+            return "redirect:/readme";
 
         if (getCurrentUserRole().equals("[ROLE_ANONYMOUS]")) {
             List<Product> products = productService.getThreeProductsWithDistinctCategory();
