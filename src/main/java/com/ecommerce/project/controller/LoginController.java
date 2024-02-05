@@ -70,6 +70,13 @@ public class LoginController {
 
     }
 
+    @GetMapping("/login/logout")
+    public String logout(RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("logout", "You have been successfully logged out.");
+        return "redirect:/login";
+    }
+
     @GetMapping("/register")
     public String registerGet(Model model) {
 

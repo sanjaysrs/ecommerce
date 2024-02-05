@@ -61,8 +61,11 @@
                     <input type="password" class="form-control form-control-lg" placeholder="Password" name="password" id="password" required>
                 </div>
 
-                <div th:if="${error}" class="alert alert-error text-danger">
-                    <span th:text="${error}"></span>
+                <div th:if="${error}">
+                    <p class="alert alert-danger" role="alert" th:text="${error}"></p>
+                </div>
+                <div class="mt-3" th:if="${logout}">
+                    <p class="alert alert-success" role="alert" th:text="${logout}"></p>
                 </div>
                 <input type="submit" value="Login" class="btn btn-block font-weight-bold" style="background-color : rgb(135, 16, 216); color : white;">
 

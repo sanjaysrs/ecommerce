@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .logout(logout ->
                         logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                .logoutSuccessUrl("/login")
+                                .logoutSuccessUrl("/login/logout")
                                 .invalidateHttpSession(true)
                                 .deleteCookies("JSESSIONID")
                 ).exceptionHandling(configurer ->
