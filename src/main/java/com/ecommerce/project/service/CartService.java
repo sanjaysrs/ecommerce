@@ -112,6 +112,8 @@ public class CartService {
         if (cartOptional.isEmpty())
             return;
         Cart cart = cartOptional.get();
+        if (cart.getCoupon()==null)
+            return;
         double minimumPurchase = cart.getCoupon().getMinimumPurchase();
         double cartTotal = cart.getCartItems().stream().mapToDouble(CartItem::getTotalPrice).sum();
         if (cartTotal < minimumPurchase) {
