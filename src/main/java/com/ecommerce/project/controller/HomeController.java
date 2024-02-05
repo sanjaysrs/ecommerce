@@ -48,6 +48,11 @@ public class HomeController {
         return userService.findUserByEmail(authentication.getName());
     }
 
+    @GetMapping("/readme")
+    public String readme() {
+        return "readme";
+    }
+
     @GetMapping("/")
     public String home(Model model) {
 
