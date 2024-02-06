@@ -69,6 +69,6 @@ Welcome to the Spring Boot E-Commerce Platform. This project is a comprehensive 
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE.md).
 
 ---
