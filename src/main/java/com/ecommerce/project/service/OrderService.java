@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -173,7 +174,7 @@ public class OrderService {
         order.setAddress(address);
         order.setPaymentMethod(paymentMethod);
 
-        order.setDate(LocalDateTime.now());
+        order.setDate(LocalDateTime.now(ZoneId.of("Asia/Kolkata")));
 
         order.setTotalPrice(total);
 
