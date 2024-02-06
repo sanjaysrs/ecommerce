@@ -4,6 +4,7 @@ import com.ecommerce.project.entity.*;
 import com.ecommerce.project.repository.OrderItemRepository;
 import com.ecommerce.project.repository.OrderRepository;
 import com.ecommerce.project.repository.OrderStatusRepository;
+import org.eclipse.jdt.internal.compiler.env.IBinaryField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
@@ -182,6 +183,10 @@ public class OrderService {
         order.setOrderStatus(orderStatus);
 
         addOrderItems(user.getCart(), order);
+
+        if (user.getCart().getCoupon()!=null)
+            order.setCouponApplied(true);
+
         orderRepository.save(order);
     }
 
