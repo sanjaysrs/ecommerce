@@ -2,11 +2,13 @@ package com.ecommerce.project.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
-@Data
-@NoArgsConstructor
 public class WishlistItem {
 
     @Id

@@ -3,11 +3,14 @@ package com.ecommerce.project.otp.entity;
 import com.ecommerce.project.entity.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
 @Entity
-@Data
 public class Otp {
 
     @Id

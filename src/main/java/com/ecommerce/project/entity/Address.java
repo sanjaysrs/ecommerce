@@ -2,9 +2,12 @@ package com.ecommerce.project.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
-@Data
 public class Address {
 
     @Id
@@ -26,12 +29,5 @@ public class Address {
         return streetAddress + ", " + city + ", " + state + ", " + postalCode;
     }
 
-    public Address(User user) {
-        this.user = user;
-    }
-
-    public Address() {
-
-    }
 }
 

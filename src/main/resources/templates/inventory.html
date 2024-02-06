@@ -47,10 +47,8 @@
         <h3 class="text-info" th:text="${stockStatus}"></h3>
     </div>
 
-<!--    Row Start-->
     <div class="row">
 
-<!--        Column 1 Start-->
         <div class="col-2">
             <a th:href="@{/admin/products/add}" style="margin: 20px 0" class="btn buntan">Add Product</a>
 
@@ -66,12 +64,10 @@
 
             <br>
 
-            <!-- Place for messages: error, alert etc ... -->
             <div class="form-group" th:if="${searchError}">
                 <div class="col-xs-15">
                     <div>
 
-                        <!-- Check for login error -->
 
                         <div th:if="${searchError}">
 
@@ -96,10 +92,8 @@
                 </ul>
             </div>
         </div>
-<!--        Column 1 End-->
 
 
-<!--        Column 2 Start-->
         <div class="col">
             <table class="table">
 
@@ -132,9 +126,7 @@
 
             </table>
         </div>
-<!--        Column 2 End-->
     </div>
-<!--    Row End-->
 
 </div>
 <script>

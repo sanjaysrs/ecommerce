@@ -2,9 +2,12 @@ package com.ecommerce.project.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
-@Data
 public class OrderItem {
 
     @Id
@@ -20,9 +23,6 @@ public class OrderItem {
     private Product product;
 
     private int quantity;
-
-    public OrderItem() {
-    }
 
     public double getSubtotal() {
         return product.getPrice() * quantity;

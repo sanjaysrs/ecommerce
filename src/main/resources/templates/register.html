@@ -49,12 +49,10 @@
         <form th:action="@{/register}" th:object="${user}" method="post">
 
 
-            <!-- Place for messages: error, alert etc ... -->
             <div class="form-group">
                 <div class="col-xs-15">
                     <div>
 
-                        <!-- Check for login error -->
 
                         <div th:if="${registrationError}">
 

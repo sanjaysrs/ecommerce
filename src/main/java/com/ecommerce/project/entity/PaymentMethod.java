@@ -4,7 +4,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 @Entity
 public class PaymentMethod {
 
@@ -14,35 +18,4 @@ public class PaymentMethod {
 
     private String method;
 
-    public PaymentMethod() {
-
-    }
-
-    public PaymentMethod(String method) {
-        this.method = method;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(String method) {
-        this.method = method;
-    }
-
-    @Override
-    public String toString() {
-        return "PaymentMethod{" +
-                "id=" + id +
-                ", method='" + method + '\'' +
-                '}';
-    }
 }

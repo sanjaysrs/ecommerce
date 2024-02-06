@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Details</title>
-    <!-- Include Bootstrap CSS link -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .buntan {background-color:rgb(135, 16, 216); color:white;}
@@ -54,13 +53,11 @@
 <div class="container mt-5">
     <h1 class="text-center">Profile Details</h1>
 
-    <!-- Display order information -->
     <div class="card mt-4">
         <div class="card-body">
             <h2 class="card-title">Email : <span th:text="${user.email}"></span></h2>
             <h2 class="card-title">First Name : <span th:text="${user.firstName}"></span></h2>
             <h2 class="card-title">Last name : <span th:text="${user.lastName}"></span></h2>
-            <!--            <p class="card-text"><strong>Order ID:</strong> <span th:text="${order.id}"></span></p>-->
         </div>
     </div>
 
