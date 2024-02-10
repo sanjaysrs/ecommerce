@@ -120,7 +120,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "FROM customer_order o " +
             "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() + INTERVAL 1 DAY " +
             "AND o.order_status_id <> 6 " +
-            "GROUP BY MONTHNAME(O.date) ", nativeQuery = true)
+            "GROUP BY MONTHNAME(o.date) ", nativeQuery = true)
     List<List<Object>> countOrdersLastTwelveMonths();
 
     @Query(value = "SELECT MONTHNAME(o.date) AS month, " +
@@ -128,7 +128,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "FROM customer_order o " +
             "WHERE o.date BETWEEN CURDATE() - INTERVAL 12 MONTH AND CURDATE() + INTERVAL 1 DAY " +
             "AND o.order_status_id <> 6 " +
-            "GROUP BY MONTHNAME(O.date) ", nativeQuery = true)
+            "GROUP BY MONTHNAME(o.date) ", nativeQuery = true)
     List<List<Object>> sumTotalPriceLastTwelveMonths();
 
     @Query(value = "SELECT CASE WHEN hours.hour = 0 THEN '12 AM' " +
